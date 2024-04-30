@@ -1,4 +1,4 @@
-# cse110-fa22-group5
+# NoteWorthy
 
 [![Coverage Status](https://coveralls.io/repos/github/cse110-fa22-group5/cse110-fa22-group5/badge.svg?branch=main)](https://coveralls.io/github/cse110-fa22-group5/cse110-fa22-group5?branch=main)
 

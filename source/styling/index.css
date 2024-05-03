@@ -14,21 +14,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0;
+  margin: auto;
+  width: 80%;
 }
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 80%;
+  width: 100%;
   margin: 1rem;
 }
 
 .controlPanel {
   display: flex;
   align-items: center;
+  flex-grow: 3;
+  background-color: black;
+  justify-content: end;
 }
 
 button {
@@ -67,7 +72,7 @@ h1 {
 
 main {
   display: flex;
-  width: 80%;
+  width: 100%;
   flex-direction: column;
   align-self: center;
 }
@@ -145,6 +150,16 @@ p {
   border-radius: 10px;
   background-color: #ffffff;
   padding: 0.3rem;
+}
+
+@media only screen and (max-width: 800px) {
+  .searchBarDiv {
+    width: 100%;
+    background-color: red;
+  }
+  .controlPanel {
+    justify-content: center;
+  }
 }
 
 .searchIcon {

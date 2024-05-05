@@ -21,6 +21,11 @@ export function initializeTagDB() {
           });
         //   objectStore.createIndex('notes', 'notes', { unique: false });
         };
+        // adding default tags into the database
+        objectStore.add("Work");
+        objectStore.add("Projects");
+        objectStore.add("Home");
+        objectStore.add("Goals");
 
         tagsDBopenReq.onsuccess = (event) => {
           tagDB = event.target.result;
@@ -31,3 +36,4 @@ export function initializeTagDB() {
         };
       });
 }
+

@@ -1,5 +1,6 @@
 # NoteWorthy
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/d0673d8890128a7210db/maintainability)](https://codeclimate.com/github/cse112-sp24-group2/NoteWorthy/maintainability)
 [![Coverage Status](https://coveralls.io/repos/github/cse110-fa22-group5/cse110-fa22-group5/badge.svg?branch=main)](https://coveralls.io/github/cse110-fa22-group5/cse110-fa22-group5?branch=main)
 
 ## Short description of project:

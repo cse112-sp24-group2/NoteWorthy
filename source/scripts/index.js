@@ -1,4 +1,5 @@
 import { initializeDB, getNotesFromStorage } from './noteStorage.js';
+import { getTagsFromStorage, initializeTagDB } from './tagStorage.js';
 
 /**
  * @description append the new row to the dashboard in the document
@@ -153,6 +154,10 @@ async function init() {
   const db = await initializeDB(indexedDB);
   const notes = await getNotesFromStorage(db);
   addNotesToDocument(notes);
+  const tagDB = await initializeTagDB(indexedDB);
+  const tags = await getTagsFromStorage(tagDB);
+  
+
   await initEventHandler();
 }
 

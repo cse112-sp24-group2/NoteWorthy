@@ -12,17 +12,7 @@ Personal note taking app that enables users to share their notes with other user
 
 ## View our deployed project!
 
-[https://cse110-fa22-group5.github.io/cse110-fa22-group5/source/index.html](https://cse110-fa22-group5.github.io/cse110-fa22-group5/source/index.html)
-
-## Meet our team!
-
-[team.md](admin/team.md)
-
-## Application Demo and Tutorial
-
-Video and tutorial on how our project works:  
-Project video - **public** version: https://www.youtube.com/watch?v=ZP5sLODzwoQ&feature=youtu.be&ab_channel=LaurenLee  
-Project video - **private** version: https://www.youtube.com/watch?v=0lr2i0lSBv4&feature=youtu.be&ab_channel=LaurenLee
+404
 
 ## Documentation
 

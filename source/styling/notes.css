@@ -42,6 +42,10 @@ header {
   color: #ffffff;
 }
 
+label{
+  color: #ffffff;
+}
+
 .note-control-bar {
   margin-top: 1rem;
   display: flex;

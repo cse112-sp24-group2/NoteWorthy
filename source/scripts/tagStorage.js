@@ -21,7 +21,7 @@ export function initializeTagDB() {
         keyPath: 'id',
         autoIncrement: true,
       });
-      const initialTags = [{ 1: "work" }, { 2: "projects" }, { 3: "personal" }];
+      const initialTags = [{ "default": "work" }, { "default": "projects" }, { "default": "personal" }];
       for (var i = 0; i < initialTags.length; i++) {
         objectStore.put(initialTags[i]);
       }
@@ -71,6 +71,51 @@ export function getTagsFromStorage(database) {
     };
   });
 }
+
+
+/**
+ * Takes the given tag and saves it to the database. To make a new tag,
+ * pass in a Tag object where the ID is undefined and a new note will be made.
+ * @param {*} database The initialized indexedDB object.
+ * @param {*} tag The tag object to save.
+ * @returns Promise<int> The ID of the newly saved tag.
+ */
+export function saveTagToStorage(database, tag) {
+  if (!tag.id) {
+    return new Promise((resolve, reject) => {
+      const objectStore = database
+        .transaction(TAG_STORE_NAME, 'readwrite')
+        .objectStore(TAG_STORE_NAME);
+      const saveTagRequest = objectStore.add(note);
+      saveTagRequest.onsuccess = () => {
+        console.log(
+          `Successfully saved tag with id ${saveTagRequest.result}`
+        );
+        console.log(saveTagRequest.result);
+        resolve(saveTagRequest.result);
+      };
+      saveTagRequest.onerror = () => {
+        reject(new Error('Error saving new tag to storage'));
+      };
+    });
+  }
+  return new Promise((resolve, reject) => {
+    const objectStore = database
+      .transaction(TAG_STORE_NAME, 'readwrite')
+      .objectStore(TAG_STORE_NAME);
+    const saveTagRequest = objectStore.put(note);
+    saveTagRequest.onsuccess = () => {
+      console.log(
+        `Successfully saved note with uuid ${saveTagRequest.result}`
+      );
+      resolve(saveTagRequest.result);
+    };
+    saveTagRequest.onerror = () => {
+      reject(new Error(`Error saving note with id ${tag.id} to storage`));
+    };
+  });
+}
+
 
 /**
  * Takes the given note and deletes it from storage.

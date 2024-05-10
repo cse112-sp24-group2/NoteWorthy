@@ -81,6 +81,8 @@ function setEditable(editable) {
 function initEditToggle(editEnabled) {
   const editButton = document.querySelector('#change-view-button');
   const saveButton = document.querySelector('#save-button');
+  const tagButton = document.querySelector('#tag-button');
+  const tagInput = document.querySelector('#tag-input');
   if (editEnabled) {
     editButton.innerHTML = 'Preview';
   } else {
@@ -90,6 +92,10 @@ function initEditToggle(editEnabled) {
   editButton.onclick = async () => {
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
+    tagButton.classList.remove('disabled-button');
+    tagButton.disabled = false;
+    tagInput.classList.remove('disabled-button');
+    tagInput.disabled = false;
     const editActive = editButton.innerHTML === 'Edit';
     setEditable(editActive);
     if (editActive) {
@@ -135,9 +141,27 @@ function initSaveButton(id, db) {
       // Disable save button after clicking it
       saveButton.classList.add('disabled-button');
       saveButton.disabled = true;
+      // Disable tag button after clicking save
+      const tagButton = document.querySelector('#tag-button');
+      tagButton.classList.add('disabled-button');
+      tagButton.disabled = true;
+      // Disable tag input after clicking save
+      const tagInput = document.querySelector('#tag-input');
+      tagInput.classList.add('disabled-button');
+      tagInput.disabled = true;
     }
   });
 }
+
+// /**
+//  * @description append the tag button to the page
+//  * @param {Integer} id unique uuid of current note
+//  * @param {*} db The initialized indexedDB object.
+//  */
+// function initTagButton(id, db) {
+//   const tagButton = document.querySelector('#tag-button');
+  
+// }
 
 /**
  * @description Deletes the current note and returns to the dashboard.
@@ -161,6 +185,8 @@ function initDeleteButton(id, db) {
     }
   });
 }
+
+
 
 /**
  * @description append the notes title, last modified date, and content to page
@@ -190,7 +216,7 @@ async function addNotesToDocument(note) {
  * We check whether the preview of the window url is set to true to represent if the user
  * is in view mode or edit mode for a given note.
  *
- * We disable the save button
+ * We disable the save button, the tag button, and the tag input for an existing note
  */
 async function init() {
   const db = await initializeDB(indexedDB);
@@ -216,13 +242,20 @@ async function init() {
     const note = await getNoteFromStorage(db, parseInt(id, 10));
     await addNotesToDocument(note);
     initEditToggle(false);
-    // existing note initial view mode should have disabled save button
+    // existing note initial view mode should have disabled save button, tag button, and tag input
     const saveButton = document.querySelector('#save-button');
+    const tagButton = document.querySelector('#tag-button');
+    const tagInput = document.querySelector('#tag-input');
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
+    tagButton.classList.add('disabled-button');
+    tagButton.disabled = true;
+    tagInput.classList.add('disabled-button');
+    tagInput.disabled = true;
   }
   initDeleteButton(id, db);
   initSaveButton(id, db);
+  initTagButton(id, db);
   initBackButton();
 }
 

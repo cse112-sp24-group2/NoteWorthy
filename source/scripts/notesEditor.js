@@ -2,7 +2,7 @@ import {
   initializeDB,
   saveNoteToStorage,
   getNotesFromStorage,
-  getNoteFromStorage,
+  getNoteFromStorage, 
   deleteNoteFromStorage,
 } from './noteStorage.js';
 import markdown from './markdown.js';
@@ -168,21 +168,23 @@ function initDeleteButton(id, db) {
  * @param {*} db The initialized indexedDB object.
  */
 function initExportButton(id, db) {
-  // const exportButton = document.querySelector('#export-button');
-  // exportButton.addEventListener('click', async () => {
-  //   if (!id) {return;}
-  //   const note = await getNoteFromStorage(db, id);
-  //   const title = note.title;
-  //   const content = note.content;
-  //   const blob = new Blob([content], { type: 'text/plain' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `${title}.txt`;
-  //   a.click();
-  //   // URL.revokeObjectURL(url);
-  // });
-  return;
+  const exportButton = document.querySelector('#export-button');
+  if (!id) {
+    alert('Please save the note before exporting.');
+    return;
+  }
+  exportButton.addEventListener('click', async () => {
+    const note = await getNoteFromStorage(db, id);
+    const blob = new Blob([note.content], { type: 'text/plain' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = `${note.title || 'note'}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  });
 }
 
 /**
@@ -246,6 +248,7 @@ async function init() {
   }
   initDeleteButton(id, db);
   initSaveButton(id, db);
+  initExportButton(id, db);
   initBackButton();
 }
 

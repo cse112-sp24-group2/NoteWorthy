@@ -71,3 +71,29 @@ export function getTagsFromStorage(database) {
     };
   });
 }
+
+/**
+ * Takes the given note and deletes it from storage.
+ * @param {*} database The initialized indexedDB object.
+ * @param {*} tag The note object to delete.
+ * @returns Promise<void>
+ */
+export function deleteNoteFromStorage(database, tag) {
+  return new Promise((resolve, reject) => {
+    const objectStore = database
+      .transaction(TAG_STORE_NAME, 'readwrite')
+      .objectStore(TAG_STORE_NAME);
+    const deleteTagRequest = objectStore.delete(tag.id);
+    deleteTagRequest.onsuccess = () => {
+      console.log(
+        `Successfully deleted tag with id ${deleteTagRequest.result}`
+      );
+      resolve();
+    };
+    deleteTagRequest.onerror = () => {
+      reject(
+        new Error(`Error deleting tag with id ${tag.id} from storage`)
+      );
+    };
+  });
+}

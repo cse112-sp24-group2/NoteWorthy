@@ -10,8 +10,7 @@ Personal note taking app that enables users to share their notes with other user
 
 <br>
 
-## [View our deployed project!](
-https://cse112-sp24-group2.github.io/NoteWorthy/source/index.html)
+## [View our deployed project!](https://cse112-sp24-group2.github.io/NoteWorthy/source/index.html)
 
 ## Documentation
 

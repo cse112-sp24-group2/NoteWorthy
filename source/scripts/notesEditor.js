@@ -170,27 +170,27 @@ function initDeleteButton(id, db) {
 function initExportButton(id, db) {
   const exportButton = document.querySelector('#export-button');
   if (!id) {
-    alert('Please save the note before exporting.');
-    return;
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
   }
   exportButton.addEventListener('click', async () => {
     const note = await getNoteFromStorage(db, id);
 
-  // Using jsPDF to create a PDF
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+    // Using jsPDF to create a PDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-  // Set metadata
-  doc.setProperties({
-    title: note.title,
-    subject: 'Note export',
-  });
+    // Set metadata
+    doc.setProperties({
+      title: note.title,
+      subject: 'Note export',
+    });
 
-  // Add note content
-  doc.text(note.content, 10, 10);  // Adjust coordinates and formatting as needed
+    // Add note content
+    doc.text(note.content, 10, 10);  // Adjust coordinates and formatting as needed
 
-  // Save the PDF
-  doc.save(`${note.title || 'note'}.pdf`);
+    // Save the PDF
+    doc.save(`${note.title}.pdf`);
   });
 }
 

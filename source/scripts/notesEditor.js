@@ -178,7 +178,7 @@ function initExportButton(id, db) {
 
     // Using jsPDF to create a PDF
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    let doc = new jsPDF(['a4']);
 
     // Set metadata
     doc.setProperties({
@@ -186,11 +186,25 @@ function initExportButton(id, db) {
       subject: 'Note export',
     });
 
-    // Add note content
-    doc.text(note.content, 10, 10);  // Adjust coordinates and formatting as needed
+    const displayElement = document.querySelector('#view-content')
+    let element = displayElement.cloneNode(true);
+    element.style = 'background-color: white;\
+                      color: black;\
+                      border: none;\
+                      font-size: 4px;\
+                      width: auto;\
+                      height: auto;\
+                      flex: auto;';
+    
+    displayElement.after(element);
 
-    // Save the PDF
-    doc.save(`${note.title}.pdf`);
+    // Add note content
+    await doc.html(element, {
+      callback: function(doc) {
+        doc.save(`${note.title}.pdf`);
+      },
+    });
+    displayElement.parentNode.removeChild(element);
   });
 }
 

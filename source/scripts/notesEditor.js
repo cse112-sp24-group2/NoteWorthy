@@ -100,7 +100,7 @@ function initEditToggle(editEnabled) {
   };
 }
 /**
- * @description append the save button to the page
+ * @description Set up on-click listener function for save button.
  * @param {Integer} id unique uuid of current note
  * @param {*} db The initialized indexedDB object.
  */
@@ -160,6 +160,29 @@ function initDeleteButton(id, db) {
       }
     }
   });
+}
+
+/**
+ * @description Set up on-click listener for export button.
+ * @param {Integer} id unique uuid of current note
+ * @param {*} db The initialized indexedDB object.
+ */
+function initExportButton(id, db) {
+  // const exportButton = document.querySelector('#export-button');
+  // exportButton.addEventListener('click', async () => {
+  //   if (!id) {return;}
+  //   const note = await getNoteFromStorage(db, id);
+  //   const title = note.title;
+  //   const content = note.content;
+  //   const blob = new Blob([content], { type: 'text/plain' });
+  //   const url = URL.createObjectURL(blob);
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = `${title}.txt`;
+  //   a.click();
+  //   // URL.revokeObjectURL(url);
+  // });
+  return;
 }
 
 /**

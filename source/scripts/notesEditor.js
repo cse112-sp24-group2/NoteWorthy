@@ -175,15 +175,22 @@ function initExportButton(id, db) {
   }
   exportButton.addEventListener('click', async () => {
     const note = await getNoteFromStorage(db, id);
-    const blob = new Blob([note.content], { type: 'text/plain' });
-    const href = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = href;
-    link.download = `${note.title || 'note'}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
+
+  // Using jsPDF to create a PDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Set metadata
+  doc.setProperties({
+    title: note.title,
+    subject: 'Note export',
+  });
+
+  // Add note content
+  doc.text(note.content, 10, 10);  // Adjust coordinates and formatting as needed
+
+  // Save the PDF
+  doc.save(`${note.title || 'note'}.pdf`);
   });
 }
 

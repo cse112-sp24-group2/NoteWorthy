@@ -1,4 +1,5 @@
-import { initializeDB, getNotesFromStorage } from './noteStorage.js';
+import { initializeDB, getNotesFromStorage, getNoteFromStorage, deleteNoteFromStorage  } from './noteStorage.js';
+import { setEditable, addNoteToDocument, initEditToggle, initDeleteButton, initSaveButton   } from './notesEditor.js'
 
 /**
  * @description append the new row to the dashboard in the document
@@ -19,7 +20,7 @@ function addNotesToDocument(notes) {
     row.note = note;
     dashboard.appendChild(row);
     row.shadowRoot
-      .querySelector('.title')
+      .querySelector('.note-title')
       .addEventListener('click', async () => {
         window.location.href = `./notes.html?id=${note.uuid}`;
       });
@@ -106,12 +107,12 @@ function filterNotesByQuery(notes, query) {
  * @description Add necessary event handlers for the buttons on page
  */
 async function initEventHandler() {
-  const button = document.querySelector('button');
+  const button = document.querySelector('#newNote');
   const db = await initializeDB(indexedDB);
   const notes = await getNotesFromStorage(db);
   // navigate to note page in order for the user to write note
   button.addEventListener('click', async () => {
-    window.location.href = './notes.html';
+    updateURL('?id=1');
   });
 
   // Handle notes sorting on column header clicks
@@ -144,15 +145,159 @@ async function initEventHandler() {
     console.log(event.target.value);
     addNotesToDocument(filterNotesByQuery(notes, event.target.value));
   });
+
+  // Window event listener to detech when URL changes since converting to SPA
+  let currURL = window.location.search;
+  window.addEventListener('popstate', () => {
+    const newURL = window.location.search;
+    if (newURL !== currURL) {
+      currURL = newURL;
+      URLRoutingHandler();
+    }
+  })
+}
+
+async function initEditor() {
+  const db = await initializeDB(indexedDB);
+  const deleteButton = document.querySelector('#delete-button');
+
+  deleteButton.addEventListener('click', () => {
+    const id = deleteButton.datasets.id;
+    if (id) {
+      // Only do this if the id has already been saved;
+      // otherwise return directly to the dashboard
+      if (window.confirm('Are you sure you want to delete this note?')) {
+        deleteNoteFromStorage(db, { uuid: id });
+        window.location.href = './index.html';
+      }
+    }
+  });
+}
+
+async function initSave() {
+  const db = await initializeDB(indexedDB);
+  const saveButton = document.querySelector('#save-button');
+  // add event listener to save button
+  saveButton.addEventListener('click', () => {
+    const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
+    if (title === '') {
+      alert('Please enter a valid title.');
+    } else {
+      const content = document.querySelector('#edit-content').value;
+      const lastModified = getDate();
+      const noteObject = {
+        title,
+        lastModified,
+        content,
+      };
+      const id = saveButton.datasets.id;
+      if (id) {
+        noteObject.uuid = id;
+      }
+      saveNoteToStorage(db, noteObject);
+      if (!id) {
+        // Navigate to the saved note page if we're saving a brand new note
+        getNotesFromStorage(db).then((res) => {
+          updateURL(`?id=${res[res.length - 1].uuid}`);
+        });
+      }
+      // Switch to preview mode
+      initEditToggle(false);
+      setEditable(false);
+      // Disable save button after clicking it
+      saveButton.classList.add('disabled-button');
+      saveButton.disabled = true;
+    }
+  });
+}
+
+export function initBackButton() {
+  const backButton = document.querySelector('#back-button');
+  
+  backButton.addEventListener('click', () => {
+    const editContent = document.querySelector('#edit-content');
+    const titleInput = document.querySelector('#title-input');
+    const saveButton = document.querySelector('#save-button');
+    const oldTitleInput = titleInput.value;
+    const oldNoteBody = editContent.value;
+    if (
+      saveButton.disabled !== true
+        && (titleInput.value !== '' || editContent.value !== '')
+        && (titleInput.value !== oldTitleInput || oldNoteBody !== editContent.value)
+    ) {
+      if (!window.confirm('Are you sure you want to return to the main dashboard? Your note will not be saved.')) {
+        return;
+      } else {
+        updateURL('')
+      }
+    } else {
+      updateURL('')
+    }
+  })
+}
+
+/**
+ * @description handles url routing, checks url parameters and loads
+ *              dashboard or editor accordingly
+ */
+function URLRoutingHandler() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id')
+
+  // So that child functions can hide/unhide dashboard or editor
+  const dom = {
+    editor: document.querySelector(".editor"),
+    dashboard: document.querySelector(".dashboard"),
+  }
+
+  if (id == null) {
+    switchToDashboard(dom)
+  } else {
+    switchToEditor(parseInt(id, 10), dom)
+  }
+}
+
+/**
+ * @description Switches current view to editor
+ * @param {Number} id note id
+ * @param {dom references} dom to hide/unhide dashboard and editor
+ */
+async function switchToEditor(id, dom) {
+  console.log(`switching to editor`)
+
+  if (id) {
+    const db = await initializeDB(indexedDB);
+    const note = await getNoteFromStorage(db, id);
+    addNoteToDocument(note);
+    initDeleteButton(id, db);
+    initSaveButton(id, db);
+    initBackButton();
+  }
+
+  dom.editor.classList.remove('hidden');
+  dom.dashboard.classList.add('hidden');
+}
+
+async function switchToDashboard(dom) {
+  console.log(`switching to dashboard`)
+  const db = await initializeDB(indexedDB);
+  const notes = await getNotesFromStorage(db);
+  addNotesToDocument(notes);
+  dom.editor.classList.add('hidden');
+  dom.dashboard.classList.remove('hidden');
+}
+
+export function updateURL(urlString) {
+  if (urlString == '') urlString = '/';
+  window.history.pushState({}, null, urlString);
+  window.dispatchEvent(new Event('popstate'));
 }
 
 /**
  * @description call all the functions after the DOM is loaded
  */
 async function init() {
-  const db = await initializeDB(indexedDB);
-  const notes = await getNotesFromStorage(db);
-  addNotesToDocument(notes);
+  URLRoutingHandler();
   await initEventHandler();
 }
 

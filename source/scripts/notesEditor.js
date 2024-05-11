@@ -6,6 +6,7 @@ import {
   deleteNoteFromStorage,
 } from './noteStorage.js';
 import markdown from './markdown.js';
+import { updateURL } from './index.js';
 
 /**
  * @description get the current date and time for the dashboard
@@ -39,17 +40,13 @@ function initBackButton() {
       && (titleInput.value !== '' || editContent.value !== '')
       && (titleInput.value !== oldTitleInput || oldNoteBody !== editContent.value)
     ) {
-      if (
-        !window.confirm(
-          'Are you sure you want to return to the main dashboard? Your note will not be saved.'
-        )
-      ) {
-        backButton.removeAttribute('href');
+      if (!window.confirm('Are you sure you want to return to the main dashboard? Your note will not be saved.')) {
+        return;
       } else {
-        backButton.setAttribute('href', './index.html');
+        updateURL('')
       }
     } else {
-      backButton.setAttribute('href', './index.html');
+      updateURL('')
     }
   }
 
@@ -59,7 +56,7 @@ function initBackButton() {
  * @description Switches between edit/view modes on the page
  * @param {*} editable True for edit mode, false for preview mode
  */
-function setEditable(editable) {
+export function setEditable(editable) {
   const editContent = document.querySelector('#edit-content');
   const viewContent = document.querySelector('#view-content');
   const titleInput = document.querySelector('#title-input');
@@ -78,7 +75,7 @@ function setEditable(editable) {
  * @description Initialize the button that toggles between edit and preview modes
  * @param {boolean} editEnabled True if the note is initially in edit mode, false if in preview mode
  */
-function initEditToggle(editEnabled) {
+export function initEditToggle(editEnabled) {
   const editButton = document.querySelector('#change-view-button');
   const saveButton = document.querySelector('#save-button');
   if (editEnabled) {
@@ -104,7 +101,7 @@ function initEditToggle(editEnabled) {
  * @param {Integer} id unique uuid of current note
  * @param {*} db The initialized indexedDB object.
  */
-function initSaveButton(id, db) {
+export function initSaveButton(id, db) {
   const saveButton = document.querySelector('#save-button');
   // add event listener to save button
   saveButton.addEventListener('click', () => {
@@ -144,8 +141,9 @@ function initSaveButton(id, db) {
  * @param {Integer} id unique uuid of current note
  * @param {*} db The initialized indexedDB object.
  */
-function initDeleteButton(id, db) {
+export function initDeleteButton(id, db) {
   const deleteButton = document.querySelector('#delete-button');
+  console.log(deleteButton.dataset.id)
   if (!id) {
     deleteButton.classList.add('disabled-button');
     deleteButton.disabled = true;
@@ -166,7 +164,7 @@ function initDeleteButton(id, db) {
  * @description append the notes title, last modified date, and content to page
  * @param {*} note note object with data
  */
-async function addNotesToDocument(note) {
+export async function addNoteToDocument(note) {
   // select html items
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
@@ -208,13 +206,13 @@ async function init() {
       lastModified: `${getDate()}`,
       content: '',
     };
-    await addNotesToDocument(noteObject);
+    await addNoteToDocument(noteObject);
     initEditToggle(true);
   } else {
     // if id exists meaning it's an existing note, pass preview to enable edit mode button
     id = parseInt(id, 10);
     const note = await getNoteFromStorage(db, parseInt(id, 10));
-    await addNotesToDocument(note);
+    await addNoteToDocument(note);
     initEditToggle(false);
     // existing note initial view mode should have disabled save button
     const saveButton = document.querySelector('#save-button');
@@ -226,4 +224,4 @@ async function init() {
   initBackButton();
 }
 
-window.addEventListener('DOMContentLoaded', init);
+// window.addEventListener('DOMContentLoaded', init);

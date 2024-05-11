@@ -123,6 +123,7 @@ function initSaveButton(id, db) {
       const noteObject = {
         title,
         lastModified,
+        tags: [],
         content,
       };
       if (id) {
@@ -232,6 +233,7 @@ async function init() {
     const noteObject = {
       title: '',
       lastModified: `${getDate()}`,
+      tags: [],
       content: '',
     };
     await addNotesToDocument(noteObject);

@@ -144,6 +144,28 @@ main {
   flex-direction: column;
   gap: 3rem;
   flex: 1;
+  position: relative;
+}
+
+.wojak {
+  z-index: -1;
+  bottom: 0;
+  opacity: 10%;
+  position: absolute;
+  left: 0;
+}
+
+.empty-dashboard {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-dashboard > p {
+  font-size: 1.3rem;
 }
 
 /* ----------DASHBOARD HEADER---------- */

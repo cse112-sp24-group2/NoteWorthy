@@ -64,14 +64,22 @@ function addNotesToDocument(notes) {
 }
 
 /**
+ * @description Show/Hide empty notes on dashboard
+ * @param {bool} bool true to hide, false to show
+ */
+function hideEmptyWojak(bool) {
+  const empty = document.querySelector('.empty-dashboard');
+  empty.classList.toggle('hidden', bool);
+}
+
+/**
  * @description Updates the URL to signify page changing.
  *              Window eventlisteners will automatically detect the change.
  * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
  */
 export default function updateURL(urlString) {
-  let url = urlString;
-  if (urlString === '') url = '/';
-  window.history.pushState({}, null, url);
+  const path = window.location.pathname;
+  window.history.pushState({}, null, path + urlString);
   window.dispatchEvent(new Event('popstate'));
 }
 
@@ -163,12 +171,12 @@ function editNote(bool) {
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
 async function switchToDashboard(dom) {
-  console.log(`switching to dashboard`);
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
+  hideEmptyWojak(notes.length !== 0);
 }
 
 /**
@@ -177,7 +185,6 @@ async function switchToDashboard(dom) {
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
 async function switchToEditor(id, dom) {
-  console.log(`switching to editor`);
   if (id !== 9999) {
     const db = pageData.database;
     const note = await getNoteFromStorage(db, id);
@@ -211,8 +218,6 @@ function URLRoutingHandler() {
   } else {
     pageData.noteID = parseInt(id, 10);
   }
-
-  console.log(pageData.noteID);
 
   // So that child functions can hide/unhide dashboard or editor
   const dom = {
@@ -376,6 +381,7 @@ async function initEventHandler() {
  * @description call all the functions after the DOM is loaded
  */
 async function init() {
+  console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   URLRoutingHandler();
   initEditor();
@@ -393,13 +399,13 @@ window.addEventListener('DOMContentLoaded', init);
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="dashboardRow.html">dashboardRow</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addNotesToDocument">addNotesToDocument</a></li><li><a href="global.html#addNoteToDocument">addNoteToDocument</a></li><li><a href="global.html#deleteNote">deleteNote</a></li><li><a href="global.html#deleteNoteFromStorage">deleteNoteFromStorage</a></li><li><a href="global.html#editNote">editNote</a></li><li><a href="global.html#filterNotesByQuery">filterNotesByQuery</a></li><li><a href="global.html#getDate">getDate</a></li><li><a href="global.html#getNoteFromStorage">getNoteFromStorage</a></li><li><a href="global.html#getNotesFromStorage">getNotesFromStorage</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initDeleteButton">initDeleteButton</a></li><li><a href="global.html#initEditor">initEditor</a></li><li><a href="global.html#initEditToggle">initEditToggle</a></li><li><a href="global.html#initEventHandler">initEventHandler</a></li><li><a href="global.html#initializeDB">initializeDB</a></li><li><a href="global.html#initSaveButton">initSaveButton</a></li><li><a href="global.html#saveNote">saveNote</a></li><li><a href="global.html#saveNoteToStorage">saveNoteToStorage</a></li><li><a href="global.html#setEditable">setEditable</a></li><li><a href="global.html#sortNotesByTime">sortNotesByTime</a></li><li><a href="global.html#sortNotesByTitle">sortNotesByTitle</a></li><li><a href="global.html#switchToDashboard">switchToDashboard</a></li><li><a href="global.html#switchToEditor">switchToEditor</a></li><li><a href="global.html#URLRoutingHandler">URLRoutingHandler</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="dashboardRow.html">dashboardRow</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addNotesToDocument">addNotesToDocument</a></li><li><a href="global.html#addNoteToDocument">addNoteToDocument</a></li><li><a href="global.html#deleteNote">deleteNote</a></li><li><a href="global.html#deleteNoteFromStorage">deleteNoteFromStorage</a></li><li><a href="global.html#editNote">editNote</a></li><li><a href="global.html#filterNotesByQuery">filterNotesByQuery</a></li><li><a href="global.html#getDate">getDate</a></li><li><a href="global.html#getNoteFromStorage">getNoteFromStorage</a></li><li><a href="global.html#getNotesFromStorage">getNotesFromStorage</a></li><li><a href="global.html#hideEmptyWojak">hideEmptyWojak</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initDeleteButton">initDeleteButton</a></li><li><a href="global.html#initEditor">initEditor</a></li><li><a href="global.html#initEditToggle">initEditToggle</a></li><li><a href="global.html#initEventHandler">initEventHandler</a></li><li><a href="global.html#initializeDB">initializeDB</a></li><li><a href="global.html#initSaveButton">initSaveButton</a></li><li><a href="global.html#saveNote">saveNote</a></li><li><a href="global.html#saveNoteToStorage">saveNoteToStorage</a></li><li><a href="global.html#setEditable">setEditable</a></li><li><a href="global.html#sortNotesByTime">sortNotesByTime</a></li><li><a href="global.html#sortNotesByTitle">sortNotesByTitle</a></li><li><a href="global.html#switchToDashboard">switchToDashboard</a></li><li><a href="global.html#switchToEditor">switchToEditor</a></li><li><a href="global.html#URLRoutingHandler">URLRoutingHandler</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Sun May 12 2024 05:36:35 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Sun May 12 2024 07:17:51 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

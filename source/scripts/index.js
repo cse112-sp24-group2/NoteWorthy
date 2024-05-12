@@ -36,14 +36,22 @@ function addNotesToDocument(notes) {
 }
 
 /**
+ * @description Show/Hide empty notes on dashboard
+ * @param {bool} bool true to hide, false to show
+ */
+function hideEmptyWojak(bool) {
+  const empty = document.querySelector('.empty-dashboard');
+  empty.classList.toggle('hidden', bool);
+}
+
+/**
  * @description Updates the URL to signify page changing.
  *              Window eventlisteners will automatically detect the change.
  * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
  */
 export default function updateURL(urlString) {
-  let url = urlString;
-  if (urlString === '') url = '/';
-  window.history.pushState({}, null, url);
+  const path = window.location.pathname;
+  window.history.pushState({}, null, path + urlString);
   window.dispatchEvent(new Event('popstate'));
 }
 
@@ -135,12 +143,12 @@ function editNote(bool) {
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
 async function switchToDashboard(dom) {
-  console.log(`switching to dashboard`);
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
+  hideEmptyWojak(notes.length !== 0);
 }
 
 /**
@@ -149,7 +157,6 @@ async function switchToDashboard(dom) {
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
 async function switchToEditor(id, dom) {
-  console.log(`switching to editor`);
   if (id !== 9999) {
     const db = pageData.database;
     const note = await getNoteFromStorage(db, id);
@@ -183,8 +190,6 @@ function URLRoutingHandler() {
   } else {
     pageData.noteID = parseInt(id, 10);
   }
-
-  console.log(pageData.noteID);
 
   // So that child functions can hide/unhide dashboard or editor
   const dom = {
@@ -348,6 +353,7 @@ async function initEventHandler() {
  * @description call all the functions after the DOM is loaded
  */
 async function init() {
+  console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   URLRoutingHandler();
   initEditor();

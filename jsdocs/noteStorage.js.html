@@ -67,9 +67,7 @@ export function initializeDB(indexedDB) {
  */
 export function getNotesFromStorage(database) {
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME)
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
     const notes = [];
     const getNotesRequest = objectStore.openCursor();
     getNotesRequest.onsuccess = (event) => {
@@ -83,11 +81,7 @@ export function getNotesFromStorage(database) {
       }
     };
     getNotesRequest.onerror = (event) => {
-      reject(
-        new Error(
-          `Error fetching notes from storage: ${event.target.errorCode}`
-        )
-      );
+      reject(new Error(`Error fetching notes from storage: ${event.target.errorCode}`));
     };
   });
 }
@@ -100,9 +94,7 @@ export function getNotesFromStorage(database) {
  */
 export function getNoteFromStorage(database, id) {
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME)
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
     const getNoteRequest = objectStore.get(id);
     getNoteRequest.onsuccess = () => {
       resolve(getNoteRequest.result);
@@ -123,14 +115,10 @@ export function getNoteFromStorage(database, id) {
 export function saveNoteToStorage(database, note) {
   if (!note.uuid) {
     return new Promise((resolve, reject) => {
-      const objectStore = database
-        .transaction(OBJECT_STORE_NAME, 'readwrite')
-        .objectStore(OBJECT_STORE_NAME);
+      const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
       const saveNoteRequest = objectStore.add(note);
       saveNoteRequest.onsuccess = () => {
-        console.log(
-          `Successfully saved note with uuid ${saveNoteRequest.result}`
-        );
+        console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
         console.log(saveNoteRequest.result);
         resolve(saveNoteRequest.result);
       };
@@ -140,14 +128,10 @@ export function saveNoteToStorage(database, note) {
     });
   }
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME, 'readwrite')
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const saveNoteRequest = objectStore.put(note);
     saveNoteRequest.onsuccess = () => {
-      console.log(
-        `Successfully saved note with uuid ${saveNoteRequest.result}`
-      );
+      console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
       resolve(saveNoteRequest.result);
     };
     saveNoteRequest.onerror = () => {
@@ -164,20 +148,14 @@ export function saveNoteToStorage(database, note) {
  */
 export function deleteNoteFromStorage(database, note) {
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME, 'readwrite')
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const deleteNoteRequest = objectStore.delete(note.uuid);
     deleteNoteRequest.onsuccess = () => {
-      console.log(
-        `Successfully deleted note with uuid ${deleteNoteRequest.result}`
-      );
+      console.log(`Successfully deleted note with uuid ${deleteNoteRequest.result}`);
       resolve();
     };
     deleteNoteRequest.onerror = () => {
-      reject(
-        new Error(`Error deleting note with id ${note.uuid} from storage`)
-      );
+      reject(new Error(`Error deleting note with id ${note.uuid} from storage`));
     };
   });
 }
@@ -191,13 +169,13 @@ export function deleteNoteFromStorage(database, note) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="dashboardRow.html">dashboardRow</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addNotesToDocument">addNotesToDocument</a></li><li><a href="global.html#deleteNoteFromStorage">deleteNoteFromStorage</a></li><li><a href="global.html#filterNotesByQuery">filterNotesByQuery</a></li><li><a href="global.html#getDate">getDate</a></li><li><a href="global.html#getNoteFromStorage">getNoteFromStorage</a></li><li><a href="global.html#getNotesFromStorage">getNotesFromStorage</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initBackButton">initBackButton</a></li><li><a href="global.html#initDeleteButton">initDeleteButton</a></li><li><a href="global.html#initEditToggle">initEditToggle</a></li><li><a href="global.html#initEventHandler">initEventHandler</a></li><li><a href="global.html#initializeDB">initializeDB</a></li><li><a href="global.html#initSaveButton">initSaveButton</a></li><li><a href="global.html#saveNoteToStorage">saveNoteToStorage</a></li><li><a href="global.html#setEditable">setEditable</a></li><li><a href="global.html#sortNotesByTime">sortNotesByTime</a></li><li><a href="global.html#sortNotesByTitle">sortNotesByTitle</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="dashboardRow.html">dashboardRow</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addNotesToDocument">addNotesToDocument</a></li><li><a href="global.html#addNoteToDocument">addNoteToDocument</a></li><li><a href="global.html#deleteNote">deleteNote</a></li><li><a href="global.html#deleteNoteFromStorage">deleteNoteFromStorage</a></li><li><a href="global.html#editNote">editNote</a></li><li><a href="global.html#filterNotesByQuery">filterNotesByQuery</a></li><li><a href="global.html#getDate">getDate</a></li><li><a href="global.html#getNoteFromStorage">getNoteFromStorage</a></li><li><a href="global.html#getNotesFromStorage">getNotesFromStorage</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#initDeleteButton">initDeleteButton</a></li><li><a href="global.html#initEditor">initEditor</a></li><li><a href="global.html#initEditToggle">initEditToggle</a></li><li><a href="global.html#initEventHandler">initEventHandler</a></li><li><a href="global.html#initializeDB">initializeDB</a></li><li><a href="global.html#initSaveButton">initSaveButton</a></li><li><a href="global.html#saveNote">saveNote</a></li><li><a href="global.html#saveNoteToStorage">saveNoteToStorage</a></li><li><a href="global.html#setEditable">setEditable</a></li><li><a href="global.html#sortNotesByTime">sortNotesByTime</a></li><li><a href="global.html#sortNotesByTitle">sortNotesByTitle</a></li><li><a href="global.html#switchToDashboard">switchToDashboard</a></li><li><a href="global.html#switchToEditor">switchToEditor</a></li><li><a href="global.html#URLRoutingHandler">URLRoutingHandler</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri May 10 2024 20:56:20 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Sun May 12 2024 05:31:45 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

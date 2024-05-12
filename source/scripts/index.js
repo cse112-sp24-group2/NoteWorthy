@@ -40,7 +40,7 @@ function addNotesToDocument(notes) {
  *              Window eventlisteners will automatically detect the change.
  * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
  */
-function updateURL(urlString) {
+export default function updateURL(urlString) {
   let url = urlString;
   if (urlString === '') url = '/';
   window.history.pushState({}, null, url);

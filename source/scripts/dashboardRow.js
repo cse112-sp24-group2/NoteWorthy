@@ -1,5 +1,5 @@
 import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
-import { updateURL } from './index.js';
+import updateURL from './index.js';
 
 const template = document.getElementById('dashboard-note-template');
 

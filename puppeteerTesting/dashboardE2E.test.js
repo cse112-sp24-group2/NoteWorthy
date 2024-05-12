@@ -152,22 +152,18 @@ describe('Basic user flow for Website', () => {
   /**
    * Check to make sure after clicking Save the innerHTML for the title is 'Lecture 1 CSE 110'
    */
-  it(
-    'Check to make sure after clicking Save the window is in view editor mode and user cannot' + 'edit note page',
-    async () => {
-      console.log('Checking title input uneditable...');
-      const titleText = await page.$eval('#title-input', (e) => e.value);
-      console.log(titleText);
-      const titleEditable = await page.$eval('#title-input', (e) => e.disabled);
-      expect(titleText).toBe('Lecture 1 CSE 110');
-      expect(titleEditable).toBe(true);
-      const editTxtOff = await page.$eval('#edit-content', (e) => e.hidden);
-      const viewTxtOff = await page.$eval('#view-content', (e) => e.hidden);
-      expect(editTxtOff).toBe(true);
-      expect(viewTxtOff).toBe(false);
-    },
-    2500
-  );
+  it('Check to make sure after clicking Save the window is in view editor mode and user cannot edit note page', async () => {
+    console.log('Checking title input uneditable...');
+    const titleText = await page.$eval('#title-input', (e) => e.value);
+    console.log(titleText);
+    const titleEditable = await page.$eval('#title-input', (e) => e.disabled);
+    expect(titleText).toBe('Lecture 1 CSE 110');
+    expect(titleEditable).toBe(true);
+    const editTxtOff = await page.$eval('#edit-content', (e) => e.hidden);
+    const viewTxtOff = await page.$eval('#view-content', (e) => e.hidden);
+    expect(editTxtOff).toBe(true);
+    expect(viewTxtOff).toBe(false);
+  }, 2500);
 
   /**
    * Check to make sure the element note-content-input attribute

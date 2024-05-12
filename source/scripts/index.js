@@ -132,7 +132,7 @@ function editNote(bool) {
 
 /**
  * @description Switches current view to dashboard
- * @param {dom references} dom to hide/unhide dashboard and editor
+ * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
 async function switchToDashboard(dom) {
   console.log(`switching to dashboard`);
@@ -146,7 +146,7 @@ async function switchToDashboard(dom) {
 /**
  * @description Switches current view to editor
  * @param {Number} id note id
- * @param {dom references} dom to hide/unhide dashboard and editor
+ * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
 async function switchToEditor(id, dom) {
   console.log(`switching to editor`);

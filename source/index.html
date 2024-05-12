@@ -17,6 +17,7 @@
     <script src="./scripts/dashboardRow.js" type="module"></script>
     <script src="./scripts/noteStorage.js" type="module"></script>
   </head>
+
   <body>
     <div class="header">
       <h1>NoteWorthy.</h1>
@@ -26,35 +27,35 @@
     </div>
     <main>
       <!-- WILL CHANGE SOON -->
-        <div style="display: none;" class="columnTitle">
-          <div class="titleCol">
-            <p class="titleColHeader">Title</p>
-            <div></div>
-            <svg
-              class="titleColSortOrder"
-              width="12"
-              height="6"
-              viewBox="0 0 12 6"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6 0L11.1962 6H0.803848L6 0Z" fill="#D9D9D9" />
-            </svg>
-          </div>
-          <div class="timeCol">
-            <svg
-              class="timeColSortOrder"
-              width="12"
-              height="6"
-              viewBox="0 0 12 6"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6 0L11.1962 6H0.803848L6 0Z" fill="#D9D9D9" />
-            </svg>
-            <p class="timeColHeader">Last Modified</p>
-          </div>
+      <div style="display: none" class="columnTitle">
+        <div class="titleCol">
+          <p class="titleColHeader">Title</p>
+          <div></div>
+          <svg
+            class="titleColSortOrder"
+            width="12"
+            height="6"
+            viewBox="0 0 12 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6 0L11.1962 6H0.803848L6 0Z" fill="#D9D9D9" />
+          </svg>
         </div>
+        <div class="timeCol">
+          <svg
+            class="timeColSortOrder"
+            width="12"
+            height="6"
+            viewBox="0 0 12 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6 0L11.1962 6H0.803848L6 0Z" fill="#D9D9D9" />
+          </svg>
+          <p class="timeColHeader">Last Modified</p>
+        </div>
+      </div>
 
       <!-- SIDEBAR -->
       <section class="sidebar">
@@ -87,20 +88,13 @@
 
       <!-- VIEWS SECTION -->
       <section class="view">
-
         <!-- NOTES DASHBOARD -->
         <div class="dashboard">
           <header class="dashboard-header">
             <h2>Dashboard</h2>
             <div class="searchbar-wrapper">
               <img src="images/search-icon.svg" />
-              <input
-                class="searchBar"
-                type="text"
-                id="search"
-                name="search"
-                placeholder="Search"
-              />
+              <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
             </div>
             <span>Sort By: Recently Edited</span>
           </header>
@@ -132,7 +126,6 @@
             <div id="view-content" hidden></div>
           </main>
         </div>
-
       </section>
     </main>
   </body>
@@ -140,19 +133,22 @@
   <template id="dashboard-note-template">
     <head>
       <style>
-      @import url('./styling/index.css');
+        @import url('./styling/index.css');
       </style>
     </head>
     <div class="note-wrapper">
       <div class="note-front">
         <div class="note-front-top">
           <h4 class="note-title"></h4>
-          <p class="note-text">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable </p>
+          <p class="note-text">
+            It is a long established fact that a reader will be distracted by the readable content of a page when
+            looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of
+            letters, as opposed to using 'Content here, content here', making it look like readable
+          </p>
         </div>
         <div class="note-front-bottom">
           <p class="note-last-modified"></p>
           <img class="note-more" src="images/more-icon.svg" />
-
         </div>
       </div>
       <div class="note-back hidden">

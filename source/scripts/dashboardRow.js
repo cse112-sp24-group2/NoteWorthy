@@ -1,7 +1,6 @@
 import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
 import { updateURL } from './index.js';
 
-
 const template = document.getElementById('dashboard-note-template');
 
 class dashboardRow extends HTMLElement {
@@ -20,7 +19,6 @@ class dashboardRow extends HTMLElement {
     shadow.append(note);
   }
 
-
   /**
    * Finds necessary HTML elements in shadow root and puts into this.dom object
    * @param none
@@ -36,7 +34,6 @@ class dashboardRow extends HTMLElement {
     };
   }
 
-
   /**
    * Set the note property
    * @param {Object} note containing the note data
@@ -45,8 +42,8 @@ class dashboardRow extends HTMLElement {
     const newTitle = document.createTextNode(note.title);
     const newModified = document.createTextNode(note.lastModified);
 
-    this.dom.title.replaceChildren(newTitle)
-    this.dom.lastModified.replaceChildren(newModified)
+    this.dom.title.replaceChildren(newTitle);
+    this.dom.lastModified.replaceChildren(newModified);
 
     this.dom.deleteButton.addEventListener('click', async (event) => {
       event.stopPropagation();
@@ -61,7 +58,7 @@ class dashboardRow extends HTMLElement {
     });
 
     this.dom.noteFront.onclick = () => {
-      updateURL(`?id=${note.uuid}`)
+      updateURL(`?id=${note.uuid}`);
     };
   }
 }

@@ -2,9 +2,12 @@
   font-family: 'Poppins', sans-serif;
   padding: 0;
   margin: 0;
-  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-  box-sizing: border-box;         /* Opera/IE 8+ */
+  -webkit-box-sizing: border-box;
+  /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;
+  /* Firefox, other Gecko */
+  box-sizing: border-box;
+  /* Opera/IE 8+ */
 }
 
 body {
@@ -126,7 +129,6 @@ main {
   display: flex;
 }
 
-
 /* ------------------------------VIEWS------------------------------ */
 
 .view {
@@ -222,8 +224,7 @@ main {
 }
 
 .note-text {
-  -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, 
-    from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+  -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
 
 .note-front-bottom {
@@ -298,5 +299,5 @@ main {
 
 #edit-content {
   border-color: rgba(136, 86, 174, 0.388);
-  resize:none;
+  resize: none;
 }

@@ -12,7 +12,7 @@ import { updateURL } from './index.js';
  * @description get the current date and time for the dashboard
  * @returns {string} current date in format of mm/dd/yyyy at XX:XX XM
  */
-function getDate() {
+export function getDate() {
   const date = new Date();
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -60,6 +60,7 @@ export function setEditable(editable) {
   const editContent = document.querySelector('#edit-content');
   const viewContent = document.querySelector('#view-content');
   const titleInput = document.querySelector('#title-input');
+  const saveButton = document.querySelector('#save-button');
   if (!editable) {
     viewContent.innerHTML = markdown(editContent.value);
     viewContent.hidden = false;
@@ -70,6 +71,9 @@ export function setEditable(editable) {
     viewContent.hidden = true;
     titleInput.removeAttribute('disabled');
   }
+
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
 }
 /**
  * @description Initialize the button that toggles between edit and preview modes
@@ -143,7 +147,6 @@ export function initSaveButton(id, db) {
  */
 export function initDeleteButton(id, db) {
   const deleteButton = document.querySelector('#delete-button');
-  console.log(deleteButton.dataset.id)
   if (!id) {
     deleteButton.classList.add('disabled-button');
     deleteButton.disabled = true;

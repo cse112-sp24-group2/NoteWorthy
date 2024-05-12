@@ -16,6 +16,32 @@
     <script src="./scripts/index.js" type="module"></script>
     <script src="./scripts/dashboardRow.js" type="module"></script>
     <script src="./scripts/noteStorage.js" type="module"></script>
+    <template id="dashboard-note-template">
+      <style>
+        @import url('./styling/index.css');
+      </style>
+      <div class="note-wrapper">
+        <div class="note-front">
+          <div class="note-front-top">
+            <h4 class="note-title"></h4>
+            <p class="note-text">
+              It is a long established fact that a reader will be distracted by the readable content of a page when
+              looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of
+              letters, as opposed to using 'Content here, content here', making it look like readable
+            </p>
+          </div>
+          <div class="note-front-bottom">
+            <p class="note-last-modified"></p>
+            <img class="note-more" src="images/more-icon.svg" />
+          </div>
+        </div>
+        <div class="note-back hidden">
+          <div>
+            <button class="note-delete-button">Delete Note</button>
+          </div>
+        </div>
+      </div>
+    </template>
   </head>
 
   <body>
@@ -93,7 +119,7 @@
           <header class="dashboard-header">
             <h2>Dashboard</h2>
             <div class="searchbar-wrapper">
-              <img src="images/search-icon.svg" />
+              <img alt="search note" src="images/search-icon.svg" />
               <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
             </div>
             <span>Sort By: Recently Edited</span>
@@ -117,45 +143,16 @@
               <button id="delete-button">Delete</button>
             </div>
           </header>
-          <main id="notes-content">
+          <div id="notes-content">
             <textarea
               id="edit-content"
               placeholder="Take a note... (Styling with Markdown is supported)"
               hidden
             ></textarea>
             <div id="view-content" hidden></div>
-          </main>
+          </div>
         </div>
       </section>
     </main>
   </body>
-
-  <template id="dashboard-note-template">
-    <head>
-      <style>
-        @import url('./styling/index.css');
-      </style>
-    </head>
-    <div class="note-wrapper">
-      <div class="note-front">
-        <div class="note-front-top">
-          <h4 class="note-title"></h4>
-          <p class="note-text">
-            It is a long established fact that a reader will be distracted by the readable content of a page when
-            looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of
-            letters, as opposed to using 'Content here, content here', making it look like readable
-          </p>
-        </div>
-        <div class="note-front-bottom">
-          <p class="note-last-modified"></p>
-          <img class="note-more" src="images/more-icon.svg" />
-        </div>
-      </div>
-      <div class="note-back hidden">
-        <div>
-          <button class="note-delete-button">Delete Note</button>
-        </div>
-      </div>
-    </div>
-  </template>
 </html>

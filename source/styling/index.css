@@ -49,6 +49,7 @@ button:hover {
 }
 
 #newNote {
+  text-wrap: nowrap;
   height: fit-content;
   font-size: 2em;
 }

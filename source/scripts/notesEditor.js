@@ -179,7 +179,7 @@ function initExportButton(id, db) {
     const href = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = href;
-    link.download = `${note.title || 'note'}.txt`;
+    link.download = `${note.title}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -248,6 +248,7 @@ async function init() {
   }
   initDeleteButton(id, db);
   initSaveButton(id, db);
+  initExportButton(id, db);
   initBackButton();
 }
 

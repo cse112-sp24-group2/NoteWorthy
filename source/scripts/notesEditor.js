@@ -2,7 +2,7 @@ import {
   initializeDB,
   saveNoteToStorage,
   getNotesFromStorage,
-  getNoteFromStorage,
+  getNoteFromStorage, 
   deleteNoteFromStorage,
 } from './noteStorage.js';
 import markdown from './markdown.js';
@@ -173,18 +173,8 @@ function initExportButton(id, db) {
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
   }
-
   exportButton.addEventListener('click', async () => {
     const note = await getNoteFromStorage(db, id);
-    const title = note.title;
-    const content = note.content;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${title}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
 
     // Using jsPDF to create a PDF
     const { jsPDF } = window.jspdf;
@@ -216,7 +206,6 @@ function initExportButton(id, db) {
     });
     displayElement.parentNode.removeChild(element);
   });
-  return;
 }
 
 /**
@@ -280,8 +269,8 @@ async function init() {
   }
   initDeleteButton(id, db);
   initSaveButton(id, db);
-  initBackButton();
   initExportButton(id, db);
+  initBackButton();
 }
 
 window.addEventListener('DOMContentLoaded', init);

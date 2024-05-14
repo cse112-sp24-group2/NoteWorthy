@@ -2,7 +2,7 @@ import {
   initializeDB,
   saveNoteToStorage,
   getNotesFromStorage,
-  getNoteFromStorage, 
+  getNoteFromStorage,
   deleteNoteFromStorage,
 } from './noteStorage.js';
 import markdown from './markdown.js';
@@ -170,41 +170,20 @@ function initDeleteButton(id, db) {
 function initExportButton(id, db) {
   const exportButton = document.querySelector('#export-button');
   if (!id) {
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
+    alert('Please save the note before exporting.');
+    return;
   }
   exportButton.addEventListener('click', async () => {
     const note = await getNoteFromStorage(db, id);
-
-    // Using jsPDF to create a PDF
-    const { jsPDF } = window.jspdf;
-    let doc = new jsPDF(['a4']);
-
-    // Set metadata
-    doc.setProperties({
-      title: note.title,
-      subject: 'Note export',
-    });
-
-    const displayElement = document.querySelector('#view-content')
-    let element = displayElement.cloneNode(true);
-    element.style = 'background-color: white;\
-                      color: black;\
-                      border: none;\
-                      font-size: 4px;\
-                      width: auto;\
-                      height: auto;\
-                      flex: auto;';
-    
-    displayElement.after(element);
-
-    // Add note content
-    await doc.html(element, {
-      callback: function(doc) {
-        doc.save(`${note.title}.pdf`);
-      },
-    });
-    displayElement.parentNode.removeChild(element);
+    const blob = new Blob([note.content], { type: 'text/plain' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = `${note.title || 'note'}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
   });
 }
 
@@ -269,7 +248,6 @@ async function init() {
   }
   initDeleteButton(id, db);
   initSaveButton(id, db);
-  initExportButton(id, db);
   initBackButton();
 }
 

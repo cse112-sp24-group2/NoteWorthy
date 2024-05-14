@@ -226,10 +226,9 @@ function saveNote() {
     lastModified,
     content,
   };
-  if (id) {
-    noteObject.uuid = id;
-    saveNoteToStorage(db, noteObject);
-  } else {
+  if (id) noteObject.uuid = id;
+  saveNoteToStorage(db, noteObject);
+  if (!id) {
     // replace current url with new note id
     getNotesFromStorage(db).then((res) => {
       window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);

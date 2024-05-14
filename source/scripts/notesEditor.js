@@ -65,45 +65,6 @@ export function initEditToggle(editEnabled) {
     }
   };
 }
-/**
- * @description append the save button to the page
- * @param {Integer} id unique uuid of current note
- * @param {*} db The initialized indexedDB object.
- */
-export function initSaveButton(id, db) {
-  const saveButton = document.querySelector('#save-button');
-  // add event listener to save button
-  saveButton.addEventListener('click', () => {
-    const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
-    if (title === '') {
-      alert('Please enter a valid title.');
-    } else {
-      const content = document.querySelector('#edit-content').value;
-      const lastModified = getDate();
-      const noteObject = {
-        title,
-        lastModified,
-        content,
-      };
-      if (id) {
-        noteObject.uuid = id;
-      }
-      saveNoteToStorage(db, noteObject);
-      if (!id) {
-        // Navigate to the saved note page if we're saving a brand new note
-        getNotesFromStorage(db).then((res) => {
-          window.location.href = `./notes.html?id=${res[res.length - 1].uuid}`;
-        });
-      }
-      // Switch to preview mode
-      initEditToggle(false);
-      setEditable(false);
-      // Disable save button after clicking it
-      saveButton.classList.add('disabled-button');
-      saveButton.disabled = true;
-    }
-  });
-}
 
 /**
  * @description Deletes the current note and returns to the dashboard.

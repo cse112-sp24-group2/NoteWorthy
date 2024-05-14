@@ -56,37 +56,39 @@ export default function updateURL(urlString) {
 }
 
 /**
- * @description sort the notes by last modified date
- * @param {Array<Object>} notes containing all the notes in the local storage
- * @param {String} sortType the type of sort, either ascending or descending
- * @returns sortedNotes
+ * @description Parse the note date string into a Date object
+ * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
+ * @returns {Date} The parsed Date object
+ */
+function parseNoteDate(dateString) {
+  const [month, day, dateTimeString] = dateString.split('/');
+  const [date, timeString] = dateTimeString.split('at ');
+  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
+
+  let parsedHour = parseInt(hour, 10);
+  if (parsedHour === 12) {
+    parsedHour = ampm === 'PM' ? 12 : 0;
+  } else {
+    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
+  }
+
+  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
+}
+
+/**
+ * @description Sort the notes by last modified date
+ * @param {Array<Object>} notes - Array containing all the notes in local storage
+ * @param {String} sortType - The type of sort, either 'asc' for ascending or 'desc' for descending
+ * @returns {Array<Object>} Sorted array of notes
  */
 function sortNotesByTime(notes, sortType) {
+  const sortOrder = sortType === 'asc' ? 1 : -1;
+
   return notes.sort((note1, note2) => {
-    const dateList1 = note1.lastModified.split('/');
-    const dateList2 = note2.lastModified.split('/');
-    const timeList1 = dateList1[2].split('at ')[1].split(' ');
-    const timeList2 = dateList2[2].split('at ')[1].split(' ');
-    let hour1;
-    let hour2;
-    if (timeList1[0].split(':')[0] === '12') {
-      hour1 = timeList1[1] === 'AM' ? 0 : 12;
-    } else {
-      hour1 = timeList1[1] === 'PM' ? parseInt(timeList1[0], 10) + 12 : timeList1[0];
-    }
-    if (timeList2[0].split(':')[0] === '12') {
-      hour2 = timeList2[1] === 'AM' ? 0 : 12;
-    } else {
-      hour2 = timeList2[1] === 'PM' ? parseInt(timeList2[0], 10) + 12 : timeList2[0];
-    }
-    const minute1 = timeList1[0].split(':')[1];
-    const minute2 = timeList2[0].split(':')[1];
-    const date1 = new Date(dateList1[2].split('at ')[0], dateList1[0] - 1, dateList1[1], hour1, minute1);
-    const date2 = new Date(dateList2[2].split('at ')[0], dateList2[0] - 1, dateList2[1], hour2, minute2);
-    if (sortType === 'asc') {
-      return date1 - date2;
-    }
-    return date2 - date1;
+    const date1 = parseNoteDate(note1.lastModified);
+    const date2 = parseNoteDate(note2.lastModified);
+
+    return (date1 - date2) * sortOrder;
   });
 }
 
@@ -212,12 +214,10 @@ function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
-
   if (title === '') {
     alert('Please enter a valid title.');
     return;
   }
-
   const saveButton = document.querySelector('#save-button');
   const content = document.querySelector('#edit-content').value;
   const lastModified = getDate();
@@ -228,17 +228,14 @@ function saveNote() {
   };
   if (id) {
     noteObject.uuid = id;
-  }
-  saveNoteToStorage(db, noteObject);
-  if (!id) {
-    // Navigate to the saved note page if we're saving a brand new note
+    saveNoteToStorage(db, noteObject);
+  } else {
+    // replace current url with new note id
     getNotesFromStorage(db).then((res) => {
       window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
-      // updateURL(`?id=${res[res.length - 1].uuid}`);
     });
   }
-  // Switch to preview mode
-  editNote(false);
+  editNote(false); // Switch to preview mode
   // Disable save button after clicking it
   saveButton.classList.add('disabled-button');
   saveButton.disabled = true;
@@ -254,12 +251,14 @@ function deleteNote(toDelete) {
   const id = toDelete || pageData.noteID;
   const db = pageData.database;
 
-  if (id) {
-    if (window.confirm('Are you sure you want to delete')) {
-      deleteNoteFromStorage(db, { uuid: id });
-      if (!toDelete) updateURL('');
-    }
-  }
+  if (!id) return;
+  if (!window.confirm('Are you sure you want to delete')) return;
+
+  deleteNoteFromStorage(db, { uuid: id });
+
+  // This means we are deleting from the editor page, so we should return
+  // to the dashboard
+  if (!toDelete) updateURL('');
 }
 
 /**
@@ -289,14 +288,61 @@ async function initEditor() {
 }
 
 /**
+ * Initializes the event handler for sorting notes by time column.
+ * @param {Object[]} notes - An array of note objects.
+ */
+function initTimeColumnSorting(notes) {
+  const timeColSortArrow = document.querySelector('.timeColSortOrder');
+  const timeCol = document.querySelector('.timeCol');
+  let timeSortCount = 0;
+
+  timeCol.addEventListener('click', async () => {
+    const direction = timeSortCount % 2 === 0 ? 'asc' : 'desc';
+    timeColSortArrow.setAttribute('direction', '');
+    timeColSortArrow.setAttribute('direction', direction);
+    timeSortCount += 1;
+    addNotesToDocument(sortNotesByTime(notes, direction));
+  });
+}
+
+/**
+ * Initializes the event handler for sorting notes by title column.
+ * @param {Object[]} notes - An array of note objects.
+ */
+function initTitleColumnSorting(notes) {
+  const titleColSortArrow = document.querySelector('.titleColSortOrder');
+  const titleCol = document.querySelector('.titleCol');
+  let titleSortCount = 0;
+
+  titleCol.addEventListener('click', async () => {
+    const direction = titleSortCount % 2 === 0 ? 'asc' : 'desc';
+    titleColSortArrow.setAttribute('direction', '');
+    titleColSortArrow.setAttribute('direction', direction);
+    titleSortCount += 1;
+    addNotesToDocument(sortNotesByTitle(notes, direction));
+  });
+}
+
+/**
+ * Initializes the event handler for filtering notes by search query.
+ * @param {Object[]} notes - An array of note objects.
+ */
+function initSearchBar(notes) {
+  const searchBar = document.querySelector('.searchBar');
+  searchBar.addEventListener('input', (event) => {
+    console.log(event.target.value);
+    addNotesToDocument(filterNotesByQuery(notes, event.target.value));
+  });
+}
+
+/**
  * @description Add necessary event handlers for the buttons on page
  */
 async function initEventHandler() {
-  const button = document.querySelector('#newNote');
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
 
-  // navigate the to editor page for new note
+  const button = document.querySelector('#newNote');
   button.addEventListener('click', async () => {
     // HACK: need to change and handle proper URL
     updateURL('?id=9999');
@@ -307,38 +353,10 @@ async function initEventHandler() {
     updateURL('');
   });
 
-  // Handle notes sorting on column header clicks
-  const timeColSortArrow = document.querySelector('.timeColSortOrder');
-  const titleColSortArrow = document.querySelector('.titleColSortOrder');
-  // sort the notes to display in dashboard by last modified date
-  const timeCol = document.querySelector('.timeCol');
-  let timeSortCount = 0;
-  timeCol.addEventListener('click', async () => {
-    const direction = timeSortCount % 2 === 0 ? 'asc' : 'desc';
-    titleColSortArrow.setAttribute('direction', '');
-    timeColSortArrow.setAttribute('direction', direction);
-    timeSortCount += 1;
-    addNotesToDocument(sortNotesByTime(notes, direction));
-  });
+  initTimeColumnSorting(notes);
+  initTitleColumnSorting(notes);
+  initSearchBar(notes);
 
-  // sort the notes to display in dashboard by title
-  const titleCol = document.querySelector('.titleCol');
-  let titleSortCount = 0;
-  titleCol.addEventListener('click', async () => {
-    const direction = titleSortCount % 2 === 0 ? 'asc' : 'desc';
-    timeColSortArrow.setAttribute('direction', '');
-    titleColSortArrow.setAttribute('direction', direction);
-    titleSortCount += 1;
-    addNotesToDocument(sortNotesByTitle(notes, direction));
-  });
-
-  const searchBar = document.querySelector('.searchBar');
-  searchBar.addEventListener('input', (event) => {
-    console.log(event.target.value);
-    addNotesToDocument(filterNotesByQuery(notes, event.target.value));
-  });
-
-  // Window event listener to detech when URL changes since converting to SPA
   let currURL = window.location.search;
   window.addEventListener('popstate', () => {
     const newURL = window.location.search;

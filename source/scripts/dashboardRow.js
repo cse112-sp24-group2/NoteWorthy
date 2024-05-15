@@ -76,6 +76,8 @@ class dashboardRow extends HTMLElement {
 
   /**
    * Set the note property
+   * set Delete Button: Delete current note. Need second confirmation
+   * set duplicate Button: Duplicate the selected note
    * @param {Object} note containing the note data
    */
   set note(note) {
@@ -101,7 +103,8 @@ class dashboardRow extends HTMLElement {
         // do nothing if user does not confirm deletion
       }
     });
-
+    //new Note has the same note content/title
+    //assign current Time to uuid/lastModified
     const duplicateButton = shadow.querySelector('.note > div > .duplicateButton');
     duplicateButton.addEventListener('click', async (event) => {
       event.stopPropagation();

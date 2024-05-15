@@ -1,17 +1,11 @@
-import {
-  initializeDB,
-  saveNoteToStorage,
-  getNotesFromStorage,
-  getNoteFromStorage,
-  deleteNoteFromStorage,
-} from './noteStorage.js';
+import { saveNoteToStorage, getNotesFromStorage, deleteNoteFromStorage } from './noteStorage.js';
 import markdown from './markdown.js';
 
 /**
  * @description get the current date and time for the dashboard
  * @returns {string} current date in format of mm/dd/yyyy at XX:XX XM
  */
-function getDate() {
+export function getDate() {
   const date = new Date();
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -22,47 +16,16 @@ function getDate() {
   });
   return `${month}/${day}/${year} at ${time}`;
 }
-/**
- * @description Add event listener to back button to alert the
- *              user that changes may not be saved
- */
-function initBackButton() {
-  const editContent = document.querySelector('#edit-content');
-  const titleInput = document.querySelector('#title-input');
-  const backButton = document.querySelector('#back-button');
-  const saveButton = document.querySelector('#save-button');
-  const oldTitleInput = titleInput.value;
-  const oldNoteBody = editContent.value;
-  function dis() {
-    if (
-      saveButton.disabled !== true
-      && (titleInput.value !== '' || editContent.value !== '')
-      && (titleInput.value !== oldTitleInput || oldNoteBody !== editContent.value)
-    ) {
-      if (
-        !window.confirm(
-          'Are you sure you want to return to the main dashboard? Your note will not be saved.'
-        )
-      ) {
-        backButton.removeAttribute('href');
-      } else {
-        backButton.setAttribute('href', './index.html');
-      }
-    } else {
-      backButton.setAttribute('href', './index.html');
-    }
-  }
 
-  backButton.addEventListener('click', dis);
-}
 /**
  * @description Switches between edit/view modes on the page
  * @param {*} editable True for edit mode, false for preview mode
  */
-function setEditable(editable) {
+export function setEditable(editable) {
   const editContent = document.querySelector('#edit-content');
   const viewContent = document.querySelector('#view-content');
   const titleInput = document.querySelector('#title-input');
+  const saveButton = document.querySelector('#save-button');
   if (!editable) {
     viewContent.innerHTML = markdown(editContent.value);
     viewContent.hidden = false;
@@ -73,12 +36,15 @@ function setEditable(editable) {
     viewContent.hidden = true;
     titleInput.removeAttribute('disabled');
   }
+
+  saveButton.classList.remove('disabled-button');
+  saveButton.disabled = false;
 }
 /**
  * @description Initialize the button that toggles between edit and preview modes
  * @param {boolean} editEnabled True if the note is initially in edit mode, false if in preview mode
  */
-function initEditToggle(editEnabled) {
+export function initEditToggle(editEnabled) {
   const editButton = document.querySelector('#change-view-button');
   const saveButton = document.querySelector('#save-button');
   if (editEnabled) {
@@ -144,7 +110,7 @@ function initSaveButton(id, db) {
  * @param {Integer} id unique uuid of current note
  * @param {*} db The initialized indexedDB object.
  */
-function initDeleteButton(id, db) {
+export function initDeleteButton(id, db) {
   const deleteButton = document.querySelector('#delete-button');
   if (!id) {
     deleteButton.classList.add('disabled-button');
@@ -191,7 +157,7 @@ function initExportButton(id, db) {
  * @description append the notes title, last modified date, and content to page
  * @param {*} note note object with data
  */
-async function addNotesToDocument(note) {
+export async function addNoteToDocument(note) {
   // select html items
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');

@@ -10,9 +10,7 @@ Personal note taking app that enables users to share their notes with other user
 
 <br>
 
-## View our deployed project!
-
-404
+## [View our deployed project!](https://cse112-sp24-group2.github.io/NoteWorthy/source/index.html)
 
 ## Documentation
 
@@ -36,20 +34,6 @@ To check code for linting and formatting using ESLint and Prettier, run
 
 ```
 npm run lint:fix
-```
-
-## Testing
-
-List how to test our code (unit and E2E) and what we use to test.
-
-We use [Jest](https://jestjs.io/) for our backend unit testing (tests located in [./jestTesting](./jestTesting/)).
-
-Additionally, we use [Puppeteer](https://pptr.dev/) for end-to-end testing (tests located in [./puppeteerTesting](./puppeteerTesting/))
-
-To run unit and end-to-end tests, run
-
-```
-npm run test
 ```
 
 ## Linting and Validation

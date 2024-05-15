@@ -48,9 +48,7 @@ describe('Backend: Read/Add notes', () => {
       lastModified: '1/1/2001 at 1:00 PM',
       content: 'Hello World!',
     };
-    await Promise.all(
-      [0, 1, 2, 3, 4, 5].map(() => saveNoteToStorage(db, note))
-    );
+    await Promise.all([0, 1, 2, 3, 4, 5].map(() => saveNoteToStorage(db, note)));
     const notes = await getNotesFromStorage(db);
     expect(notes.length).toBe(7);
   });

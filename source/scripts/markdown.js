@@ -34,41 +34,37 @@ export default function markdown(src) {
   }
 
   function highlight(s) {
-    return s.replace(
-      regexHighlight,
-      (all, _, p1, emp, sub, sup, small, big, p2, content) => {
-        let elem;
-        if (emp) {
-          if (p2) {
-            elem = 'strong';
-          } else {
-            elem = 'em';
-          }
-        } else if (sub) {
-          if (p2) {
-            elem = 's';
-          } else {
-            elem = 'sub';
-          }
-        } else if (sup) {
-          elem = 'sup';
-        } else if (small) {
-          elem = 'small';
-        } else if (big) {
-          elem = 'big';
+    return s.replace(regexHighlight, (all, _, p1, emp, sub, sup, small, big, p2, content) => {
+      let elem;
+      if (emp) {
+        if (p2) {
+          elem = 'strong';
         } else {
-          elem = 'code';
+          elem = 'em';
         }
-        return _ + element(elem, highlight(content));
+      } else if (sub) {
+        if (p2) {
+          elem = 's';
+        } else {
+          elem = 'sub';
+        }
+      } else if (sup) {
+        elem = 'sup';
+      } else if (small) {
+        elem = 'small';
+      } else if (big) {
+        elem = 'big';
+      } else {
+        elem = 'code';
       }
-    );
+      return _ + element(elem, highlight(content));
+    });
   }
 
   function blockquote(s) {
-    return s.replace(regexBlockQuote, (all, content) => element(
-      'blockquote',
-      blockquote(highlight(content.replace(/^ *&gt; */gm, '')))
-    ));
+    return s.replace(regexBlockQuote, (all, content) =>
+      element('blockquote', blockquote(highlight(content.replace(/^ *&gt; */gm, ''))))
+    );
   }
 
   function list(s) {
@@ -86,12 +82,8 @@ export default function markdown(src) {
       return `\n${
         ol
           ? `<ol start="${
-            num
-              ? `${ol}">`
-              : `${parseInt(ol, 36) - 9}" style="list-style-type:${
-                low ? 'low' : 'upp'
-              }er-alpha">`
-          }${entry}</ol>`
+              num ? `${ol}">` : `${parseInt(ol, 36) - 9}" style="list-style-type:${low ? 'low' : 'upp'}er-alpha">`
+            }${entry}</ol>`
           : element('ul', entry)
       }`;
     });
@@ -123,10 +115,7 @@ export default function markdown(src) {
   // code
   replace(regexCode, (all, p1, p2, p3, p4) => {
     si -= 1;
-    stash[si] = element(
-      'pre',
-      element('code', p3 || p4.replace(/^ {4}/gm, ''))
-    );
+    stash[si] = element('pre', element('code', p3 || p4.replace(/^ {4}/gm, '')));
     return `${si}\uf8ff`;
   });
 
@@ -151,25 +140,21 @@ export default function markdown(src) {
     const sep = table.match(regexTableHead)[1];
     return `\n${element(
       'table',
-      table.replace(regexRow, (row, ri) => (row === sep
-        ? ''
-        : element(
-          'tr',
-          row.replace(regexCell, (_all, cell, ci) => (ci
-            ? element(
-              sep && !ri ? 'th' : 'td',
-              unesc(highlight(cell || ''))
+      table.replace(regexRow, (row, ri) =>
+        row === sep
+          ? ''
+          : element(
+              'tr',
+              row.replace(regexCell, (_all, cell, ci) =>
+                ci ? element(sep && !ri ? 'th' : 'td', unesc(highlight(cell || ''))) : ''
+              )
             )
-            : ''))
-        )))
+      )
     )}`;
   });
 
   // heading
-  replace(
-    regexHeading,
-    (all, _, p1, p2) => _ + element(`h${p1.length}`, unesc(highlight(p2)))
-  );
+  replace(regexHeading, (all, _, p1, p2) => _ + element(`h${p1.length}`, unesc(highlight(p2))));
 
   // paragraph
   replace(regexParagraph, (all, content) => element('p', unesc(highlight(content))));

@@ -69,32 +69,6 @@ async function switchToDashboard(dom) {
 }
 
 /**
- * @description Switches current view to editor
- * @param {Number} id note id
- * @param {HTMLElement} dom to hide/unhide dashboard and editor
- */
-async function switchToEditor(id, dom) {
-  if (id !== 9999) {
-    const db = pageData.database;
-    const note = await getNoteFromStorage(db, id);
-    pageData.editEnabled = false;
-    addNoteToDocument(note);
-    setEditable(pageData.editEnabled);
-  } else {
-    const noteObject = {
-      title: '',
-      lastModified: `${getDate()}`,
-      content: '',
-    };
-    await addNoteToDocument(noteObject);
-    editNote(true);
-  }
-
-  dom.editor.classList.remove('hidden');
-  dom.dashboard.classList.add('hidden');
-}
-
-/**
  * @description Parse the note date string into a Date object
  * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
  * @returns {Date} The parsed Date object
@@ -112,6 +86,34 @@ function parseNoteDate(dateString) {
   }
 
   return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
+}
+
+/**
+ * @description toggles note editing when called.
+ * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
+ */
+function editNote(bool) {
+  const editButton = document.querySelector('#change-view-button');
+  const exportButton = document.querySelector('#export-button');
+  const saveButton = document.querySelector('#save-button');
+  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
+  const edit = pageData.editEnabled;
+
+  if (edit) {
+    editButton.innerHTML = 'Preview';
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
+  } else {
+    editButton.innerHTML = 'Edit';
+    exportButton.classList.remove('disabled-button');
+    exportButton.disabled = false;
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
+  }
+
+  setEditable(edit);
 }
 
 /**
@@ -142,34 +144,6 @@ function saveNote() {
     });
   }
   editNote(false); // Switch to preview mode
-}
-
-/**
- * @description toggles note editing when called.
- * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
- */
-function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
-  const exportButton = document.querySelector('#export-button');
-  const saveButton = document.querySelector('#save-button');
-  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
-  const edit = pageData.editEnabled;
-
-  if (edit) {
-    editButton.innerHTML = 'Preview';
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    editButton.innerHTML = 'Edit';
-    exportButton.classList.remove('disabled-button');
-    exportButton.disabled = false;
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  }
-
-  setEditable(edit);
 }
 
 /**
@@ -208,6 +182,32 @@ async function exportNote() {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(href);
+}
+
+/**
+ * @description Switches current view to editor
+ * @param {Number} id note id
+ * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ */
+async function switchToEditor(id, dom) {
+  if (id !== 9999) {
+    const db = pageData.database;
+    const note = await getNoteFromStorage(db, id);
+    pageData.editEnabled = false;
+    addNoteToDocument(note);
+    setEditable(pageData.editEnabled);
+  } else {
+    const noteObject = {
+      title: '',
+      lastModified: `${getDate()}`,
+      content: '',
+    };
+    await addNoteToDocument(noteObject);
+    editNote(true);
+  }
+
+  dom.editor.classList.remove('hidden');
+  dom.dashboard.classList.add('hidden');
 }
 
 /**

@@ -130,7 +130,7 @@ function initSaveButton(id, db) {
       const noteObject = {
         title,
         lastModified,
-        tags: ["work", "personal"],
+        tags: ["work", "personal", "school", "projects"],
         content,
       };
       if (id) {
@@ -143,6 +143,16 @@ function initSaveButton(id, db) {
           window.location.href = `./notes.html?id=${res[res.length - 1].uuid}`;
         });
       }
+
+
+
+      let notes_db = db.transaction("NotesOS").objectStore("NotesOS");
+      console.log(notes_db.indexNames[0]);
+      const tags_index = notes_db.index("note_tags");
+      console.log(tags_index.getAll("personal"));
+
+
+
       // Switch to preview mode
       initEditToggle(false);
       setEditable(false);

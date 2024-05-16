@@ -1,4 +1,3 @@
-import { saveNoteToStorage, getNotesFromStorage, deleteNoteFromStorage } from './noteStorage.js';
 import markdown from './markdown.js';
 
 /**

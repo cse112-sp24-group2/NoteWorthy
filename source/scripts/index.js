@@ -27,6 +27,19 @@ function addNotesToDocument(notes) {
   });
 }
 
+
+function addTagsToDocument(tags) {
+  const tagList = document.querySelector('#tag-list');
+  tags.forEach((tag) => {
+    const tagButton = document.createElement('button');
+    tagButton.textContent = tag.tag_name;
+    tagButton.classList.add('tag-button');
+    tagButton.type = 'radio';
+    tagList.appendChild(tagButton);
+  });
+
+}
+
 /**
  * @description sort the notes by last modified date
  * @param {Array<Object>} notes containing all the notes in the local storage
@@ -156,8 +169,8 @@ async function init() {
   addNotesToDocument(notes);
   const tagDB = await initializeTagDB(indexedDB);
   const tags = await getTagsFromStorage(tagDB);
-  
-
+  console.log(tags);
+  addTagsToDocument(tags);
   await initEventHandler();
 }
 

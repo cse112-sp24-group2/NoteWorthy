@@ -1,6 +1,10 @@
 let tagDB;
 const TAG_STORE_NAME = 'tags';
-// const initialTags = [{ 1: "work" }, { 2: "projects" }, { 3: "personal" }];
+const TAG_OBJECT = {
+  tag_name: '',
+  assoc_notes: []
+};
+
 
 /**
  * Sets up and returns a reference to our IndexedDB tags storage.
@@ -18,14 +22,15 @@ export function initializeTagDB() {
       // Set up the database table if it hasn't been initialized yet.
       tagDB = event.target.result;
       const objectStore = tagDB.createObjectStore(TAG_STORE_NAME, {
-        keyPath: 'id',
+        keyPath: 'tag_name',
         autoIncrement: true,
       });
-      const initialTags = [{ "default": "work" }, { "default": "projects" }, { "default": "personal" }];
-      for (var i = 0; i < initialTags.length; i++) {
-        objectStore.put(initialTags[i]);
+      let default_tags = ['work', 'projects', 'personal', 'school'];
+      for (let i = 0; i < default_tags.length; i++) {
+        let default_tag_object = TAG_OBJECT;
+        default_tag_object.tag_name = default_tags[i];
+        objectStore.put(default_tag_object);
       }
-
     };
 
     tagsDBopenReq.onsuccess = (event) => {

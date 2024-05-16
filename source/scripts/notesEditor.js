@@ -6,6 +6,7 @@ import {
   deleteNoteFromStorage,
 } from './noteStorage.js';
 import markdown from './markdown.js';
+import {getTagsFromStorage, saveTagToStorage} from './tagStorage.js';
 
 /**
  * @description get the current date and time for the dashboard
@@ -83,6 +84,7 @@ function initEditToggle(editEnabled) {
   const saveButton = document.querySelector('#save-button');
   const tagButton = document.querySelector('#tag-button');
   const tagInput = document.querySelector('#tag-input');
+  const tagList = document.querySelectorAll('#tag');
   if (editEnabled) {
     editButton.innerHTML = 'Preview';
   } else {
@@ -96,6 +98,11 @@ function initEditToggle(editEnabled) {
     tagButton.disabled = false;
     tagInput.classList.remove('disabled-button');
     tagInput.disabled = false;
+    for(let i = 0; i < tagList.length; i++ ){
+      tagList[i].classList.remove('disabled-button');
+      tagList[i].disabled = false;
+    }
+
     const editActive = editButton.innerHTML === 'Edit';
     setEditable(editActive);
     if (editActive) {
@@ -123,7 +130,7 @@ function initSaveButton(id, db) {
       const noteObject = {
         title,
         lastModified,
-        tags: [],
+        tags: ["work", "personal"],
         content,
       };
       if (id) {
@@ -150,19 +157,31 @@ function initSaveButton(id, db) {
       const tagInput = document.querySelector('#tag-input');
       tagInput.classList.add('disabled-button');
       tagInput.disabled = true;
+
+      const tagList = document.querySelectorAll('#tag');
+      for(let i = 0; i < tagList.length; i++ ){
+        tagList[i].classList.add('disabled-button');
+        tagList[i].disabled = true;
+      }
+
+
     }
   });
 }
 
-// /**
-//  * @description append the tag button to the page
-//  * @param {Integer} id unique uuid of current note
-//  * @param {*} db The initialized indexedDB object.
-//  */
-// function initTagButton(id, db) {
-//   const tagButton = document.querySelector('#tag-button');
+/**
+ * @description append the tag button to the page
+ * @param {Integer} id unique uuid of current note
+ * @param {*} db The initialized indexedDB object.
+ */
+function initTagButton(id, db) {
+  const tagButton = document.querySelector('#tag-button');
   
-// }
+}
+
+function displayTags() {
+
+}
 
 /**
  * @description Deletes the current note and returns to the dashboard.
@@ -248,12 +267,18 @@ async function init() {
     const saveButton = document.querySelector('#save-button');
     const tagButton = document.querySelector('#tag-button');
     const tagInput = document.querySelector('#tag-input');
+    const tagList = document.querySelectorAll('#tag');
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
     tagButton.classList.add('disabled-button');
     tagButton.disabled = true;
     tagInput.classList.add('disabled-button');
     tagInput.disabled = true;
+    for(let i = 0; i < tagList.length; i++ ){
+      tagList[i].classList.add('disabled-button');
+      tagList[i].disabled = true;
+    }
+    
   }
   initDeleteButton(id, db);
   initSaveButton(id, db);

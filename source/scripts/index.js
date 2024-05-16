@@ -15,6 +15,44 @@ const pageData = {
 };
 
 /**
+ * @description Updates the URL to signify page changing.
+ *              Window eventlisteners will automatically detect the change.
+ * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
+ */
+export default function updateURL(urlString) {
+  const path = window.location.pathname;
+  window.history.pushState({}, null, path + urlString);
+  window.dispatchEvent(new Event('popstate'));
+}
+
+/**
+ * @description handles url routing, checks url parameters and loads
+ *              dashboard or editor accordingly
+ */
+function URLRoutingHandler() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+
+  if (id === '9999' || id == null) {
+    pageData.noteID = null;
+  } else {
+    pageData.noteID = parseInt(id, 10);
+  }
+
+  // So that child functions can hide/unhide dashboard or editor
+  const dom = {
+    editor: document.querySelector('.editor'),
+    dashboard: document.querySelector('.dashboard'),
+  };
+
+  if (id == null) {
+    switchToDashboard(dom);
+  } else {
+    switchToEditor(parseInt(id, 10), dom);
+  }
+}
+
+/**
  * @description append the new row to the dashboard in the document
  * @param {Array<Object>} notes containing all the notes in the local storage
  */
@@ -42,37 +80,6 @@ function addNotesToDocument(notes) {
 function hideEmptyWojak(bool) {
   const empty = document.querySelector('.empty-dashboard');
   empty.classList.toggle('hidden', bool);
-}
-
-/**
- * @description Updates the URL to signify page changing.
- *              Window eventlisteners will automatically detect the change.
- * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
- */
-export default function updateURL(urlString) {
-  const path = window.location.pathname;
-  window.history.pushState({}, null, path + urlString);
-  window.dispatchEvent(new Event('popstate'));
-}
-
-/**
- * @description Parse the note date string into a Date object
- * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
- * @returns {Date} The parsed Date object
- */
-function parseNoteDate(dateString) {
-  const [month, day, dateTimeString] = dateString.split('/');
-  const [date, timeString] = dateTimeString.split('at ');
-  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
-
-  let parsedHour = parseInt(hour, 10);
-  if (parsedHour === 12) {
-    parsedHour = ampm === 'PM' ? 12 : 0;
-  } else {
-    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
-  }
-
-  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
 }
 
 /**
@@ -123,24 +130,6 @@ function filterNotesByQuery(notes, query) {
 }
 
 /**
- * @description toggles note editing when called.
- * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
- */
-function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
-  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
-  const edit = pageData.editEnabled;
-
-  if (edit) {
-    editButton.innerHTML = 'Preview';
-  } else {
-    editButton.innerHTML = 'Edit';
-  }
-
-  setEditable(edit);
-}
-
-/**
  * @description Switches current view to dashboard
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
@@ -180,30 +169,23 @@ async function switchToEditor(id, dom) {
 }
 
 /**
- * @description handles url routing, checks url parameters and loads
- *              dashboard or editor accordingly
+ * @description Parse the note date string into a Date object
+ * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
+ * @returns {Date} The parsed Date object
  */
-function URLRoutingHandler() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
+function parseNoteDate(dateString) {
+  const [month, day, dateTimeString] = dateString.split('/');
+  const [date, timeString] = dateTimeString.split('at ');
+  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
 
-  if (id === '9999' || id == null) {
-    pageData.noteID = null;
+  let parsedHour = parseInt(hour, 10);
+  if (parsedHour === 12) {
+    parsedHour = ampm === 'PM' ? 12 : 0;
   } else {
-    pageData.noteID = parseInt(id, 10);
+    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
   }
 
-  // So that child functions can hide/unhide dashboard or editor
-  const dom = {
-    editor: document.querySelector('.editor'),
-    dashboard: document.querySelector('.dashboard'),
-  };
-
-  if (id == null) {
-    switchToDashboard(dom);
-  } else {
-    switchToEditor(parseInt(id, 10), dom);
-  }
+  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
 }
 
 /**
@@ -235,9 +217,34 @@ function saveNote() {
     });
   }
   editNote(false); // Switch to preview mode
-  // Disable save button after clicking it
-  saveButton.classList.add('disabled-button');
-  saveButton.disabled = true;
+}
+
+/**
+ * @description toggles note editing when called.
+ * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
+ */
+function editNote(bool) {
+  const editButton = document.querySelector('#change-view-button');
+  const exportButton = document.querySelector('#export-button');
+  const saveButton = document.querySelector('#save-button');
+  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
+  const edit = pageData.editEnabled;
+
+  if (edit) {
+    editButton.innerHTML = 'Preview';
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
+  } else {
+    editButton.innerHTML = 'Edit';
+    exportButton.classList.remove('disabled-button');
+    exportButton.disabled = false;
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
+  }
+
+  setEditable(edit);
 }
 
 /**
@@ -261,6 +268,24 @@ function deleteNote(toDelete) {
 }
 
 /**
+ * @description Exports the note as a txt file
+ */
+async function exportNote() {
+  const id = pageData.noteID;
+  const db = pageData.database;
+  const note = await getNoteFromStorage(db, id);
+  const blob = new Blob([note.content], { type: 'text/plain' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = `${note.title}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
+}
+
+/**
  * @description Initializes the button and functionality of the editor page.
  */
 async function initEditor() {
@@ -268,6 +293,7 @@ async function initEditor() {
   const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
   const editButton = document.querySelector('#change-view-button');
+  const exportButton = document.querySelector('#export-button')
 
   deleteButton.addEventListener('click', () => {
     deleteNote();
@@ -284,6 +310,22 @@ async function initEditor() {
   editButton.addEventListener('click', () => {
     editNote();
   });
+
+  exportButton.addEventListener('click', async () => {
+    await exportNote();
+  });
+
+  if (editEnabled) {
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
+  } else {
+    exportButton.classList.remove('disabled-button');
+    exportButton.disabled = false;
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
+  }
 }
 
 /**

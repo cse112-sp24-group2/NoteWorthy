@@ -1,5 +1,7 @@
 # NoteWorthy
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/d0673d8890128a7210db/maintainability)](https://codeclimate.com/github/cse112-sp24-group2/NoteWorthy/maintainability)
+[![Technical Debt](https://img.shields.io/codeclimate/tech-debt/cse112-sp24-group2/NoteWorthy?logo=codeclimate)](https://codeclimate.com/github/cse112-sp24-group2/NoteWorthy/maintainability)
 [![Coverage Status](https://coveralls.io/repos/github/cse110-fa22-group5/cse110-fa22-group5/badge.svg?branch=main)](https://coveralls.io/github/cse110-fa22-group5/cse110-fa22-group5?branch=main)
 
 ## Short description of project:
@@ -8,19 +10,7 @@ Personal note taking app that enables users to share their notes with other user
 
 <br>
 
-## View our deployed project!
-
-[https://cse110-fa22-group5.github.io/cse110-fa22-group5/source/index.html](https://cse110-fa22-group5.github.io/cse110-fa22-group5/source/index.html)
-
-## Meet our team!
-
-[team.md](admin/team.md)
-
-## Application Demo and Tutorial
-
-Video and tutorial on how our project works:  
-Project video - **public** version: https://www.youtube.com/watch?v=ZP5sLODzwoQ&feature=youtu.be&ab_channel=LaurenLee  
-Project video - **private** version: https://www.youtube.com/watch?v=0lr2i0lSBv4&feature=youtu.be&ab_channel=LaurenLee
+## [View our deployed project!](https://cse112-sp24-group2.github.io/NoteWorthy/source/index.html)
 
 ## Documentation
 
@@ -44,20 +34,6 @@ To check code for linting and formatting using ESLint and Prettier, run
 
 ```
 npm run lint:fix
-```
-
-## Testing
-
-List how to test our code (unit and E2E) and what we use to test.
-
-We use [Jest](https://jestjs.io/) for our backend unit testing (tests located in [./jestTesting](./jestTesting/)).
-
-Additionally, we use [Puppeteer](https://pptr.dev/) for end-to-end testing (tests located in [./puppeteerTesting](./puppeteerTesting/))
-
-To run unit and end-to-end tests, run
-
-```
-npm run test
 ```
 
 ## Linting and Validation

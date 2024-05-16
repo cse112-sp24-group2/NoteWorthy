@@ -39,9 +39,7 @@ export function initializeDB(indexedDB) {
  */
 export function getNotesFromStorage(database) {
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME)
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
     const notes = [];
     const getNotesRequest = objectStore.openCursor();
     getNotesRequest.onsuccess = (event) => {
@@ -55,11 +53,7 @@ export function getNotesFromStorage(database) {
       }
     };
     getNotesRequest.onerror = (event) => {
-      reject(
-        new Error(
-          `Error fetching notes from storage: ${event.target.errorCode}`
-        )
-      );
+      reject(new Error(`Error fetching notes from storage: ${event.target.errorCode}`));
     };
   });
 }
@@ -72,9 +66,7 @@ export function getNotesFromStorage(database) {
  */
 export function getNoteFromStorage(database, id) {
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME)
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
     const getNoteRequest = objectStore.get(id);
     getNoteRequest.onsuccess = () => {
       resolve(getNoteRequest.result);
@@ -95,14 +87,10 @@ export function getNoteFromStorage(database, id) {
 export function saveNoteToStorage(database, note) {
   if (!note.uuid) {
     return new Promise((resolve, reject) => {
-      const objectStore = database
-        .transaction(OBJECT_STORE_NAME, 'readwrite')
-        .objectStore(OBJECT_STORE_NAME);
+      const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
       const saveNoteRequest = objectStore.add(note);
       saveNoteRequest.onsuccess = () => {
-        console.log(
-          `Successfully saved note with uuid ${saveNoteRequest.result}`
-        );
+        console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
         console.log(saveNoteRequest.result);
         resolve(saveNoteRequest.result);
       };
@@ -112,14 +100,10 @@ export function saveNoteToStorage(database, note) {
     });
   }
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME, 'readwrite')
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const saveNoteRequest = objectStore.put(note);
     saveNoteRequest.onsuccess = () => {
-      console.log(
-        `Successfully saved note with uuid ${saveNoteRequest.result}`
-      );
+      console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
       resolve(saveNoteRequest.result);
     };
     saveNoteRequest.onerror = () => {
@@ -136,20 +120,14 @@ export function saveNoteToStorage(database, note) {
  */
 export function deleteNoteFromStorage(database, note) {
   return new Promise((resolve, reject) => {
-    const objectStore = database
-      .transaction(OBJECT_STORE_NAME, 'readwrite')
-      .objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const deleteNoteRequest = objectStore.delete(note.uuid);
     deleteNoteRequest.onsuccess = () => {
-      console.log(
-        `Successfully deleted note with uuid ${deleteNoteRequest.result}`
-      );
+      console.log(`Successfully deleted note with uuid ${deleteNoteRequest.result}`);
       resolve();
     };
     deleteNoteRequest.onerror = () => {
-      reject(
-        new Error(`Error deleting note with id ${note.uuid} from storage`)
-      );
+      reject(new Error(`Error deleting note with id ${note.uuid} from storage`));
     };
   });
 }

@@ -15,6 +15,161 @@ const pageData = {
 };
 
 /**
+ * @description Switches current view to dashboard
+ * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ */
+async function switchToDashboard(dom) {
+  const db = pageData.database;
+  const notes = await getNotesFromStorage(db);
+  addNotesToDocument(notes);
+  dom.editor.classList.add('hidden');
+  dom.dashboard.classList.remove('hidden');
+  hideEmptyWojak(notes.length !== 0);
+}
+
+/**
+ * @description Switches current view to editor
+ * @param {Number} id note id
+ * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ */
+async function switchToEditor(id, dom) {
+  if (id !== 9999) {
+    const db = pageData.database;
+    const note = await getNoteFromStorage(db, id);
+    pageData.editEnabled = false;
+    addNoteToDocument(note);
+    setEditable(pageData.editEnabled);
+  } else {
+    const noteObject = {
+      title: '',
+      lastModified: `${getDate()}`,
+      content: '',
+    };
+    await addNoteToDocument(noteObject);
+    editNote(true);
+  }
+
+  dom.editor.classList.remove('hidden');
+  dom.dashboard.classList.add('hidden');
+}
+
+/**
+ * @description Parse the note date string into a Date object
+ * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
+ * @returns {Date} The parsed Date object
+ */
+function parseNoteDate(dateString) {
+  const [month, day, dateTimeString] = dateString.split('/');
+  const [date, timeString] = dateTimeString.split('at ');
+  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
+
+  let parsedHour = parseInt(hour, 10);
+  if (parsedHour === 12) {
+    parsedHour = ampm === 'PM' ? 12 : 0;
+  } else {
+    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
+  }
+
+  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
+}
+
+/**
+ * @description Saves note to the database. Makes sure title is valid
+ *              and handles cases when the note is new or already existing
+ */
+function saveNote() {
+  const db = pageData.database;
+  const id = pageData.noteID;
+  const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
+  if (title === '') {
+    alert('Please enter a valid title.');
+    return;
+  }
+  const content = document.querySelector('#edit-content').value;
+  const lastModified = getDate();
+  const noteObject = {
+    title,
+    lastModified,
+    content,
+  };
+  if (id) noteObject.uuid = id;
+  saveNoteToStorage(db, noteObject);
+  if (!id) {
+    // replace current url with new note id
+    getNotesFromStorage(db).then((res) => {
+      window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
+    });
+  }
+  editNote(false); // Switch to preview mode
+}
+
+/**
+ * @description toggles note editing when called.
+ * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
+ */
+function editNote(bool) {
+  const editButton = document.querySelector('#change-view-button');
+  const exportButton = document.querySelector('#export-button');
+  const saveButton = document.querySelector('#save-button');
+  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
+  const edit = pageData.editEnabled;
+
+  if (edit) {
+    editButton.innerHTML = 'Preview';
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
+  } else {
+    editButton.innerHTML = 'Edit';
+    exportButton.classList.remove('disabled-button');
+    exportButton.disabled = false;
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
+  }
+
+  setEditable(edit);
+}
+
+/**
+ * @description Deletes the note
+ * @param {Number} toDelete OPTIONAL. Do not pass a ID if you are currently in
+ *                                    the editor page, ID will be handled automatically.
+ *                                    Only pass ID when deleting note from dashboard
+ */
+function deleteNote(toDelete) {
+  const id = toDelete || pageData.noteID;
+  const db = pageData.database;
+
+  if (!id) return;
+  if (!window.confirm('Are you sure you want to delete')) return;
+
+  deleteNoteFromStorage(db, { uuid: id });
+
+  // This means we are deleting from the editor page, so we should return
+  // to the dashboard
+  if (!toDelete) updateURL('');
+}
+
+/**
+ * @description Exports the note as a txt file
+ */
+async function exportNote() {
+  const id = pageData.noteID;
+  const db = pageData.database;
+  const note = await getNoteFromStorage(db, id);
+  const blob = new Blob([note.content], { type: 'text/plain' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = `${note.title}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
+}
+
+/**
  * @description Updates the URL to signify page changing.
  *              Window eventlisteners will automatically detect the change.
  * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
@@ -130,162 +285,6 @@ function filterNotesByQuery(notes, query) {
 }
 
 /**
- * @description Switches current view to dashboard
- * @param {HTMLElement} dom to hide/unhide dashboard and editor
- */
-async function switchToDashboard(dom) {
-  const db = pageData.database;
-  const notes = await getNotesFromStorage(db);
-  addNotesToDocument(notes);
-  dom.editor.classList.add('hidden');
-  dom.dashboard.classList.remove('hidden');
-  hideEmptyWojak(notes.length !== 0);
-}
-
-/**
- * @description Switches current view to editor
- * @param {Number} id note id
- * @param {HTMLElement} dom to hide/unhide dashboard and editor
- */
-async function switchToEditor(id, dom) {
-  if (id !== 9999) {
-    const db = pageData.database;
-    const note = await getNoteFromStorage(db, id);
-    pageData.editEnabled = false;
-    addNoteToDocument(note);
-    setEditable(pageData.editEnabled);
-  } else {
-    const noteObject = {
-      title: '',
-      lastModified: `${getDate()}`,
-      content: '',
-    };
-    await addNoteToDocument(noteObject);
-    editNote(true);
-  }
-
-  dom.editor.classList.remove('hidden');
-  dom.dashboard.classList.add('hidden');
-}
-
-/**
- * @description Parse the note date string into a Date object
- * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
- * @returns {Date} The parsed Date object
- */
-function parseNoteDate(dateString) {
-  const [month, day, dateTimeString] = dateString.split('/');
-  const [date, timeString] = dateTimeString.split('at ');
-  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
-
-  let parsedHour = parseInt(hour, 10);
-  if (parsedHour === 12) {
-    parsedHour = ampm === 'PM' ? 12 : 0;
-  } else {
-    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
-  }
-
-  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
-}
-
-/**
- * @description Saves note to the database. Makes sure title is valid
- *              and handles cases when the note is new or already existing
- */
-function saveNote() {
-  const db = pageData.database;
-  const id = pageData.noteID;
-  const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
-  if (title === '') {
-    alert('Please enter a valid title.');
-    return;
-  }
-  const saveButton = document.querySelector('#save-button');
-  const content = document.querySelector('#edit-content').value;
-  const lastModified = getDate();
-  const noteObject = {
-    title,
-    lastModified,
-    content,
-  };
-  if (id) noteObject.uuid = id;
-  saveNoteToStorage(db, noteObject);
-  if (!id) {
-    // replace current url with new note id
-    getNotesFromStorage(db).then((res) => {
-      window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
-    });
-  }
-  editNote(false); // Switch to preview mode
-}
-
-/**
- * @description toggles note editing when called.
- * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
- */
-function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
-  const exportButton = document.querySelector('#export-button');
-  const saveButton = document.querySelector('#save-button');
-  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
-  const edit = pageData.editEnabled;
-
-  if (edit) {
-    editButton.innerHTML = 'Preview';
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    editButton.innerHTML = 'Edit';
-    exportButton.classList.remove('disabled-button');
-    exportButton.disabled = false;
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  }
-
-  setEditable(edit);
-}
-
-/**
- * @description Deletes the note
- * @param {Number} toDelete OPTIONAL. Do not pass a ID if you are currently in
- *                                    the editor page, ID will be handled automatically.
- *                                    Only pass ID when deleting note from dashboard
- */
-function deleteNote(toDelete) {
-  const id = toDelete || pageData.noteID;
-  const db = pageData.database;
-
-  if (!id) return;
-  if (!window.confirm('Are you sure you want to delete')) return;
-
-  deleteNoteFromStorage(db, { uuid: id });
-
-  // This means we are deleting from the editor page, so we should return
-  // to the dashboard
-  if (!toDelete) updateURL('');
-}
-
-/**
- * @description Exports the note as a txt file
- */
-async function exportNote() {
-  const id = pageData.noteID;
-  const db = pageData.database;
-  const note = await getNoteFromStorage(db, id);
-  const blob = new Blob([note.content], { type: 'text/plain' });
-  const href = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = href;
-  link.download = `${note.title}.txt`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(href);
-}
-
-/**
  * @description Initializes the button and functionality of the editor page.
  */
 async function initEditor() {
@@ -293,7 +292,7 @@ async function initEditor() {
   const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
   const editButton = document.querySelector('#change-view-button');
-  const exportButton = document.querySelector('#export-button')
+  const exportButton = document.querySelector('#export-button');
 
   deleteButton.addEventListener('click', () => {
     deleteNote();
@@ -315,7 +314,7 @@ async function initEditor() {
     await exportNote();
   });
 
-  if (editEnabled) {
+  if (this.editEnabled == null || !this.editEnabled) {
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
     saveButton.classList.remove('disabled-button');

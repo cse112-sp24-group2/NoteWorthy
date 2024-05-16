@@ -15,6 +15,47 @@ const pageData = {
 };
 
 /**
+ * @description append the new row to the dashboard in the document
+ * @param {Array<Object>} notes containing all the notes in the local storage
+ */
+function addNotesToDocument(notes) {
+  const dashboard = document.querySelector('.dashboardItems');
+
+  // Clear out the existing rows in the dashboard
+  const dashboardRow = document.querySelectorAll('dashboard-row');
+  dashboardRow.forEach((row) => {
+    row.remove();
+  });
+
+  // Repopulate dashboard with new notes
+  notes.forEach((note) => {
+    const row = document.createElement('dashboard-row');
+    row.note = note;
+    dashboard.appendChild(row);
+  });
+}
+
+/**
+ * @description Show/Hide empty notes on dashboard
+ * @param {bool} bool true to hide, false to show
+ */
+function hideEmptyWojak(bool) {
+  const empty = document.querySelector('.empty-dashboard');
+  empty.classList.toggle('hidden', bool);
+}
+
+/**
+ * @description Updates the URL to signify page changing.
+ *              Window eventlisteners will automatically detect the change.
+ * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
+ */
+export default function updateURL(urlString) {
+  const path = window.location.pathname;
+  window.history.pushState({}, null, path + urlString);
+  window.dispatchEvent(new Event('popstate'));
+}
+
+/**
  * @description Switches current view to dashboard
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
@@ -170,17 +211,6 @@ async function exportNote() {
 }
 
 /**
- * @description Updates the URL to signify page changing.
- *              Window eventlisteners will automatically detect the change.
- * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
- */
-export default function updateURL(urlString) {
-  const path = window.location.pathname;
-  window.history.pushState({}, null, path + urlString);
-  window.dispatchEvent(new Event('popstate'));
-}
-
-/**
  * @description handles url routing, checks url parameters and loads
  *              dashboard or editor accordingly
  */
@@ -205,36 +235,6 @@ function URLRoutingHandler() {
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }
-}
-
-/**
- * @description append the new row to the dashboard in the document
- * @param {Array<Object>} notes containing all the notes in the local storage
- */
-function addNotesToDocument(notes) {
-  const dashboard = document.querySelector('.dashboardItems');
-
-  // Clear out the existing rows in the dashboard
-  const dashboardRow = document.querySelectorAll('dashboard-row');
-  dashboardRow.forEach((row) => {
-    row.remove();
-  });
-
-  // Repopulate dashboard with new notes
-  notes.forEach((note) => {
-    const row = document.createElement('dashboard-row');
-    row.note = note;
-    dashboard.appendChild(row);
-  });
-}
-
-/**
- * @description Show/Hide empty notes on dashboard
- * @param {bool} bool true to hide, false to show
- */
-function hideEmptyWojak(bool) {
-  const empty = document.querySelector('.empty-dashboard');
-  empty.classList.toggle('hidden', bool);
 }
 
 /**

@@ -6,6 +6,7 @@ import {
   saveNoteToStorage,
 } from './noteStorage.js';
 import { setEditable, getDate, addNoteToDocument } from './notesEditor.js';
+import { parseNoteDate } from './utility.js';
 
 // Page Data reference to minimize initializeDB calls among other variables
 const pageData = {
@@ -66,26 +67,6 @@ async function switchToDashboard(dom) {
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
   hideEmptyWojak(notes.length !== 0);
-}
-
-/**
- * @description Parse the note date string into a Date object
- * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
- * @returns {Date} The parsed Date object
- */
-function parseNoteDate(dateString) {
-  const [month, day, dateTimeString] = dateString.split('/');
-  const [date, timeString] = dateTimeString.split('at ');
-  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
-
-  let parsedHour = parseInt(hour, 10);
-  if (parsedHour === 12) {
-    parsedHour = ampm === 'PM' ? 12 : 0;
-  } else {
-    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
-  }
-
-  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
 }
 
 /**

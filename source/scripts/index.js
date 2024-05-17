@@ -307,6 +307,7 @@ async function initEditor() {
   const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
   const editButton = document.querySelector('#change-view-button');
+  const tagButton = document.querySelector('#tag-button');
 
   deleteButton.addEventListener('click', () => {
     deleteNote();
@@ -322,6 +323,10 @@ async function initEditor() {
 
   editButton.addEventListener('click', () => {
     editNote();
+  });
+
+  tagButton.addEventListener('click', () => {
+
   });
 
   // const tagButton = document.querySelector('#tag-button');

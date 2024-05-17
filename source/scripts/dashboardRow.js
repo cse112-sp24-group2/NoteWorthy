@@ -1,5 +1,5 @@
-import { initializeDB, deleteNoteFromStorage, getNotesFromStorage } from './noteStorage.js';
-import {updateURL, addNotesToDocument} from './index.js';
+import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
+import { updateURL, addNotesToDocument } from './index.js';
 
 const template = document.getElementById('dashboard-note-template');
 
@@ -68,12 +68,11 @@ class dashboardRow extends HTMLElement {
       newNote.uuid = Date.now();
       newNote.lastModified = new Date().toLocaleString();
       saveNoteToStorage(db, newNote);
-      //Add new Note row without reloading
+      //  Add new Note row without reloading
       const notes = await getNotesFromStorage(db);
       addNotesToDocument(notes);
-      //window.location.reload();
+      //  window.location.reload();
     });
-    
     this.dom.noteFront.onclick = () => {
       updateURL(`?id=${note.uuid}`);
     };

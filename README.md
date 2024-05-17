@@ -17,5 +17,5 @@ Personal note taking app that enables users to share their notes with other user
 
 ## Important Links
 
-- Documentation: (JSDocs)[]
-- Team intro: (Youtube)[https://youtu.be/6TGIHsYhdZY?si=kF-PFqX8vI5nCssk]
+- Documentation: [JSDocs]()
+- Team intro: [Youtube](https://youtu.be/6TGIHsYhdZY?si=kF-PFqX8vI5nCssk)

@@ -14,7 +14,7 @@ const pageData = {
   noteID: null,
   editEnabled: false,
   tagDB: null,
-  tags: [],
+  tags: {},
 };
 
 /**
@@ -142,6 +142,17 @@ function filterNotesByQuery(notes, query) {
 }
 
 /**
+ * Queries the notes database for notes with a specific tag.
+ * @param {string} className - The tag name to query for.
+ * @returns {Array<Object>} - An array of note objects with the specified tag.
+ */
+function tagQuery(className) {
+  const notesDB = pageData.database.transaction("NotesOS").objectStore('NotesOS');
+  let tags_index = notesDB.index('note_tags');
+  console.log(tags_index.getAll(className));
+}
+
+/**
  * @description toggles note editing when called.
  * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
  */
@@ -243,7 +254,7 @@ function saveNote() {
   const noteObject = {
     title,
     lastModified,
-    tags:[],
+    tags:["work", "school"],
     content,
   };
   if (id) noteObject.uuid = id;
@@ -408,6 +419,7 @@ async function initEventHandler() {
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
   initSearchBar(notes);
+  initTagSearch();
 
   let currURL = window.location.search;
   window.addEventListener('popstate', () => {
@@ -417,6 +429,21 @@ async function initEventHandler() {
       URLRoutingHandler();
     }
   });
+}
+
+/**
+ * Initializes the tag search functionality.
+ */
+function initTagSearch(){
+  let searchButtons = document.getElementsByName('tag-search');
+  console.log(searchButtons);
+  searchButtons.forEach((button) =>{
+    button.addEventListener('click', () => {
+      console.log(button.className);
+      tagQuery(button.className);
+    });
+  }
+  );
 }
 
 /**
@@ -430,6 +457,7 @@ async function init() {
   URLRoutingHandler();
   initEditor();
 
+  console.log("this is pageData.database ", pageData.database);
   await initEventHandler();
   // addTagsToDocument(tags); PUT IN INIT EVENT HANDLER
 

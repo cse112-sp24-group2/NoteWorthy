@@ -240,6 +240,8 @@ main {
   border-bottom: 2px solid var(--dark-purple);
   padding: 0.3rem 1rem;
   font-size: 1rem;
+  width: 13rem;
+  transition: 0.3s;
 }
 
 .searchbar-wrapper > input:focus {

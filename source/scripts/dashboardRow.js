@@ -1,4 +1,7 @@
-import { initializeDB, deleteNoteFromStorage, saveNoteToStorage } from './noteStorage.js';
+import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
+import updateURL from './index.js';
+
+const template = document.getElementById('dashboard-note-template');
 
 class dashboardRow extends HTMLElement {
   /**
@@ -7,6 +10,10 @@ class dashboardRow extends HTMLElement {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+    this.dom = this.fetchElementsFromDOM();
+
     const note = document.createElement('div');
     note.setAttribute('class', 'note');
     const style = document.createElement('style');
@@ -29,10 +36,6 @@ class dashboardRow extends HTMLElement {
                 display: none;
                 margin-right: 1.5em;
             }
-            .duplicateButton {
-                display: none;
-                margin-right: 1.5em;
-            }
 
             .note > p, .lastModified {
                 color: white;
@@ -45,16 +48,9 @@ class dashboardRow extends HTMLElement {
                 cursor: pointer;
             }
 
-           .note:hover div > .deleteButton {
+           .note:hover div > button {
                 display:block;
                 background: url('../source/images/trash-can-solid.svg');
-                cursor: pointer;
-                height: 1.7em;
-                width: 1.5em;
-            }
-            .note:hover div > .duplicateButton {
-                display:block;
-                background: url('../source/images/duplicate.svg');
                 cursor: pointer;
                 height: 1.7em;
                 width: 1.5em;
@@ -75,24 +71,44 @@ class dashboardRow extends HTMLElement {
   }
 
   /**
+   * Finds necessary HTML elements in shadow root and puts into this.dom object
+   * @param none
+   */
+  fetchElementsFromDOM() {
+    return {
+      noteWrapper: this.shadowRoot.querySelector('.note-wrapper'),
+      noteFront: this.shadowRoot.querySelector('.note-front'),
+      noteBack: this.shadowRoot.querySelector('.note-back'),
+      title: this.shadowRoot.querySelector('.note-title'),
+      deleteButton: this.shadowRoot.querySelector('.note-delete-button'),
+      lastModified: this.shadowRoot.querySelector('.note-last-modified'),
+    };
+  }
+
+  /**
    * Set the note property
    * set Delete Button: Delete current note. Need second confirmation
    * set duplicate Button: Duplicate the selected note
    * @param {Object} note containing the note data
    */
   set note(note) {
-    const shadow = this.shadowRoot;
-    const noteDiv = shadow.querySelector('.note');
+     const newTitle = document.createTextNode(note.title);
+    const newModified = document.createTextNode(note.lastModified);
+
+    this.dom.title.replaceChildren(newTitle);
+    this.dom.lastModified.replaceChildren(newModified);
+
     noteDiv.innerHTML = `
             <p class="title">${note.title}</p>
             <div>
-                <button class="duplicateButton"></button>
                 <button class="deleteButton"></button>
                 <p class="lastModified">${note.lastModified}</p>
             </div>
         `;
-    const deleteButton = shadow.querySelector('.note > div > .deleteButton');
-    deleteButton.addEventListener('click', async (event) => {
+    const button = shadow.querySelector('.note > div > button');
+    this.dom.deleteButton.addEventListener('click', async (event) => {
+
+
       event.stopPropagation();
       // confirm note deletion with user
       if (window.confirm('Are you sure you want to delete this note?')) {
@@ -103,22 +119,10 @@ class dashboardRow extends HTMLElement {
         // do nothing if user does not confirm deletion
       }
     });
-    //new Note has the same note content/title
-    //assign current Time to uuid/lastModified
-    const duplicateButton = shadow.querySelector('.note > div > .duplicateButton');
-    duplicateButton.addEventListener('click', async (event) => {
-      event.stopPropagation();
-      const db = await initializeDB(indexedDB);
-      const newNote = { ...note };
-      newNote.title = `${note.title} (copy)`;
-      newNote.uuid = Date.now();
-      newNote.lastModified = new Date().toLocaleString();
-      saveNoteToStorage(db, newNote);
-      window.location.reload();
-    });
-    noteDiv.onclick = () => {
-      window.location.href = `./notes.html?id=${note.uuid}`;
+    this.dom.noteFront.onclick = () => {
+      updateURL(`?id=${note.uuid}`);
     };
+  }
   }
 }
 

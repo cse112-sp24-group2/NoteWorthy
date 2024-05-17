@@ -334,8 +334,10 @@ async function initEditor() {
  * @description adds a Tag to note
  */
   function addTags() {
-    const id = pageData.noteID
-    const tagname = querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
+    const id = pageData.noteID;
+    const db = pageData.database;
+   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
+    // const test = getElementById('tag-123')
     if(tagname == '') {
       alert("Please enter a valid tag name");
     } else {
@@ -368,11 +370,28 @@ async function initEditor() {
           label.htmlFor = "tag43"; // replace with unique tag identifier
           label.appendChild(document.createTextNode(tagname));
           parentElement.appendChild(label);
+
+          // adding to database
+          // db.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
+          // objectStore.add(note);
         }
       }
-      // if(!id){
+      if(!id){
+        // notes.tags.push(tagname);
+        // push HTML element
+        var parentElement = document.getElementById("notes-tags");
+        var newCheckBox = document.createElement('input');
+        newCheckBox.type = 'checkbox';
+        newCheckBox.id = 'tag'
+        newCheckBox.value = "something"  + '<br/>';
+        newCheckBox.name = "tag43" // replace with unique tag identifier
+        parentElement.appendChild(newCheckBox);
 
-      // }
+
+        var label = document.createElement('label')
+        label.htmlFor = "tag43"; // replace with unique tag identifier
+        label.appendChild(document.createTextNode(tagname));
+        parentElement.appendChild(label);      }
 
       // if not contained in tag database, then push to that as well.
     }

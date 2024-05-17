@@ -2,7 +2,7 @@ let tagDB;
 const TAG_STORE_NAME = 'tags';
 const TAG_OBJECT = {
   tag_name: '',
-  assoc_notes: []
+  assoc_notes: 0
 };
 
 

@@ -289,7 +289,6 @@ main {
 
 .note-wrapper > section {
   border-radius: 0.4rem;
-  cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0);
   background: var(--light-purple);
   /* box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15); */
@@ -307,6 +306,10 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.note-front {
+  cursor: pointer;
 }
 
 .note-title {

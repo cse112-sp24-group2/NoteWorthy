@@ -33,9 +33,12 @@ class dashboardRow extends HTMLElement {
       noteFront: this.shadowRoot.querySelector('.note-front'),
       noteBack: this.shadowRoot.querySelector('.note-back'),
       title: this.shadowRoot.querySelector('.note-title'),
-      deleteButton: this.shadowRoot.querySelector('.note-delete-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
       noteMore: this.shadowRoot.querySelector('.note-more'),
+      downloadBtn: this.shadowRoot.querySelector('.note-download-button'),
+      copyBtn: this.shadowRoot.querySelector('.note-copy-button'),
+      deleteBtn: this.shadowRoot.querySelector('.note-delete-button'),
+      backBtn: this.shadowRoot.querySelector('.note-back-button'),
     };
   }
 
@@ -50,7 +53,7 @@ class dashboardRow extends HTMLElement {
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);
 
-    this.dom.deleteButton.addEventListener('click', async (event) => {
+    this.dom.deleteBtn.addEventListener('click', async (event) => {
       event.stopPropagation();
       // confirm note deletion with user
       if (window.confirm('Are you sure you want to delete this note?')) {
@@ -62,14 +65,13 @@ class dashboardRow extends HTMLElement {
       }
     });
 
-    this.dom.noteBack.onclick = (e) => {
+    this.dom.backBtn.onclick = (e) => {
       e.stopPropagation();
       this.flipNote();
     };
 
     this.dom.noteMore.onclick = (e) => {
       e.stopPropagation();
-      console.log(123);
       this.flipNote();
     };
 

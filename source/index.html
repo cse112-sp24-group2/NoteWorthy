@@ -21,7 +21,7 @@
         @import url('./styling/index.css');
       </style>
       <div class="note-wrapper">
-        <div class="note-front">
+        <section class="note-front">
           <div class="note-front-top">
             <h4 class="note-title"></h4>
             <p class="note-text">
@@ -34,12 +34,17 @@
             <p class="note-last-modified"></p>
             <img class="note-more" src="images/more-icon.svg" />
           </div>
-        </div>
-        <div class="note-back hidden">
+        </section>
+        <section class="note-back flipped">
           <div>
+            <h4>Note details</h4>
+            <p>Tags</p>
+            <p>Download</p>
+            <p>Make a copy</p>
             <button class="note-delete-button">Delete Note</button>
+            <p>Go back</p>
           </div>
-        </div>
+        </section>
       </div>
     </template>
   </head>

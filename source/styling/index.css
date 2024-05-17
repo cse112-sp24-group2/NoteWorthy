@@ -218,21 +218,28 @@ main {
 /* ----------INDIVIDUAL NOTE CARDS---------- */
 
 .note-wrapper {
-  padding: 1.5rem 1rem;
   width: 17rem;
   height: 21rem;
-  border-radius: 0.4rem;
-  background: lightgray;
   cursor: pointer;
+  position: relative;
 }
 
 .note-wrapper:hover {
-  background: lightslategray;
+  box-shadow: 0 0 1rem 1rem rgb(30, 30, 30, 0.1);
+}
+
+.note-wrapper > section {
+  padding: 1.5rem 1rem;
+  border-radius: 0.4rem;
+  background: lightgray;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .note-front {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -258,6 +265,7 @@ main {
   padding: 0.5rem;
   border-radius: 100%;
   filter: invert(100%);
+  z-index: 10;
 }
 
 .note-more:hover {
@@ -265,7 +273,15 @@ main {
 }
 
 .note-back {
-  display: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: lightgray;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .note-title {
@@ -321,4 +337,18 @@ main {
 #edit-content {
   border-color: rgba(136, 86, 174, 0.388);
   resize: none;
+}
+
+.flipped {
+  transform: rotate3d(0, 1, 0, 180deg);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flipped::before {
+  transform: rotateX(-90deg);
+}
+
+.transition-action {
+  transition: transform 0.2s ease-in-out, opacity 0.2s cubic-bezier(0.6, 0, 0.4, 1);
 }

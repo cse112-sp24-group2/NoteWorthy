@@ -1,4 +1,5 @@
 import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
+import { toggleClassToArr } from './utility.js';
 import updateURL from './index.js';
 
 const template = document.getElementById('dashboard-note-template');
@@ -9,6 +10,9 @@ class dashboardRow extends HTMLElement {
    */
   constructor() {
     super();
+    this.flipped = false;
+    this.animation = false;
+
     const shadow = this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
@@ -31,6 +35,7 @@ class dashboardRow extends HTMLElement {
       title: this.shadowRoot.querySelector('.note-title'),
       deleteButton: this.shadowRoot.querySelector('.note-delete-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
+      noteMore: this.shadowRoot.querySelector('.note-more'),
     };
   }
 
@@ -57,9 +62,31 @@ class dashboardRow extends HTMLElement {
       }
     });
 
+    this.dom.noteBack.onclick = (e) => {
+      e.stopPropagation();
+      this.flipNote();
+    };
+
+    this.dom.noteMore.onclick = (e) => {
+      e.stopPropagation();
+      console.log(123);
+      this.flipNote();
+    };
+
     this.dom.noteFront.onclick = () => {
       updateURL(`?id=${note.uuid}`);
     };
+  }
+
+  flipNote() {
+    if (!this.animation) {
+      // fires once per element for lifetime
+      toggleClassToArr([this.dom.noteFront, this.dom.noteBack], 'transition-action');
+      this.animation = true;
+    }
+
+    toggleClassToArr([this.dom.noteFront, this.dom.noteBack], 'flipped');
+    this.flipped = !this.flipped;
   }
 }
 

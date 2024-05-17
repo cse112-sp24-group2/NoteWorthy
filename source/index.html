@@ -109,10 +109,13 @@
             <p>14</p>
           </li>
         </ul>
-        <button>View all</button>
+        <button id="view-more">View all</button>
         <h3>Pinned</h3>
+
+        <div id="divider"></div>
         <footer>
-          <p>Username</p>
+          <div id="profile-img"></div>
+          <p >Username</p>
           <button>Settings</button>
         </footer>
       </section>
@@ -124,8 +127,8 @@
           <header class="dashboard-header">
             <h2>Dashboard</h2>
             <div class="searchbar-wrapper">
-              <img alt="search note" src="images/search-icon.svg" />
               <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
+              <img alt="search note" src="images/search-icon.svg" />
             </div>
             <span>Sort By: Recently Edited</span>
           </header>
@@ -148,9 +151,10 @@
               </div>
             </div>
             <div class="note-control-bar">
-              <button id="back-button">Go back</button>
+              <button id="back-button">Back</button>
               <button id="change-view-button">Edit</button>
               <button id="save-button">Save</button>
+              <button id="export-button">Export</button>
               <button id="delete-button">Delete</button>
             </div>
           </header>

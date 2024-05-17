@@ -1,4 +1,3 @@
-import { saveNoteToStorage, getNotesFromStorage, deleteNoteFromStorage } from './noteStorage.js';
 import markdown from './markdown.js';
 
 /**
@@ -31,62 +30,15 @@ export function setEditable(editable) {
     viewContent.hidden = false;
     editContent.hidden = true;
     titleInput.setAttribute('disabled', true);
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
   } else {
     editContent.hidden = false;
     viewContent.hidden = true;
     titleInput.removeAttribute('disabled');
-  }
-
-  saveButton.classList.remove('disabled-button');
-  saveButton.disabled = false;
-}
-/**
- * @description Initialize the button that toggles between edit and preview modes
- * @param {boolean} editEnabled True if the note is initially in edit mode, false if in preview mode
- */
-export function initEditToggle(editEnabled) {
-  const editButton = document.querySelector('#change-view-button');
-  const saveButton = document.querySelector('#save-button');
-  if (editEnabled) {
-    editButton.innerHTML = 'Preview';
-  } else {
-    editButton.innerHTML = 'Edit';
-  }
-  setEditable(editEnabled);
-  editButton.onclick = async () => {
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
-    const editActive = editButton.innerHTML === 'Edit';
-    setEditable(editActive);
-    if (editActive) {
-      editButton.innerHTML = 'Preview';
-    } else {
-      editButton.innerHTML = 'Edit';
-    }
-  };
-}
-
-/**
- * @description Deletes the current note and returns to the dashboard.
- * @param {Integer} id unique uuid of current note
- * @param {*} db The initialized indexedDB object.
- */
-export function initDeleteButton(id, db) {
-  const deleteButton = document.querySelector('#delete-button');
-  if (!id) {
-    deleteButton.classList.add('disabled-button');
-    deleteButton.disabled = true;
   }
-  deleteButton.addEventListener('click', () => {
-    if (id) {
-      // Only do this if the id has already been saved;
-      // otherwise return directly to the dashboard
-      if (window.confirm('Are you sure you want to delete this note?')) {
-        deleteNoteFromStorage(db, { uuid: id });
-        window.location.href = './index.html';
-      }
-    }
-  });
 }
 
 /**

@@ -96,6 +96,11 @@
           <label for="school">school</label>
           <input type="radio" class="work" name="tag-search">
           <label for="work">work</label>
+          <button type="uncheck" onClick ="(function (){
+            document.getElementsByName('tag-search').forEach((tag) => {
+              tag.checked = false;
+            });
+            })">uncheck all</button>
         </form>
           <li>
             <p>School</p>

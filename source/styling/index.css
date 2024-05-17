@@ -375,7 +375,7 @@ main {
 }
 
 .note-back > footer > button:hover {
-  transform: scale(110%);
+  transform: scale(1.1);
 }
 
 .note-back > footer > button > img {
@@ -477,5 +477,5 @@ main {
 }
 
 .note-control-bar > button:hover {
-  transform: scale(110%);
+  transform: scale(1.1);
 }

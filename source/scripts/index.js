@@ -188,6 +188,7 @@ async function switchToEditor(id, dom) {
     const noteObject = {
       title: '',
       lastModified: `${getDate()}`,
+      tags:[],
       content: '',
     };
     await addNoteToDocument(noteObject);
@@ -326,9 +327,57 @@ async function initEditor() {
   });
 
   tagButton.addEventListener('click', () => {
-
+    addTags();
   });
 
+/**
+ * @description adds a Tag to note
+ */
+  function addTags() {
+    const id = pageData.noteID
+    const tagname = querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
+    if(tagname == '') {
+      alert("Please enter a valid tag name");
+    } else {
+      // if existing note
+      if(id) {
+        // access note
+        const note = getNoteFromStorage(id);
+        tags = note.tags;
+        let contains = false;
+        // check to see if note is already tagged
+        for(let i = 0; i < tags.length; i++) {
+          if(tags[i] == tagname) {
+            alert("Note already tagged with"); // + tagname
+            contains = true;
+          } 
+        }
+        if(!contains) {
+          notes.tags.push(tagname);
+          // push HTML element
+          var parentElement = document.getElementById("notes-tags");
+          var newCheckBox = document.createElement('input');
+          newCheckBox.type = 'checkbox';
+          newCheckBox.id = 'tag'
+          newCheckBox.value = "something"  + '<br/>';
+          newCheckBox.name = "tag43" // replace with unique tag identifier
+          parentElement.appendChild(newCheckBox);
+
+
+          var label = document.createElement('label')
+          label.htmlFor = "tag43"; // replace with unique tag identifier
+          label.appendChild(document.createTextNode(tagname));
+          parentElement.appendChild(label);
+        }
+      }
+      // if(!id){
+
+      // }
+
+      // if not contained in tag database, then push to that as well.
+    }
+
+  }
   // const tagButton = document.querySelector('#tag-button');
   // const tagInput = document.querySelector('#tag-input');
   // const tagList = document.querySelectorAll('#tag');

@@ -14,7 +14,7 @@ const pageData = {
   noteID: null,
   editEnabled: false,
   tagDB: null,
-  tags: [],
+  tags: [], // use this to keep track of which new tags are being pushed to addtags.
 };
 
 /**
@@ -260,9 +260,6 @@ function saveNote() {
   saveButton.classList.add('disabled-button');
   saveButton.disabled = true;
 
-
-
-
    // Disable tag button after clicking save
    const tagButton = document.querySelector('#tag-button');
    tagButton.classList.add('disabled-button');
@@ -277,6 +274,18 @@ function saveNote() {
      tagList[i].classList.add('disabled-button');
      tagList[i].disabled = true;
    }
+
+  //  const tagData = pageData.tagDB;
+  //  // adding tags to the databases
+  //  for(let i = 0; i < pageData.tags.length; i++) {
+  //   // if tag already exists in tagDB, increment the assoc count
+  //   if() {
+      
+  //   }
+  //   else {
+  //     // create tag in database with value 1.
+  //   }    
+  //  }
 
 }
 
@@ -336,8 +345,7 @@ async function initEditor() {
   function addTags() {
     const id = pageData.noteID;
     const db = pageData.database;
-   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
-    // const test = getElementById('tag-123')
+    const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
     if(tagname == '') {
       alert("Please enter a valid tag name");
     } else {
@@ -371,9 +379,10 @@ async function initEditor() {
           label.appendChild(document.createTextNode(tagname));
           parentElement.appendChild(label);
 
+          pageData.tags.push(tagname);
           // adding to database
-          // db.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
-          // objectStore.add(note);
+          // db.transaction('NotesOS', 'readwrite').objectStore('note_tags');
+          // objectStore.add({tagname, note});
         }
       }
       if(!id){
@@ -391,7 +400,10 @@ async function initEditor() {
         var label = document.createElement('label')
         label.htmlFor = "tag43"; // replace with unique tag identifier
         label.appendChild(document.createTextNode(tagname));
-        parentElement.appendChild(label);      }
+        parentElement.appendChild(label);      
+
+        pageData.tags.push(tagname);
+      }
 
       // if not contained in tag database, then push to that as well.
     }

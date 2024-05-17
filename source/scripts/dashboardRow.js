@@ -16,57 +16,6 @@ class dashboardRow extends HTMLElement {
 
     const note = document.createElement('div');
     note.setAttribute('class', 'note');
-    const style = document.createElement('style');
-    style.textContent = `.note {
-                display: flex;
-                flex-direction: row;
-                font-family: sans-serif;
-                justify-content: space-between;
-                // width: 100%;
-                margin: 1px;
-                padding: 10px 30px 10px 30px;
-                background: #9867C5;
-            }
-
-            .note > div {
-                display: flex;
-            }
-
-            .deleteButton {
-                display: none;
-                margin-right: 1.5em;
-            }
-
-            .note > p, .lastModified {
-                color: white;
-                font-family: 'Poppins', sans-serif;
-            }
-
-            .note:hover {
-                filter: drop-shadow(0px 0px 10px black);
-                outline: 1px black;
-                cursor: pointer;
-            }
-
-           .note:hover div > button {
-                display:block;
-                background: url('../source/images/trash-can-solid.svg');
-                cursor: pointer;
-                height: 1.7em;
-                width: 1.5em;
-            }
-
-            .note:hover div > button:hover {
-                filter: drop-shadow(0px 0px 5px white);
-            }
-
-            .note > div > button {
-                border-style: none;
-                margin-top: 2.3ex;
-            }
-        `;
-
-    shadow.append(style);
     shadow.append(note);
   }
 
@@ -81,6 +30,7 @@ class dashboardRow extends HTMLElement {
       noteBack: this.shadowRoot.querySelector('.note-back'),
       title: this.shadowRoot.querySelector('.note-title'),
       deleteButton: this.shadowRoot.querySelector('.note-delete-button'),
+      replicateButton: this.shadowRoot.querySelector('.note-replicate-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
     };
   }
@@ -92,23 +42,14 @@ class dashboardRow extends HTMLElement {
    * @param {Object} note containing the note data
    */
   set note(note) {
-     const newTitle = document.createTextNode(note.title);
+    const newTitle = document.createTextNode(note.title);
     const newModified = document.createTextNode(note.lastModified);
 
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);
 
-    noteDiv.innerHTML = `
-            <p class="title">${note.title}</p>
-            <div>
-                <button class="deleteButton"></button>
-                <p class="lastModified">${note.lastModified}</p>
-            </div>
-        `;
-    const button = shadow.querySelector('.note > div > button');
+    // set event listeners for delete and replicate buttons
     this.dom.deleteButton.addEventListener('click', async (event) => {
-
-
       event.stopPropagation();
       // confirm note deletion with user
       if (window.confirm('Are you sure you want to delete this note?')) {
@@ -119,10 +60,20 @@ class dashboardRow extends HTMLElement {
         // do nothing if user does not confirm deletion
       }
     });
+    this.dom.replicateButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      const db = await initializeDB(indexedDB);
+      const newNote = { ...note };
+      newNote.title = `${note.title} (copy)`;
+      newNote.uuid = Date.now();
+      newNote.lastModified = new Date().toLocaleString();
+      saveNoteToStorage(db, newNote);
+      window.location.reload();
+    });
+    
     this.dom.noteFront.onclick = () => {
       updateURL(`?id=${note.uuid}`);
     };
-  }
   }
 }
 

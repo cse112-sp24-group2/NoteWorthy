@@ -100,13 +100,13 @@ function editNote(bool) {
   const edit = pageData.editEnabled;
 
   if (edit) {
-    editButton.innerHTML = 'Preview';
+    editButton.firstChild.src = './images/edit-note.svg';
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
   } else {
-    editButton.innerHTML = 'Edit';
+    editButton.firstChild.src = './images/preview-note.svg';
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
     saveButton.classList.add('disabled-button');
@@ -293,6 +293,11 @@ async function initEditor() {
   const backButton = document.querySelector('#back-button');
   const editButton = document.querySelector('#change-view-button');
   const exportButton = document.querySelector('#export-button');
+  const editContent = document.querySelector('#notes-content');
+
+  editContent.addEventListener('click', () => {
+    editNote(true);
+  });
 
   deleteButton.addEventListener('click', () => {
     deleteNote();

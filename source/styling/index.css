@@ -264,24 +264,30 @@ main {
   display: flex;
   gap: 2.5rem;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
 }
 
 /* ----------INDIVIDUAL NOTE CARDS---------- */
 
 .note-wrapper {
-  padding: 1.5rem 1rem;
   width: 15rem;
   height: 21rem;
-  border-radius: 0.4rem;
-  background: var(--light-purple);
-  cursor: pointer;
-  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
 }
 
-.note-wrapper:hover {
+.note-wrapper > section:hover {
   border: 1px solid var(--dark-purple);
+}
+
+.note-wrapper > section {
+  border-radius: 0.4rem;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0);
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem 1rem;
+  width: 100%;
+  height: 100%;
+  background: var(--light-purple);
 }
 
 .note-front {
@@ -297,6 +303,7 @@ main {
 }
 
 .note-text {
+  height: 70%;
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
 
@@ -307,14 +314,17 @@ main {
 }
 
 .note-more {
-  padding: 0.5rem;
+  height: 2rem;
+  width: auto;
   border-radius: 100%;
-  filter: invert(100%);
+  filter: invert(70%);
   z-index: 10;
+  transition: transform 0.3s;
 }
 
 .note-more:hover {
-  background: gray;
+  transform: scale(110%);
+  filter: invert(100%);
 }
 
 .note-back {
@@ -366,10 +376,15 @@ main {
   outline: none;
 }
 
+#notes-content {
+  height: 100%;
+}
+
 #edit-content,
 #view-content {
   padding: 1em;
   width: 100%;
+  height: 100%;
   outline: none;
   overflow-y: hidden;
   font-size: 1.2em;
@@ -385,6 +400,7 @@ main {
 }
 
 .flipped {
+  border: 1px solid var(--dark-purple);
   transform: rotate3d(0, 1, 0, 180deg);
   pointer-events: none;
   opacity: 0;
@@ -412,12 +428,13 @@ main {
 }
 
 .note-control-bar > button {
-  color: var(--white);
-  background: var(--dark-purple);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 0.4rem;
-  font-weight: 400;
   cursor: pointer;
-  font-size: 1.2rem;
+  border: none;
+  background: none;
+  filter: invert(100%);
+  transition: transform 0.3s;
+}
+
+.note-control-bar > button:hover {
+  transform: scale(110%);
 }

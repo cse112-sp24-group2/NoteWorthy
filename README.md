@@ -8,7 +8,7 @@
 
 Personal note taking app that enables users to share their notes with other users while maintaining of their own notes.
 
-## Important File(paths)s
+## Important File(path)s
 
 - Contributing: [`CONTRIBUTING.md`](https://github.com/cse112-sp24-group2/NoteWorthy/blob/main/CONTRIBUTING.md)
 - Workplans: [`admin/workplans`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/admin/workplans)

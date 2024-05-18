@@ -10,6 +10,12 @@
   /* Opera/IE 8+ */
 }
 
+/* Prevent dragging images */
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -28,6 +34,15 @@ body {
   }
 }
 
+/* GLOBAL COLORS */
+:root {
+  --dark-purple: #211c34;
+  --light-purple: #ede9f2;
+  --text-purple: #48375c;
+  --white: #ffffff;
+  --accent-purple: #d4c1ec;
+}
+
 /* ------------------------------HEADER------------------------------ */
 
 .header {
@@ -35,7 +50,8 @@ body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background: lightgray;
+  height: 4rem;
+  background: var(--dark-purple);
   height: 4rem;
   min-height: 4rem;
   padding-right: 3rem;
@@ -43,10 +59,9 @@ body {
 }
 
 h1 {
-  font-size: 1.7rem;
-  color: black;
+  font-size: 2rem;
+  color: var(--white);
   font-weight: 700;
-  letter-spacing: 0.1rem;
   width: 20%;
   text-align: center;
   cursor: pointer;
@@ -58,16 +73,19 @@ h1 {
 }
 
 #newNote {
-  font-size: 1.3em;
+  font-size: 1.5em;
   padding: 0.3rem 3rem 0.3rem 3rem;
-  background: gray;
+  background: var(--white);
+  color: var(--text-purple);
+  border-radius: 6px;
   border: none;
   font-weight: 700;
   cursor: pointer;
 }
 
 #newNote:hover {
-  background: lightslategray;
+  background: var(--light-purple);
+  color: var(--dark-purple);
 }
 
 /* ------------------------------MAIN BODY------------------------------ */
@@ -81,16 +99,19 @@ main {
 /* ------------------------------SIDEBAR------------------------------ */
 
 .sidebar {
-  background: darkgrey;
-  width: 20%;
+  background: var(--accent-purple);
+  width: 24%;
   padding: 1.5rem;
   position: relative;
 }
 
 /* "Tags" and "Pinned" */
 .sidebar > h3 {
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   margin-bottom: 1rem;
+  color: var(--dark-purple);
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .tags-list {
@@ -99,39 +120,64 @@ main {
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .tags-list > li {
   display: flex;
   background: red;
   justify-content: space-between;
-  padding: 0.9rem 1rem;
+  padding: 0.8rem 1.4rem;
   font-size: 1rem;
-  background: lightgray;
+  background: var(--white);
   border-radius: 0.4rem;
   font-weight: 700;
+  width: 100%;
+  cursor: pointer;
 }
 
 /* "View all" */
-.sidebar > button {
-  background: none;
-  border: none;
+#view-more {
+  color: var(--dark-purple);
   font-size: 1rem;
-  margin-bottom: 3rem;
   text-decoration: underline;
   cursor: pointer;
+  text-align: end;
+  width: 100%;
+  padding: 0.4rem 0.4rem;
+  margin-bottom: 1rem;
+  background: none;
+  border: none;
 }
 
 .sidebar > footer {
   position: absolute;
   bottom: 1.5rem;
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#divider {
+  width: 100%;
+  height: 1px;
+  background: var(--dark-purple);
+  margin: 5rem 0;
+}
+
+#profile-img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 100%;
+  margin-right: 1rem;
+  background-color: #48375c;
 }
 
 /* ------------------------------VIEWS------------------------------ */
 
 .view {
-  width: 80%;
+  width: 76%;
   padding: 2rem 4rem;
   display: flex;
   flex-direction: column;
@@ -150,7 +196,7 @@ main {
 .wojak {
   z-index: -1;
   bottom: 0;
-  opacity: 10%;
+  opacity: 30%;
   position: absolute;
   left: 0;
 }
@@ -171,7 +217,7 @@ main {
 /* ----------DASHBOARD HEADER---------- */
 
 .dashboard-header {
-  color: black;
+  color: var(--dark-purple);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -180,6 +226,8 @@ main {
 /* "Dashboard" */
 .dashboard-header > h2 {
   font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark-purple);
 }
 
 .searchbar-wrapper {
@@ -188,23 +236,34 @@ main {
 
 .searchbar-wrapper > img {
   filter: invert(100%);
+  position: relative;
+  right: 2.5rem;
 }
 
 /* Actual Search Bar */
 .searchbar-wrapper > input {
   border: none;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid var(--dark-purple);
   padding: 0.3rem 1rem;
   font-size: 1rem;
+  width: 13rem;
+  transition: 0.3s;
+}
+
+.searchbar-wrapper > input:focus {
+  outline: none;
+  width: 20rem;
+  border-bottom: 2px solid var(--accent-purple);
 }
 
 .notes-header > input::placeholder {
-  color: black;
+  color: var(--dark-purple);
 }
 
 /* "Sort by" */
-.notes-header > span {
+.dashboard-header > span {
   font-size: 1rem;
+  color: var(--dark-purple);
 }
 
 /* --------NOTES CONTAINER-------- */
@@ -213,26 +272,31 @@ main {
   display: flex;
   gap: 2.5rem;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 /* ----------INDIVIDUAL NOTE CARDS---------- */
 
 .note-wrapper {
-  padding: 1.5rem 1rem;
-  width: 17rem;
+  width: 15rem;
   height: 21rem;
+  position: relative;
+}
+
+.note-wrapper > section:hover {
+  border: 1px solid var(--dark-purple);
+}
+
+.note-wrapper > section {
   border-radius: 0.4rem;
-  background: lightgray;
-  cursor: pointer;
-}
-
-.note-wrapper:hover {
-  background: lightslategray;
-}
-
-.note-front {
+  border: 1px solid rgba(0, 0, 0, 0);
+  background: var(--light-purple);
+  /* box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15); */
+  padding: 1.5rem 1rem;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -244,7 +308,16 @@ main {
   gap: 1rem;
 }
 
+.note-front {
+  cursor: pointer;
+}
+
+.note-title {
+  font-size: 1.2rem;
+}
+
 .note-text {
+  height: 70%;
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
 
@@ -254,22 +327,61 @@ main {
   align-items: center;
 }
 
+.note-last-modified {
+  font-size: 0.9rem;
+}
+
 .note-more {
-  padding: 0.5rem;
-  border-radius: 100%;
-  filter: invert(100%);
+  height: 3rem;
+  transition: transform 0.3s;
+  width: 3rem;
+  border-bottom-right-radius: 0.4rem;
+  border-top-left-radius: 0.4rem;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-image: -webkit-linear-gradient(-45deg, #c5c1c9 50%, white 50%);
+  transition: 0.3s ease-out;
+  border: none;
 }
 
 .note-more:hover {
-  background: gray;
+  height: 4rem;
+  width: 4rem;
 }
 
 .note-back {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: lightgray;
+  position: absolute;
 }
 
-.note-title {
-  font-size: 1.2rem;
+/* BACK OF NOTE BUTTONS */
+
+.note-back > footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.note-back > footer > button {
+  border: none;
+  background: none;
+  height: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+  padding: 0;
+}
+
+.note-back > footer > button:hover {
+  transform: scale(1.1);
+}
+
+.note-back > footer > button > img {
+  height: 100%;
+  width: auto;
+  filter: invert(100%);
 }
 
 /* --------------------EDITOR AREA-------------------- */
@@ -288,37 +400,82 @@ main {
 
 /* Title Input */
 #title-input {
-  color: black;
+  color: var(--dark-purple);
   font-size: 2.5rem;
   background: none;
   font-weight: bold;
   border: none;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid var(--accent-purple);
   width: auto;
 }
 
 #title-input[disabled='true'] {
-  border-color: gray;
+  border-color: var(--dark-purple);
 }
 
 #title-input:focus {
   outline: none;
 }
 
+#notes-content {
+  height: 100%;
+}
+
 #edit-content,
 #view-content {
   padding: 1em;
   width: 100%;
+  height: 100%;
   outline: none;
   overflow-y: hidden;
-  font-size: 1.5em;
-  color: #ffffff;
-  border-radius: 1rem;
-  background-color: rgba(30, 8, 74, 0.237);
-  border: 0.25rem solid rgba(30, 8, 74, 0.237);
+  font-size: 1.2em;
+  color: var(--dark-purple);
+  border-radius: 0.4rem;
+  background-color: var(--light-purple);
+  border: 0.15rem solid var(--text-purple);
 }
 
 #edit-content {
-  border-color: rgba(136, 86, 174, 0.388);
+  border-color: var(--accent-purple);
   resize: none;
+}
+
+.flipped {
+  border: 1px solid var(--dark-purple);
+  transform: rotate3d(0, 1, 0, 180deg);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flipped::before {
+  transform: rotateX(-90deg);
+}
+
+.transition-action {
+  transition: transform 0.2s ease-in-out, opacity 0.2s cubic-bezier(0.6, 0, 0.4, 1);
+}
+
+#notes-last-modified {
+  font-weight: 400;
+  margin-top: 0.6rem;
+}
+
+.note-control-bar {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.note-control-bar > button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  filter: invert(100%);
+  transition: transform 0.3s;
+}
+
+.note-control-bar > button:hover {
+  transform: scale(1.1);
 }

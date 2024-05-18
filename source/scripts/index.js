@@ -7,6 +7,7 @@ import {
 } from './noteStorage.js';
 import { setEditable, getDate, addNoteToDocument } from './notesEditor.js';
 import { getTagsFromStorage, initializeTagDB } from './tagStorage.js';
+import { parseNoteDate } from './utility.js';
 
 // Page Data reference to minimize initializeDB calls among other variables
 const pageData = {
@@ -75,102 +76,6 @@ export default function updateURL(urlString) {
 }
 
 /**
- * @description Parse the note date string into a Date object
- * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
- * @returns {Date} The parsed Date object
- */
-function parseNoteDate(dateString) {
-  const [month, day, dateTimeString] = dateString.split('/');
-  const [date, timeString] = dateTimeString.split('at ');
-  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
-
-  let parsedHour = parseInt(hour, 10);
-  if (parsedHour === 12) {
-    parsedHour = ampm === 'PM' ? 12 : 0;
-  } else {
-    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
-  }
-
-  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
-}
-
-/**
- * @description Sort the notes by last modified date
- * @param {Array<Object>} notes - Array containing all the notes in local storage
- * @param {String} sortType - The type of sort, either 'asc' for ascending or 'desc' for descending
- * @returns {Array<Object>} Sorted array of notes
- */
-function sortNotesByTime(notes, sortType) {
-  const sortOrder = sortType === 'asc' ? 1 : -1;
-
-  return notes.sort((note1, note2) => {
-    const date1 = parseNoteDate(note1.lastModified);
-    const date2 = parseNoteDate(note2.lastModified);
-
-    return (date1 - date2) * sortOrder;
-  });
-}
-
-/**
- * @description sort the notes by title
- * @param {Array<Object>} notes containing all the notes in the local storage
- * @param {String} sortType the type of sort, either ascending or descending
- * @returns sortedNotes
- */
-function sortNotesByTitle(notes, sortType) {
-  return notes.sort((note1, note2) => {
-    if (sortType === 'asc') {
-      return note1.title.localeCompare(note2.title);
-    }
-    return note2.title.localeCompare(note1.title);
-  });
-}
-
-/**
- * @description Return the notes that match the query string. Case insensitive.
- * @param {Array<Object>} notes Array containing all the notes in local storage
- * @param {String} query The search string to filter the notes on
- * @returns filtered notes array
- */
-function filterNotesByQuery(notes, query) {
-  const queryString = query.toLowerCase().replace(/\s+/g, ' ').trim();
-  return notes.filter(
-    (note) =>
-      note.title.toLowerCase().includes(queryString) ||
-      note.lastModified.replace('at', '').toLowerCase().includes(queryString)
-  );
-}
-
-/**
- * Queries the notes database for notes with a specific tag.
- * @param {string} className - The tag name to query for.
- * @returns {Array<Object>} - An array of note objects with the specified tag.
- */
-function tagQuery(className) {
-  const notesDB = pageData.database.transaction("NotesOS").objectStore('NotesOS');
-  let tags_index = notesDB.index('note_tags');
-  console.log(tags_index.getAll(className));
-}
-
-/**
- * @description toggles note editing when called.
- * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
- */
-function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
-  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
-  const edit = pageData.editEnabled;
-
-  if (edit) {
-    editButton.innerHTML = 'Preview';
-  } else {
-    editButton.innerHTML = 'Edit';
-  }
-
-  setEditable(edit);
-}
-
-/**
  * @description Switches current view to dashboard
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
  */
@@ -184,57 +89,31 @@ async function switchToDashboard(dom) {
 }
 
 /**
- * @description Switches current view to editor
- * @param {Number} id note id
- * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ * @description toggles note editing when called.
+ * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
  */
-async function switchToEditor(id, dom) {
-  if (id !== 9999) {
-    const db = pageData.database;
-    const note = await getNoteFromStorage(db, id);
-    pageData.editEnabled = false;
-    addNoteToDocument(note);
-    setEditable(pageData.editEnabled);
+function editNote(bool) {
+  const editButton = document.querySelector('#change-view-button');
+  const exportButton = document.querySelector('#export-button');
+  const saveButton = document.querySelector('#save-button');
+  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
+  const edit = pageData.editEnabled;
+
+  if (edit) {
+    editButton.firstChild.src = './images/edit-note.svg';
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
   } else {
-    const noteObject = {
-      title: '',
-      lastModified: `${getDate()}`,
-      tags:[],
-      content: '',
-    };
-    await addNoteToDocument(noteObject);
-    editNote(true);
+    editButton.firstChild.src = './images/preview-note.svg';
+    exportButton.classList.remove('disabled-button');
+    exportButton.disabled = false;
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
   }
 
-  dom.editor.classList.remove('hidden');
-  dom.dashboard.classList.add('hidden');
-}
-
-/**
- * @description handles url routing, checks url parameters and loads
- *              dashboard or editor accordingly
- */
-function URLRoutingHandler() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
-
-  if (id === '9999' || id == null) {
-    pageData.noteID = null;
-  } else {
-    pageData.noteID = parseInt(id, 10);
-  }
-
-  // So that child functions can hide/unhide dashboard or editor
-  const dom = {
-    editor: document.querySelector('.editor'),
-    dashboard: document.querySelector('.dashboard'),
-  };
-
-  if (id == null) {
-    switchToDashboard(dom);
-  } else {
-    switchToEditor(parseInt(id, 10), dom);
-  }
+  setEditable(edit);
 }
 
 /**
@@ -249,13 +128,11 @@ function saveNote() {
     alert('Please enter a valid title.');
     return;
   }
-  const saveButton = document.querySelector('#save-button');
   const content = document.querySelector('#edit-content').value;
   const lastModified = getDate();
   const noteObject = {
     title,
     lastModified,
-    tags:["work", "school"],
     content,
   };
   if (id) noteObject.uuid = id;
@@ -267,7 +144,7 @@ function saveNote() {
     });
   }
   editNote(false); // Switch to preview mode
-  // Disable save button after clicking it
+    // Disable save button after clicking it
   saveButton.classList.add('disabled-button');
   saveButton.disabled = true;
 
@@ -297,58 +174,7 @@ function saveNote() {
   //     // create tag in database with value 1.
   //   }    
   //  }
-
 }
-
-/**
- * @description Deletes the note
- * @param {Number} toDelete OPTIONAL. Do not pass a ID if you are currently in
- *                                    the editor page, ID will be handled automatically.
- *                                    Only pass ID when deleting note from dashboard
- */
-function deleteNote(toDelete) {
-  const id = toDelete || pageData.noteID;
-  const db = pageData.database;
-
-  if (!id) return;
-  if (!window.confirm('Are you sure you want to delete')) return;
-
-  deleteNoteFromStorage(db, { uuid: id });
-
-  // This means we are deleting from the editor page, so we should return
-  // to the dashboard
-  if (!toDelete) updateURL('');
-}
-
-/**
- * @description Initializes the button and functionality of the editor page.
- */
-async function initEditor() {
-  const deleteButton = document.querySelector('#delete-button');
-  const saveButton = document.querySelector('#save-button');
-  const backButton = document.querySelector('#back-button');
-  const editButton = document.querySelector('#change-view-button');
-  const tagButton = document.querySelector('#tag-button');
-
-  deleteButton.addEventListener('click', () => {
-    deleteNote();
-  });
-
-  saveButton.addEventListener('click', () => {
-    saveNote();
-  });
-
-  backButton.addEventListener('click', () => {
-    updateURL('');
-  });
-
-  editButton.addEventListener('click', () => {
-    editNote();
-  });
-
-  tagButton.addEventListener('click', () => {
-    addTags();
-  });
 
 /**
  * @description adds a Tag to note
@@ -433,6 +259,208 @@ async function initEditor() {
   //   tagList[i].classList.add('disabled-button');
   //   tagList[i].disabled = true;
   // }
+
+/**
+ * Queries the notes database for notes with a specific tag.
+ * @param {string} className - The tag name to query for.
+ * @returns {Array<Object>} - An array of note objects with the specified tag.
+ */
+function tagQuery(className) {
+  const notesDB = pageData.database.transaction("NotesOS").objectStore('NotesOS');
+  let tags_index = notesDB.index('note_tags');
+  console.log(tags_index.getAll(className));
+}
+
+/**
+ * @description Deletes the note
+ * @param {Number} toDelete OPTIONAL. Do not pass a ID if you are currently in
+ *                                    the editor page, ID will be handled automatically.
+ *                                    Only pass ID when deleting note from dashboard
+ */
+function deleteNote(toDelete) {
+  const id = toDelete || pageData.noteID;
+  const db = pageData.database;
+  
+  if (!id) return;
+  if (!window.confirm('Are you sure you want to delete')) return;
+
+  deleteNoteFromStorage(db, { uuid: id });
+
+  // This means we are deleting from the editor page, so we should return
+  // to the dashboard
+  if (!toDelete) updateURL('');
+}
+
+/**
+ * @description Exports the note as a txt file
+ */
+async function exportNote() {
+  const id = pageData.noteID;
+  const db = pageData.database;
+  const note = await getNoteFromStorage(db, id);
+  const blob = new Blob([note.content], { type: 'text/plain' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = `${note.title}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
+}
+
+/**
+ * @description Switches current view to editor
+ * @param {Number} id note id
+ * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ */
+async function switchToEditor(id, dom) {
+  if (id !== 9999) {
+    const db = pageData.database;
+    const note = await getNoteFromStorage(db, id);
+    pageData.editEnabled = false;
+    addNoteToDocument(note);
+    setEditable(pageData.editEnabled);
+  } else {
+    const noteObject = {
+      title: '',
+      lastModified: `${getDate()}`,
+      tags:[],
+      content: '',
+    };
+    await addNoteToDocument(noteObject);
+    editNote(true);
+  }
+
+  dom.editor.classList.remove('hidden');
+  dom.dashboard.classList.add('hidden');
+}
+
+/**
+ * @description handles url routing, checks url parameters and loads
+ *              dashboard or editor accordingly
+ */
+function URLRoutingHandler() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+
+  if (id === '9999' || id == null) {
+    pageData.noteID = null;
+  } else {
+    pageData.noteID = parseInt(id, 10);
+  }
+
+  // So that child functions can hide/unhide dashboard or editor
+  const dom = {
+    editor: document.querySelector('.editor'),
+    dashboard: document.querySelector('.dashboard'),
+  };
+
+  if (id == null) {
+    switchToDashboard(dom);
+  } else {
+    switchToEditor(parseInt(id, 10), dom);
+  }
+}
+
+/**
+ * @description Sort the notes by last modified date
+ * @param {Array<Object>} notes - Array containing all the notes in local storage
+ * @param {String} sortType - The type of sort, either 'asc' for ascending or 'desc' for descending
+ * @returns {Array<Object>} Sorted array of notes
+ */
+function sortNotesByTime(notes, sortType) {
+  const sortOrder = sortType === 'asc' ? 1 : -1;
+
+  return notes.sort((note1, note2) => {
+    const date1 = parseNoteDate(note1.lastModified);
+    const date2 = parseNoteDate(note2.lastModified);
+
+    return (date1 - date2) * sortOrder;
+  });
+}
+
+/**
+ * @description sort the notes by title
+ * @param {Array<Object>} notes containing all the notes in the local storage
+ * @param {String} sortType the type of sort, either ascending or descending
+ * @returns sortedNotes
+ */
+function sortNotesByTitle(notes, sortType) {
+  return notes.sort((note1, note2) => {
+    if (sortType === 'asc') {
+      return note1.title.localeCompare(note2.title);
+    }
+    return note2.title.localeCompare(note1.title);
+  });
+}
+
+/**
+ * @description Return the notes that match the query string. Case insensitive.
+ * @param {Array<Object>} notes Array containing all the notes in local storage
+ * @param {String} query The search string to filter the notes on
+ * @returns filtered notes array
+ */
+function filterNotesByQuery(notes, query) {
+  const queryString = query.toLowerCase().replace(/\s+/g, ' ').trim();
+  return notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(queryString) ||
+      note.lastModified.replace('at', '').toLowerCase().includes(queryString)
+  );
+}
+
+/**
+ * @description Initializes the button and functionality of the editor page.
+ */
+async function initEditor() {
+  const deleteButton = document.querySelector('#delete-button');
+  const saveButton = document.querySelector('#save-button');
+  const backButton = document.querySelector('#back-button');
+  const editButton = document.querySelector('#change-view-button');
+  const tagButton = document.querySelector('#tag-button');
+  const exportButton = document.querySelector('#export-button');
+  const editContent = document.querySelector('#notes-content');
+
+  editContent.addEventListener('click', () => {
+    editNote(true);
+  });
+
+  deleteButton.addEventListener('click', () => {
+    deleteNote();
+  });
+
+  saveButton.addEventListener('click', () => {
+    saveNote();
+  });
+
+  backButton.addEventListener('click', () => {
+    updateURL('');
+  });
+
+  editButton.addEventListener('click', () => {
+    editNote();
+  });
+
+  tagButton.addEventListener('click', () => {
+    addTags();
+  });
+
+  exportButton.addEventListener('click', async () => {
+    await exportNote();
+  });
+
+  if (this.editEnabled == null || !this.editEnabled) {
+    exportButton.classList.add('disabled-button');
+    exportButton.disabled = true;
+    saveButton.classList.remove('disabled-button');
+    saveButton.disabled = false;
+  } else {
+    exportButton.classList.remove('disabled-button');
+    exportButton.disabled = false;
+    saveButton.classList.add('disabled-button');
+    saveButton.disabled = true;
+  }
 }
 
 /**

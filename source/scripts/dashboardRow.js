@@ -1,6 +1,6 @@
-import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
+import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
+import { updateURL, addNotesToDocument } from './index.js';
 import { toggleClassToArr } from './utility.js';
-import updateURL from './index.js';
 
 const template = document.getElementById('dashboard-note-template');
 
@@ -33,6 +33,7 @@ class dashboardRow extends HTMLElement {
       noteFront: this.shadowRoot.querySelector('.note-front'),
       noteBack: this.shadowRoot.querySelector('.note-back'),
       title: this.shadowRoot.querySelector('.note-title'),
+      replicateButton: this.shadowRoot.querySelector('.note-replicate-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
       noteMore: this.shadowRoot.querySelector('.note-more'),
       downloadBtn: this.shadowRoot.querySelector('.note-download-button'),
@@ -44,6 +45,8 @@ class dashboardRow extends HTMLElement {
 
   /**
    * Set the note property
+   * set Delete Button: Delete current note. Need second confirmation
+   * set duplicate Button: Duplicate the selected note
    * @param {Object} note containing the note data
    */
   set note(note) {
@@ -63,6 +66,20 @@ class dashboardRow extends HTMLElement {
       } else {
         // do nothing if user does not confirm deletion
       }
+    });
+
+    this.dom.replicateButton.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      const db = await initializeDB(indexedDB);
+      const newNote = { ...note };
+      newNote.title = `${note.title} (copy)`;
+      newNote.uuid = Date.now();
+      newNote.lastModified = new Date().toLocaleString();
+      saveNoteToStorage(db, newNote);
+      //  Add new Note row without reloading
+      const notes = await getNotesFromStorage(db);
+      addNotesToDocument(notes);
+      //  window.location.reload();
     });
 
     this.dom.backBtn.onclick = (e) => {

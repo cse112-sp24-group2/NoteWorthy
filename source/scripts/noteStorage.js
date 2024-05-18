@@ -20,7 +20,7 @@ export function initializeDB(indexedDB) {
         keyPath: 'uuid',
         autoIncrement: true,
       });
-      objectStore.createIndex('notes', 'notes', { unique: false });
+      objectStore.createIndex('note_tags', 'tags', { unique: false, multiEntry: true });
     };
     openRequest.onsuccess = (event) => {
       db = event.target.result;

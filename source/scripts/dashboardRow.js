@@ -1,5 +1,8 @@
 import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
 import { updateURL, addNotesToDocument } from './index.js';
+import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
+import { toggleClassToArr } from './utility.js';
+
 
 const template = document.getElementById('dashboard-note-template');
 
@@ -9,6 +12,9 @@ class dashboardRow extends HTMLElement {
    */
   constructor() {
     super();
+    this.flipped = false;
+    this.animation = false;
+
     const shadow = this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
@@ -29,9 +35,13 @@ class dashboardRow extends HTMLElement {
       noteFront: this.shadowRoot.querySelector('.note-front'),
       noteBack: this.shadowRoot.querySelector('.note-back'),
       title: this.shadowRoot.querySelector('.note-title'),
-      deleteButton: this.shadowRoot.querySelector('.note-delete-button'),
       replicateButton: this.shadowRoot.querySelector('.note-replicate-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
+      noteMore: this.shadowRoot.querySelector('.note-more'),
+      downloadBtn: this.shadowRoot.querySelector('.note-download-button'),
+      copyBtn: this.shadowRoot.querySelector('.note-copy-button'),
+      deleteBtn: this.shadowRoot.querySelector('.note-delete-button'),
+      backBtn: this.shadowRoot.querySelector('.note-back-button'),
     };
   }
 
@@ -48,8 +58,7 @@ class dashboardRow extends HTMLElement {
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);
 
-    // set event listeners for delete and replicate buttons
-    this.dom.deleteButton.addEventListener('click', async (event) => {
+    this.dom.deleteBtn.addEventListener('click', async (event) => {
       event.stopPropagation();
       // confirm note deletion with user
       if (window.confirm('Are you sure you want to delete this note?')) {
@@ -60,6 +69,7 @@ class dashboardRow extends HTMLElement {
         // do nothing if user does not confirm deletion
       }
     });
+    
     this.dom.replicateButton.addEventListener('click', async (event) => {
       event.stopPropagation();
       const db = await initializeDB(indexedDB);
@@ -73,9 +83,31 @@ class dashboardRow extends HTMLElement {
       addNotesToDocument(notes);
       //  window.location.reload();
     });
+
+    this.dom.backBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.flipNote();
+    };
+
+    this.dom.noteMore.onclick = (e) => {
+      e.stopPropagation();
+      this.flipNote();
+    };
+
     this.dom.noteFront.onclick = () => {
       updateURL(`?id=${note.uuid}`);
     };
+  }
+
+  flipNote() {
+    if (!this.animation) {
+      // fires once per element for lifetime
+      toggleClassToArr([this.dom.noteFront, this.dom.noteBack], 'transition-action');
+      this.animation = true;
+    }
+
+    toggleClassToArr([this.dom.noteFront, this.dom.noteBack], 'flipped');
+    this.flipped = !this.flipped;
   }
 }
 

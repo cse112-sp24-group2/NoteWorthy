@@ -10,6 +10,12 @@
   /* Opera/IE 8+ */
 }
 
+/* Prevent dragging images */
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -30,11 +36,11 @@ body {
 
 /* GLOBAL COLORS */
 :root {
-  --dark-purple: #211C34;
-  --light-purple: #EDE9F2;
-  --text-purple: #48375C;
-  --white: #FFFFFF;
-  --accent-purple: #D4C1EC;
+  --dark-purple: #211c34;
+  --light-purple: #ede9f2;
+  --text-purple: #48375c;
+  --white: #ffffff;
+  --accent-purple: #d4c1ec;
 }
 
 /* ------------------------------HEADER------------------------------ */
@@ -79,7 +85,7 @@ h1 {
 
 #newNote:hover {
   background: var(--light-purple);
-  color: var(--dark-purple)
+  color: var(--dark-purple);
 }
 
 /* ------------------------------MAIN BODY------------------------------ */
@@ -165,7 +171,7 @@ main {
   height: 3rem;
   border-radius: 100%;
   margin-right: 1rem;
-  background-color: #48375C;
+  background-color: #48375c;
 }
 
 /* ------------------------------VIEWS------------------------------ */
@@ -240,6 +246,8 @@ main {
   border-bottom: 2px solid var(--dark-purple);
   padding: 0.3rem 1rem;
   font-size: 1rem;
+  width: 13rem;
+  transition: 0.3s;
 }
 
 .searchbar-wrapper > input:focus {
@@ -264,29 +272,31 @@ main {
   display: flex;
   gap: 2.5rem;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
 }
 
 /* ----------INDIVIDUAL NOTE CARDS---------- */
 
 .note-wrapper {
-  padding: 1.5rem 1rem;
   width: 15rem;
   height: 21rem;
-  border-radius: 0.4rem;
-  background: var(--light-purple);
-  cursor: pointer;
-  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
 }
 
-.note-wrapper:hover {
+.note-wrapper > section:hover {
   border: 1px solid var(--dark-purple);
 }
 
-.note-front {
+.note-wrapper > section {
+  border-radius: 0.4rem;
+  border: 1px solid rgba(0, 0, 0, 0);
+  background: var(--light-purple);
+  /* box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15); */
+  padding: 1.5rem 1rem;
   width: 100%;
   height: 100%;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -298,7 +308,16 @@ main {
   gap: 1rem;
 }
 
+.note-front {
+  cursor: pointer;
+}
+
+.note-title {
+  font-size: 1.2rem;
+}
+
 .note-text {
+  height: 70%;
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
 
@@ -308,22 +327,61 @@ main {
   align-items: center;
 }
 
+.note-last-modified {
+  font-size: 0.9rem;
+}
+
 .note-more {
-  padding: 0.5rem;
-  border-radius: 100%;
-  filter: invert(100%);
+  height: 3rem;
+  transition: transform 0.3s;
+  width: 3rem;
+  border-bottom-right-radius: 0.4rem;
+  border-top-left-radius: 0.4rem;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-image: -webkit-linear-gradient(-45deg, #c5c1c9 50%, white 50%);
+  transition: 0.3s ease-out;
+  border: none;
 }
 
 .note-more:hover {
-  background: gray;
+  height: 4rem;
+  width: 4rem;
 }
 
 .note-back {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: lightgray;
+  position: absolute;
 }
 
-.note-title {
-  font-size: 1.2rem;
+/* BACK OF NOTE BUTTONS */
+
+.note-back > footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.note-back > footer > button {
+  border: none;
+  background: none;
+  height: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+  padding: 0;
+}
+
+.note-back > footer > button:hover {
+  transform: scale(1.1);
+}
+
+.note-back > footer > button > img {
+  height: 100%;
+  width: auto;
+  filter: invert(100%);
 }
 
 /* --------------------EDITOR AREA-------------------- */
@@ -359,10 +417,15 @@ main {
   outline: none;
 }
 
+#notes-content {
+  height: 100%;
+}
+
 #edit-content,
 #view-content {
   padding: 1em;
   width: 100%;
+  height: 100%;
   outline: none;
   overflow-y: hidden;
   font-size: 1.2em;
@@ -375,6 +438,21 @@ main {
 #edit-content {
   border-color: var(--accent-purple);
   resize: none;
+}
+
+.flipped {
+  border: 1px solid var(--dark-purple);
+  transform: rotate3d(0, 1, 0, 180deg);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flipped::before {
+  transform: rotateX(-90deg);
+}
+
+.transition-action {
+  transition: transform 0.2s ease-in-out, opacity 0.2s cubic-bezier(0.6, 0, 0.4, 1);
 }
 
 #notes-last-modified {
@@ -391,12 +469,13 @@ main {
 }
 
 .note-control-bar > button {
-  color: var(--white);
-  background: var(--dark-purple);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 0.4rem;
-  font-weight: 400;
   cursor: pointer;
-  font-size: 1.2rem;
+  border: none;
+  background: none;
+  filter: invert(100%);
+  transition: transform 0.3s;
+}
+
+.note-control-bar > button:hover {
+  transform: scale(1.1);
 }

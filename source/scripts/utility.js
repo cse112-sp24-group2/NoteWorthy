@@ -28,3 +28,18 @@ export function parseNoteDate(dateString) {
 
   return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
 }
+
+/**
+ * Generates a random string of specified length.
+ *
+ * @param {number} length - The desired length of the random string.
+ * @returns {string} A string of random characters with the specified length.
+ */
+export function generateRandomString(length) {
+  let str = '';
+  const alphabet = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890';
+  for (let i = 0; i < length; i += 1) {
+    str += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  }
+  return str;
+}

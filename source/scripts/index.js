@@ -6,6 +6,7 @@ import {
   saveNoteToStorage,
 } from './noteStorage.js';
 import { setEditable, getDate, addNoteToDocument } from './notesEditor.js';
+import { parseNoteDate } from './utility.js';
 
 // Page Data reference to minimize initializeDB calls among other variables
 const pageData = {
@@ -69,26 +70,6 @@ async function switchToDashboard(dom) {
 }
 
 /**
- * @description Parse the note date string into a Date object
- * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
- * @returns {Date} The parsed Date object
- */
-function parseNoteDate(dateString) {
-  const [month, day, dateTimeString] = dateString.split('/');
-  const [date, timeString] = dateTimeString.split('at ');
-  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
-
-  let parsedHour = parseInt(hour, 10);
-  if (parsedHour === 12) {
-    parsedHour = ampm === 'PM' ? 12 : 0;
-  } else {
-    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
-  }
-
-  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
-}
-
-/**
  * @description toggles note editing when called.
  * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
  */
@@ -100,13 +81,13 @@ function editNote(bool) {
   const edit = pageData.editEnabled;
 
   if (edit) {
-    editButton.innerHTML = 'Preview';
+    editButton.firstChild.src = './images/edit-note.svg';
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
   } else {
-    editButton.innerHTML = 'Edit';
+    editButton.firstChild.src = './images/preview-note.svg';
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
     saveButton.classList.add('disabled-button');
@@ -293,6 +274,11 @@ async function initEditor() {
   const backButton = document.querySelector('#back-button');
   const editButton = document.querySelector('#change-view-button');
   const exportButton = document.querySelector('#export-button');
+  const editContent = document.querySelector('#notes-content');
+
+  editContent.addEventListener('click', () => {
+    editNote(true);
+  });
 
   deleteButton.addEventListener('click', () => {
     deleteNote();

@@ -1,4 +1,5 @@
 import markdown from './markdown.js';
+import {getTagsFromStorage, saveTagToStorage} from './tagStorage.js';
 
 /**
  * @description get the current date and time for the dashboard
@@ -41,6 +42,8 @@ export function setEditable(editable) {
   }
 }
 
+
+
 /**
  * @description append the notes title, last modified date, and content to page
  * @param {*} note note object with data
@@ -50,6 +53,9 @@ export async function addNoteToDocument(note) {
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
   const content = document.querySelector('#edit-content');
+  const intPutArea = document.getElementById("notes-tags");
+  const tag = document.createElement('input');
+
   // empty the html items
   // populate html with notes data
   title.innerHTML = '<input type="text" id="title-input" placeholder = "Untitled Note">';
@@ -57,4 +63,19 @@ export async function addNoteToDocument(note) {
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
   content.value = `${note.content}`;
+
+  // append the tags
+  const tags = note.tags;
+  for(let i = 0; i < tags.length; i++) {
+    tag.type = 'checkbox';
+    tag.id = 'tag'
+    tag.name = tags[i]; 
+    intPutArea.appendChild(tag);
+
+    var label = document.createElement('label')
+    label.htmlFor = tags[i]; // replace with unique tag identifier
+    label.appendChild(document.createTextNode(tags[i]));
+    intPutArea.appendChild(label);
+  }
+
 }

@@ -102,6 +102,21 @@
       <section class="sidebar">
         <h3>Tags</h3>
         <ul class="tags-list">
+          <form>
+          <input type="radio" class="personal" name="tag-search">
+          <label for="personal">personal</label>
+          <input type="radio" class="projects" name="tag-search">
+          <label for="projects">projects</label>
+          <input type="radio" class="school" name="tag-search">
+          <label for="school">school</label>
+          <input type="radio" class="work" name="tag-search">
+          <label for="work">work</label>
+          <button type="uncheck" onClick ="(function (){
+            document.getElementsByName('tag-search').forEach((tag) => {
+              tag.checked = false;
+            });
+            })">uncheck all</button>
+        </form>
           <li>
             <p>School</p>
             <p>5</p>
@@ -176,7 +191,15 @@
               <button id="delete-button">
                 <img alt="delete icon" src="./images/delete.svg" />
               </button>
+                          <button id="tag-button">Add Tag</button>
+              <input id="tag-input" type="text" placeholder="Add tag..." />
             </div>
+            <form id="notes-tags">
+              <input type="checkbox" id="tag" name="tag1" />
+              <label for="tag1">Tag 1</label>
+              <input type="checkbox" id="tag" name="tag2" />
+              <label for="tag2">Tag 2</label>
+            </form>
           </header>
           <div id="notes-content">
             <textarea

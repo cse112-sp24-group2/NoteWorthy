@@ -63,8 +63,7 @@ Imports Required:
 
 Goals for next sprint
 
-- Switch
-- Break down features into stories
 - Keep the same teams
 - Finish current issues
-- Get maintainability to at least B
+- Write tests
+- Create ADR's and request imports

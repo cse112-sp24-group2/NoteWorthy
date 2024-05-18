@@ -63,6 +63,7 @@ export async function addNoteToDocument(note) {
 
   // append the tags
   const tags = note.tags;
+  console.log(note);
   for (let i = 0; i < tags.length; i += 1) {
     tag.type = 'checkbox';
     tag.id = 'tag';

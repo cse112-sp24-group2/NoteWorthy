@@ -7,7 +7,7 @@ import {
 } from './noteStorage.js';
 import { setEditable, getDate, addNoteToDocument } from './notesEditor.js';
 import { getTagsFromStorage, initializeTagDB } from './tagStorage.js';
-import { parseNoteDate } from './utility.js';
+import { parseNoteDate, generateRandomString } from './utility.js';
 
 // Page Data reference to minimize initializeDB calls among other variables
 const pageData = {
@@ -20,7 +20,9 @@ const pageData = {
 
 /**
  * @description append the new row to the dashboard in the document
+ *
  * @param {Array<Object>} notes containing all the notes in the local storage
+ * @returns {void} This function does not return a value.
  */
 export function addNotesToDocument(notes) {
   const dashboard = document.querySelector('.dashboardItems');
@@ -40,11 +42,13 @@ export function addNotesToDocument(notes) {
 }
 
 /**
+ * @description Adds tags as radio buttons and labels to a tags list element in the document.
  *
- *
- * */
+ * @param {Object[]} tags - An array of tag objects containing tag names.
+ * @returns {void} this function does not return a value.
+ */
 export function addTagsToDocument(tags) {
-  const tagList = document.querySelector('.tag-list');
+  const tagList = document.querySelector('.tags-list');
   console.log(tags);
   tags.forEach((tag) => {
     const tagButton = document.createElement('input');
@@ -72,7 +76,9 @@ export function addTagsToDocument(tags) {
 
 /**
  * @description Show/Hide empty notes on dashboard
+ *
  * @param {bool} bool true to hide, false to show
+ * @returns {void} this function does not return a value.
  */
 function hideEmptyWojak(bool) {
   const empty = document.querySelector('.empty-dashboard');
@@ -82,7 +88,9 @@ function hideEmptyWojak(bool) {
 /**
  * @description Updates the URL to signify page changing.
  *              Window eventlisteners will automatically detect the change.
+ *
  * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
+ * @returns {void} this function does not return a value.
  */
 export function updateURL(urlString) {
   const path = window.location.pathname;
@@ -92,7 +100,9 @@ export function updateURL(urlString) {
 
 /**
  * @description Switches current view to dashboard
+ *
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ * @returns {void} this function does not return a value.
  */
 async function switchToDashboard(dom) {
   const db = pageData.database;
@@ -105,7 +115,9 @@ async function switchToDashboard(dom) {
 
 /**
  * @description toggles note editing when called.
+ *
  * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
+ * @returns {void} this function does not return a value.
  */
 function editNote(bool) {
   const editButton = document.querySelector('#change-view-button');
@@ -132,8 +144,9 @@ function editNote(bool) {
 }
 
 /**
- * @description Saves note to the database. Makes sure title is valid
- *              and handles cases when the note is new or already existing
+ * @description Saves the note content and updates the URL with the new note ID.
+ *
+ * @returns {void} This function does not return a value.
  */
 function saveNote() {
   const db = pageData.database;
@@ -145,6 +158,7 @@ function saveNote() {
   }
   const content = document.querySelector('#edit-content').value;
   const lastModified = getDate();
+  // TODO: Need to add tags
   const noteObject = {
     title,
     lastModified,
@@ -189,7 +203,9 @@ function saveNote() {
 }
 
 /**
- * @description adds a Tag to note
+ * @description Adds a Tag to note in the Editor page
+ *
+ * @returns {void} This function does not return a value.
  */
 function addTags() {
   const id = pageData.noteID;
@@ -216,14 +232,15 @@ function addTags() {
         // push HTML element
         const parentElement = document.getElementById('notes-tags');
         const newCheckBox = document.createElement('input');
+        const uniqueID = generateRandomString(8); // Unique tag identifier
         newCheckBox.type = 'checkbox';
-        newCheckBox.id = 'tag';
+        newCheckBox.id = uniqueID;
         newCheckBox.value = 'something <br/>';
-        newCheckBox.name = 'tag43'; // replace with unique tag identifier
+        newCheckBox.name = uniqueID;
         parentElement.appendChild(newCheckBox);
 
         const label = document.createElement('label');
-        label.htmlFor = 'tag43'; // replace with unique tag identifier
+        label.htmlFor = uniqueID;
         label.appendChild(document.createTextNode(tagname));
         parentElement.appendChild(label);
 
@@ -270,7 +287,8 @@ function addTags() {
 // }
 
 /**
- * Queries the notes database for notes with a specific tag.
+ * @description Queries the notes database for notes with a specific tag.
+ *
  * @param {string} className - The tag name to query for.
  * @returns {Array<Object>} - An array of note objects with the specified tag.
  */
@@ -282,9 +300,11 @@ function tagQuery(className) {
 
 /**
  * @description Deletes the note
+ *
  * @param {Number} toDelete OPTIONAL. Do not pass a ID if you are currently in
  *                                    the editor page, ID will be handled automatically.
  *                                    Only pass ID when deleting note from dashboard
+ * @returns {void} This function does not return a value.
  */
 function deleteNote(toDelete) {
   const id = toDelete || pageData.noteID;
@@ -302,6 +322,8 @@ function deleteNote(toDelete) {
 
 /**
  * @description Exports the note as a txt file
+ *
+ * @returns {void} This function does not return a value.
  */
 async function exportNote() {
   const id = pageData.noteID;
@@ -320,8 +342,10 @@ async function exportNote() {
 
 /**
  * @description Switches current view to editor
+ *
  * @param {Number} id note id
  * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ * @returns {void} This function does not return a value.
  */
 async function switchToEditor(id, dom) {
   if (id !== 9999) {
@@ -348,6 +372,8 @@ async function switchToEditor(id, dom) {
 /**
  * @description handles url routing, checks url parameters and loads
  *              dashboard or editor accordingly
+ *
+ * @returns {void} This function does not return a value.
  */
 function URLRoutingHandler() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -374,6 +400,7 @@ function URLRoutingHandler() {
 
 /**
  * @description Sort the notes by last modified date
+ *
  * @param {Array<Object>} notes - Array containing all the notes in local storage
  * @param {String} sortType - The type of sort, either 'asc' for ascending or 'desc' for descending
  * @returns {Array<Object>} Sorted array of notes
@@ -391,9 +418,10 @@ function sortNotesByTime(notes, sortType) {
 
 /**
  * @description sort the notes by title
+ *
  * @param {Array<Object>} notes containing all the notes in the local storage
  * @param {String} sortType the type of sort, either ascending or descending
- * @returns sortedNotes
+ * @returns {Array<Object>} sortedNotes
  */
 function sortNotesByTitle(notes, sortType) {
   return notes.sort((note1, note2) => {
@@ -406,9 +434,10 @@ function sortNotesByTitle(notes, sortType) {
 
 /**
  * @description Return the notes that match the query string. Case insensitive.
+ *
  * @param {Array<Object>} notes Array containing all the notes in local storage
  * @param {String} query The search string to filter the notes on
- * @returns filtered notes array
+ * @returns {Array<Object>} Filtered notes array
  */
 function filterNotesByQuery(notes, query) {
   const queryString = query.toLowerCase().replace(/\s+/g, ' ').trim();
@@ -421,6 +450,8 @@ function filterNotesByQuery(notes, query) {
 
 /**
  * @description Initializes the button and functionality of the editor page.
+ *
+ * @returns {void} This function does not return a value.
  */
 async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
@@ -455,11 +486,11 @@ async function initEditor() {
     addTags();
   });
 
-  exportButton.addEventListener('click', async () => {
-    await exportNote();
+  exportButton.addEventListener('click', () => {
+    exportNote();
   });
 
-  if (this.editEnabled == null || !this.editEnabled) {
+  if (pageData.editEnabled == null || !pageData.editEnabled) {
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
     saveButton.classList.remove('disabled-button');

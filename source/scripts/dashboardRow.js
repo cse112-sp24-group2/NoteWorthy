@@ -33,7 +33,7 @@ class dashboardRow extends HTMLElement {
       noteFront: this.shadowRoot.querySelector('.note-front'),
       noteBack: this.shadowRoot.querySelector('.note-back'),
       title: this.shadowRoot.querySelector('.note-title'),
-      replicateButton: this.shadowRoot.querySelector('.note-replicate-button'),
+      copyButton: this.shadowRoot.querySelector('.note-copy-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
       noteMore: this.shadowRoot.querySelector('.note-more'),
       downloadBtn: this.shadowRoot.querySelector('.note-download-button'),
@@ -68,7 +68,7 @@ class dashboardRow extends HTMLElement {
       }
     });
 
-    this.dom.replicateButton.addEventListener('click', async (event) => {
+    this.dom.copyButton.addEventListener('click', async (event) => {
       event.stopPropagation();
       const db = await initializeDB(indexedDB);
       const newNote = { ...note };

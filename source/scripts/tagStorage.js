@@ -76,11 +76,12 @@ export function getTagsFromStorage(database) {
  * @param {*} tag The tag object to save.
  * @returns Promise<int> The ID of the newly saved tag.
  */
+
 export function saveTagToStorage(database, tag) {
   if (!tag.id) {
     return new Promise((resolve, reject) => {
       const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-      const saveTagRequest = objectStore.add(note);
+      const saveTagRequest = objectStore.add(tag);
       saveTagRequest.onsuccess = () => {
         console.log(`Successfully saved tag with id ${saveTagRequest.result}`);
         console.log(saveTagRequest.result);
@@ -93,7 +94,7 @@ export function saveTagToStorage(database, tag) {
   }
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    const saveTagRequest = objectStore.put(note);
+    const saveTagRequest = objectStore.put(tag);
     saveTagRequest.onsuccess = () => {
       console.log(`Successfully saved note with uuid ${saveTagRequest.result}`);
       resolve(saveTagRequest.result);

@@ -1,5 +1,4 @@
 import markdown from './markdown.js';
-import { getTagsFromStorage, saveTagToStorage } from './tagStorage.js';
 
 /**
  * @description get the current date and time for the dashboard
@@ -64,7 +63,7 @@ export async function addNoteToDocument(note) {
 
   // append the tags
   const tags = note.tags;
-  for (let i = 0; i < tags.length; i++) {
+  for (let i = 0; i < tags.length; i += 1) {
     tag.type = 'checkbox';
     tag.id = 'tag';
     tag.name = tags[i];

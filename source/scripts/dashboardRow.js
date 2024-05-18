@@ -1,8 +1,6 @@
 import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
 import { updateURL, addNotesToDocument } from './index.js';
-import { initializeDB, deleteNoteFromStorage } from './noteStorage.js';
 import { toggleClassToArr } from './utility.js';
-
 
 const template = document.getElementById('dashboard-note-template');
 
@@ -69,7 +67,7 @@ class dashboardRow extends HTMLElement {
         // do nothing if user does not confirm deletion
       }
     });
-    
+
     this.dom.replicateButton.addEventListener('click', async (event) => {
       event.stopPropagation();
       const db = await initializeDB(indexedDB);

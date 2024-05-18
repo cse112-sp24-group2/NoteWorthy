@@ -22,7 +22,7 @@ const pageData = {
  * @description append the new row to the dashboard in the document
  * @param {Array<Object>} notes containing all the notes in the local storage
  */
-function addNotesToDocument(notes) {
+export function addNotesToDocument(notes) {
   const dashboard = document.querySelector('.dashboardItems');
 
   // Clear out the existing rows in the dashboard
@@ -43,15 +43,31 @@ function addNotesToDocument(notes) {
  *
  *
  * */
-function addTagsToDocument(tags) {
-  const tagList = document.querySelector('#tag-list');
+export function addTagsToDocument(tags) {
+  const tagList = document.querySelector('.tag-list');
+  console.log(tags);
   tags.forEach((tag) => {
-    const tagButton = document.createElement('button');
+    const tagButton = document.createElement('input');
     tagButton.textContent = tag.tag_name;
-    tagButton.classList.add('tag-button');
+    tagButton.classList.add(tag.tag_name);
     tagButton.type = 'radio';
+    tagButton.name = 'tag-search';
     tagList.appendChild(tagButton);
+    const tagLabel = document.createElement('label');
+    tagLabel.htmlFor = tag.tag_name;
+    tagLabel.textContent = tag.tag_name;
+    tagList.appendChild(tagLabel);
   });
+  const removeTagButton = document.createElement('button');
+  removeTagButton.textContent = 'uncheck all';
+  removeTagButton.type = 'uncheck';
+  removeTagButton.onclick = () => {
+    const tagButtons = document.getElementsByName('tag-search');
+    tagButtons.forEach((tagButton) => {
+      tagButton.checked = false; // eslint-disable-line no-param-reassign
+    });
+  };
+  tagList.appendChild(removeTagButton);
 }
 
 /**
@@ -68,7 +84,7 @@ function hideEmptyWojak(bool) {
  *              Window eventlisteners will automatically detect the change.
  * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
  */
-export default function updateURL(urlString) {
+export function updateURL(urlString) {
   const path = window.location.pathname;
   window.history.pushState({}, null, path + urlString);
   window.dispatchEvent(new Event('popstate'));
@@ -143,9 +159,6 @@ function saveNote() {
     });
   }
   editNote(false); // Switch to preview mode
-  // Disable save button after clicking it
-  saveButton.classList.add('disabled-button');
-  saveButton.disabled = true;
 
   // Disable tag button after clicking save
   const tagButton = document.querySelector('#tag-button');
@@ -157,7 +170,7 @@ function saveNote() {
   tagInput.disabled = true;
 
   const tagList = document.querySelectorAll('#tag');
-  for (let i = 0; i < tagList.length; i++) {
+  for (let i = 0; i < tagList.length; i += 1) {
     tagList[i].classList.add('disabled-button');
     tagList[i].disabled = true;
   }
@@ -180,36 +193,36 @@ function saveNote() {
  */
 function addTags() {
   const id = pageData.noteID;
-  const db = pageData.database;
+  // const db = pageData.database;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
-  if (tagname == '') {
+  if (tagname === '') {
     alert('Please enter a valid tag name');
   } else {
     // if existing note
     if (id) {
       // access note
       const note = getNoteFromStorage(id);
-      tags = note.tags;
+      const tags = note.tags;
       let contains = false;
       // check to see if note is already tagged
-      for (let i = 0; i < tags.length; i++) {
-        if (tags[i] == tagname) {
+      for (let i = 0; i < tags.length; i += 1) {
+        if (tags[i] === tagname) {
           alert('Note already tagged with'); // + tagname
           contains = true;
         }
       }
       if (!contains) {
-        notes.tags.push(tagname);
+        note.tags.push(tagname);
         // push HTML element
-        var parentElement = document.getElementById('notes-tags');
-        var newCheckBox = document.createElement('input');
+        const parentElement = document.getElementById('notes-tags');
+        const newCheckBox = document.createElement('input');
         newCheckBox.type = 'checkbox';
         newCheckBox.id = 'tag';
-        newCheckBox.value = 'something' + '<br/>';
+        newCheckBox.value = 'something <br/>';
         newCheckBox.name = 'tag43'; // replace with unique tag identifier
         parentElement.appendChild(newCheckBox);
 
-        var label = document.createElement('label');
+        const label = document.createElement('label');
         label.htmlFor = 'tag43'; // replace with unique tag identifier
         label.appendChild(document.createTextNode(tagname));
         parentElement.appendChild(label);
@@ -223,15 +236,15 @@ function addTags() {
     if (!id) {
       // notes.tags.push(tagname);
       // push HTML element
-      var parentElement = document.getElementById('notes-tags');
-      var newCheckBox = document.createElement('input');
+      const parentElement = document.getElementById('notes-tags');
+      const newCheckBox = document.createElement('input');
       newCheckBox.type = 'checkbox';
       newCheckBox.id = 'tag';
-      newCheckBox.value = 'something' + '<br/>';
+      newCheckBox.value = 'something <br/>';
       newCheckBox.name = 'tag43'; // replace with unique tag identifier
       parentElement.appendChild(newCheckBox);
 
-      var label = document.createElement('label');
+      const label = document.createElement('label');
       label.htmlFor = 'tag43'; // replace with unique tag identifier
       label.appendChild(document.createTextNode(tagname));
       parentElement.appendChild(label);
@@ -263,8 +276,8 @@ function addTags() {
  */
 function tagQuery(className) {
   const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
-  const tags_index = notesDB.index('note_tags');
-  console.log(tags_index.getAll(className));
+  const tagsIndex = notesDB.index('note_tags');
+  console.log(tagsIndex.getAll(className));
 }
 
 /**
@@ -508,6 +521,20 @@ function initSearchBar(notes) {
 }
 
 /**
+ * Initializes the tag search functionality.
+ */
+function initTagSearch() {
+  const searchButtons = document.getElementsByName('tag-search');
+  console.log(searchButtons);
+  searchButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      console.log(button.className);
+      tagQuery(button.className);
+    });
+  });
+}
+
+/**
  * @description Add necessary event handlers for the buttons on page
  */
 async function initEventHandler() {
@@ -541,20 +568,6 @@ async function initEventHandler() {
 }
 
 /**
- * Initializes the tag search functionality.
- */
-function initTagSearch() {
-  const searchButtons = document.getElementsByName('tag-search');
-  console.log(searchButtons);
-  searchButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      console.log(button.className);
-      tagQuery(button.className);
-    });
-  });
-}
-
-/**
  * @description call all the functions after the DOM is loaded
  */
 async function init() {
@@ -566,8 +579,8 @@ async function init() {
   initEditor();
 
   console.log('this is pageData.database ', pageData.database);
+  addTagsToDocument(pageData.tags); // PUT IN INIT EVENT HANDLER
   await initEventHandler();
-  // addTagsToDocument(tags); PUT IN INIT EVENT HANDLER
 }
 
 window.addEventListener('DOMContentLoaded', init);

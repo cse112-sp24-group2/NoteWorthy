@@ -1,3 +1,13 @@
+/*
+ * noteStorage.js initializes the main notes database and provides general
+ * CRUD functions
+ *
+ * Functions inside this file:
+ *   - initilizeDB()
+ *   - getNotesFromStorage()
+ *   - getNoteFromStorage()
+ */
+
 const DBNAME = 'NotesDB';
 const OBJECT_STORE_NAME = 'NotesOS';
 let db;

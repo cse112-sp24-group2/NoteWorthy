@@ -1,5 +1,6 @@
 import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
-import { updateURL, addNotesToDocument } from './index.js';
+import { updateURL } from './Routing.js';
+import { addNotesToDocument } from './notesDashboard.js';
 import { toggleClassToArr } from './utility.js';
 
 const template = document.getElementById('dashboard-note-template');

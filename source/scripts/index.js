@@ -1,102 +1,26 @@
-import {
-  initializeDB,
-  getNotesFromStorage,
-  getNoteFromStorage,
-  deleteNoteFromStorage,
-  saveNoteToStorage,
-} from './noteStorage.js';
-import { setEditable, getDate, addNoteToDocument } from './notesEditor.js';
+/*
+ * index.js is the entry point of the website. It initilizes the database, dashboard, sidebar, and note editor.
+ *
+ * Functions inside this file:
+ *   - switchToDashboard()
+ *   - switchToEditor()
+ *   - URLRoutingHandler()
+ *   - initEventHandler()
+ *   - init()
+ */
+import { pageData, updateURL } from './Routing.js';
+import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
+import { editNote, setEditable, addNoteToDocument, initEditor } from './notesEditor.js';
 import { getTagsFromStorage, initializeTagDB } from './tagStorage.js';
-import { parseNoteDate, generateRandomString } from './utility.js';
-
-// Page Data reference to minimize initializeDB calls among other variables
-const pageData = {
-  database: null,
-  noteID: null,
-  editEnabled: false,
-  tagDB: null,
-  tags: [], // use this to keep track of which new tags are being pushed to addtags.
-};
-
-/**
- * @description append the new row to the dashboard in the document
- *
- * @param {Array<Object>} notes containing all the notes in the local storage
- * @returns {void} This function does not return a value.
- */
-export function addNotesToDocument(notes) {
-  const dashboard = document.querySelector('.dashboardItems');
-
-  // Clear out the existing rows in the dashboard
-  const dashboardRow = document.querySelectorAll('dashboard-row');
-  dashboardRow.forEach((row) => {
-    row.remove();
-  });
-
-  // Repopulate dashboard with new notes
-  notes.forEach((note) => {
-    const row = document.createElement('dashboard-row');
-    row.note = note;
-    dashboard.appendChild(row);
-  });
-}
-
-/**
- * @description Adds tags as radio buttons and labels to a tags list element in the document.
- *
- * @param {Object[]} tags - An array of tag objects containing tag names.
- * @returns {void} this function does not return a value.
- */
-export function addTagsToDocument(tags) {
-  const tagList = document.querySelector('.tags-list');
-  console.log(tags);
-  tags.forEach((tag) => {
-    const tagButton = document.createElement('input');
-    tagButton.textContent = tag.tag_name;
-    tagButton.classList.add(tag.tag_name);
-    tagButton.type = 'radio';
-    tagButton.name = 'tag-search';
-    tagList.appendChild(tagButton);
-    const tagLabel = document.createElement('label');
-    tagLabel.htmlFor = tag.tag_name;
-    tagLabel.textContent = tag.tag_name;
-    tagList.appendChild(tagLabel);
-  });
-  const removeTagButton = document.createElement('button');
-  removeTagButton.textContent = 'uncheck all';
-  removeTagButton.type = 'uncheck';
-  removeTagButton.onclick = () => {
-    const tagButtons = document.getElementsByName('tag-search');
-    tagButtons.forEach((tagButton) => {
-      tagButton.checked = false; // eslint-disable-line no-param-reassign
-    });
-  };
-  tagList.appendChild(removeTagButton);
-}
-
-/**
- * @description Show/Hide empty notes on dashboard
- *
- * @param {bool} bool true to hide, false to show
- * @returns {void} this function does not return a value.
- */
-function hideEmptyWojak(bool) {
-  const empty = document.querySelector('.empty-dashboard');
-  empty.classList.toggle('hidden', bool);
-}
-
-/**
- * @description Updates the URL to signify page changing.
- *              Window eventlisteners will automatically detect the change.
- *
- * @param {String} urlString "" for dashboard for "?id={number}" for edit page.
- * @returns {void} this function does not return a value.
- */
-export function updateURL(urlString) {
-  const path = window.location.pathname;
-  window.history.pushState({}, null, path + urlString);
-  window.dispatchEvent(new Event('popstate'));
-}
+import { initTagSearch, addTagsToDocument } from './sidebar.js';
+import { getDate } from './utility.js';
+import {
+  addNotesToDocument,
+  hideEmptyWojak,
+  initTimeColumnSorting,
+  initTitleColumnSorting,
+  initSearchBar,
+} from './notesDashboard.js';
 
 /**
  * @description Switches current view to dashboard
@@ -111,233 +35,6 @@ async function switchToDashboard(dom) {
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
   hideEmptyWojak(notes.length !== 0);
-}
-
-/**
- * @description toggles note editing when called.
- *
- * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
- * @returns {void} this function does not return a value.
- */
-function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
-  const exportButton = document.querySelector('#export-button');
-  const saveButton = document.querySelector('#save-button');
-  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
-  const edit = pageData.editEnabled;
-
-  if (edit) {
-    editButton.firstChild.src = './images/edit-note.svg';
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    editButton.firstChild.src = './images/preview-note.svg';
-    exportButton.classList.remove('disabled-button');
-    exportButton.disabled = false;
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  }
-
-  setEditable(edit);
-}
-
-/**
- * @description Saves the note content and updates the URL with the new note ID.
- *
- * @returns {void} This function does not return a value.
- */
-function saveNote() {
-  const db = pageData.database;
-  const id = pageData.noteID;
-  const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
-  if (title === '') {
-    alert('Please enter a valid title.');
-    return;
-  }
-  const content = document.querySelector('#edit-content').value;
-  const lastModified = getDate();
-  // TODO: Need to add tags
-  const noteObject = {
-    title,
-    lastModified,
-    content,
-  };
-  if (id) noteObject.uuid = id;
-  saveNoteToStorage(db, noteObject);
-  if (!id) {
-    // replace current url with new note id
-    getNotesFromStorage(db).then((res) => {
-      window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
-    });
-  }
-  editNote(false); // Switch to preview mode
-
-  // Disable tag button after clicking save
-  const tagButton = document.querySelector('#tag-button');
-  tagButton.classList.add('disabled-button');
-  tagButton.disabled = true;
-  // Disable tag input after clicking save
-  const tagInput = document.querySelector('#tag-input');
-  tagInput.classList.add('disabled-button');
-  tagInput.disabled = true;
-
-  const tagList = document.querySelectorAll('#tag');
-  for (let i = 0; i < tagList.length; i += 1) {
-    tagList[i].classList.add('disabled-button');
-    tagList[i].disabled = true;
-  }
-
-  //  const tagData = pageData.tagDB;
-  //  // adding tags to the databases
-  //  for(let i = 0; i < pageData.tags.length; i++) {
-  //   // if tag already exists in tagDB, increment the assoc count
-  //   if() {
-
-  //   }
-  //   else {
-  //     // create tag in database with value 1.
-  //   }
-  //  }
-}
-
-/**
- * @description Adds a Tag to note in the Editor page
- *
- * @returns {void} This function does not return a value.
- */
-function addTags() {
-  const id = pageData.noteID;
-  // const db = pageData.database;
-  const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
-  if (tagname === '') {
-    alert('Please enter a valid tag name');
-  } else {
-    // if existing note
-    if (id) {
-      // access note
-      const note = getNoteFromStorage(id);
-      const tags = note.tags;
-      let contains = false;
-      // check to see if note is already tagged
-      for (let i = 0; i < tags.length; i += 1) {
-        if (tags[i] === tagname) {
-          alert('Note already tagged with'); // + tagname
-          contains = true;
-        }
-      }
-      if (!contains) {
-        note.tags.push(tagname);
-        // push HTML element
-        const parentElement = document.getElementById('notes-tags');
-        const newCheckBox = document.createElement('input');
-        const uniqueID = generateRandomString(8); // Unique tag identifier
-        newCheckBox.type = 'checkbox';
-        newCheckBox.id = uniqueID;
-        newCheckBox.value = 'something <br/>';
-        newCheckBox.name = uniqueID;
-        parentElement.appendChild(newCheckBox);
-
-        const label = document.createElement('label');
-        label.htmlFor = uniqueID;
-        label.appendChild(document.createTextNode(tagname));
-        parentElement.appendChild(label);
-
-        pageData.tags.push(tagname);
-        // adding to database
-        // db.transaction('NotesOS', 'readwrite').objectStore('note_tags');
-        // objectStore.add({tagname, note});
-      }
-    }
-    if (!id) {
-      // notes.tags.push(tagname);
-      // push HTML element
-      const parentElement = document.getElementById('notes-tags');
-      const newCheckBox = document.createElement('input');
-      newCheckBox.type = 'checkbox';
-      newCheckBox.id = 'tag';
-      newCheckBox.value = 'something <br/>';
-      newCheckBox.name = 'tag43'; // replace with unique tag identifier
-      parentElement.appendChild(newCheckBox);
-
-      const label = document.createElement('label');
-      label.htmlFor = 'tag43'; // replace with unique tag identifier
-      label.appendChild(document.createTextNode(tagname));
-      parentElement.appendChild(label);
-
-      pageData.tags.push(tagname);
-    }
-
-    // if not contained in tag database, then push to that as well.
-  }
-}
-// const tagButton = document.querySelector('#tag-button');
-// const tagInput = document.querySelector('#tag-input');
-// const tagList = document.querySelectorAll('#tag');
-// saveButton.classList.add('disabled-button');
-// saveButton.disabled = true;
-// tagButton.classList.add('disabled-button');
-// tagButton.disabled = true;
-// tagInput.classList.add('disabled-button');
-// tagInput.disabled = true;
-// for(let i = 0; i < tagList.length; i++ ){
-//   tagList[i].classList.add('disabled-button');
-//   tagList[i].disabled = true;
-// }
-
-/**
- * @description Queries the notes database for notes with a specific tag.
- *
- * @param {string} className - The tag name to query for.
- * @returns {Array<Object>} - An array of note objects with the specified tag.
- */
-function tagQuery(className) {
-  const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
-  const tagsIndex = notesDB.index('note_tags');
-  console.log(tagsIndex.getAll(className));
-}
-
-/**
- * @description Deletes the note
- *
- * @param {Number} toDelete OPTIONAL. Do not pass a ID if you are currently in
- *                                    the editor page, ID will be handled automatically.
- *                                    Only pass ID when deleting note from dashboard
- * @returns {void} This function does not return a value.
- */
-function deleteNote(toDelete) {
-  const id = toDelete || pageData.noteID;
-  const db = pageData.database;
-
-  if (!id) return;
-  if (!window.confirm('Are you sure you want to delete')) return;
-
-  deleteNoteFromStorage(db, { uuid: id });
-
-  // This means we are deleting from the editor page, so we should return
-  // to the dashboard
-  if (!toDelete) updateURL('');
-}
-
-/**
- * @description Exports the note as a txt file
- *
- * @returns {void} This function does not return a value.
- */
-async function exportNote() {
-  const id = pageData.noteID;
-  const db = pageData.database;
-  const note = await getNoteFromStorage(db, id);
-  const blob = new Blob([note.content], { type: 'text/plain' });
-  const href = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = href;
-  link.download = `${note.title}.txt`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(href);
 }
 
 /**
@@ -399,178 +96,20 @@ function URLRoutingHandler() {
 }
 
 /**
- * @description Sort the notes by last modified date
- *
- * @param {Array<Object>} notes - Array containing all the notes in local storage
- * @param {String} sortType - The type of sort, either 'asc' for ascending or 'desc' for descending
- * @returns {Array<Object>} Sorted array of notes
- */
-function sortNotesByTime(notes, sortType) {
-  const sortOrder = sortType === 'asc' ? 1 : -1;
-
-  return notes.sort((note1, note2) => {
-    const date1 = parseNoteDate(note1.lastModified);
-    const date2 = parseNoteDate(note2.lastModified);
-
-    return (date1 - date2) * sortOrder;
-  });
-}
-
-/**
- * @description sort the notes by title
- *
- * @param {Array<Object>} notes containing all the notes in the local storage
- * @param {String} sortType the type of sort, either ascending or descending
- * @returns {Array<Object>} sortedNotes
- */
-function sortNotesByTitle(notes, sortType) {
-  return notes.sort((note1, note2) => {
-    if (sortType === 'asc') {
-      return note1.title.localeCompare(note2.title);
-    }
-    return note2.title.localeCompare(note1.title);
-  });
-}
-
-/**
- * @description Return the notes that match the query string. Case insensitive.
- *
- * @param {Array<Object>} notes Array containing all the notes in local storage
- * @param {String} query The search string to filter the notes on
- * @returns {Array<Object>} Filtered notes array
- */
-function filterNotesByQuery(notes, query) {
-  const queryString = query.toLowerCase().replace(/\s+/g, ' ').trim();
-  return notes.filter(
-    (note) =>
-      note.title.toLowerCase().includes(queryString) ||
-      note.lastModified.replace('at', '').toLowerCase().includes(queryString)
-  );
-}
-
-/**
- * @description Initializes the button and functionality of the editor page.
+ * @description Initializes the necessary components for Sidebar and Notes
+ *              dashboard
  *
  * @returns {void} This function does not return a value.
- */
-async function initEditor() {
-  const deleteButton = document.querySelector('#delete-button');
-  const saveButton = document.querySelector('#save-button');
-  const backButton = document.querySelector('#back-button');
-  const editButton = document.querySelector('#change-view-button');
-  const tagButton = document.querySelector('#tag-button');
-  const exportButton = document.querySelector('#export-button');
-  const editContent = document.querySelector('#notes-content');
-
-  editContent.addEventListener('click', () => {
-    editNote(true);
-  });
-
-  deleteButton.addEventListener('click', () => {
-    deleteNote();
-  });
-
-  saveButton.addEventListener('click', () => {
-    saveNote();
-  });
-
-  backButton.addEventListener('click', () => {
-    updateURL('');
-  });
-
-  editButton.addEventListener('click', () => {
-    editNote();
-  });
-
-  tagButton.addEventListener('click', () => {
-    addTags();
-  });
-
-  exportButton.addEventListener('click', () => {
-    exportNote();
-  });
-
-  if (pageData.editEnabled == null || !pageData.editEnabled) {
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    exportButton.classList.remove('disabled-button');
-    exportButton.disabled = false;
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  }
-}
-
-/**
- * Initializes the event handler for sorting notes by time column.
- * @param {Object[]} notes - An array of note objects.
- */
-function initTimeColumnSorting(notes) {
-  const timeColSortArrow = document.querySelector('.timeColSortOrder');
-  const timeCol = document.querySelector('.timeCol');
-  let timeSortCount = 0;
-
-  timeCol.addEventListener('click', async () => {
-    const direction = timeSortCount % 2 === 0 ? 'asc' : 'desc';
-    timeColSortArrow.setAttribute('direction', '');
-    timeColSortArrow.setAttribute('direction', direction);
-    timeSortCount += 1;
-    addNotesToDocument(sortNotesByTime(notes, direction));
-  });
-}
-
-/**
- * Initializes the event handler for sorting notes by title column.
- * @param {Object[]} notes - An array of note objects.
- */
-function initTitleColumnSorting(notes) {
-  const titleColSortArrow = document.querySelector('.titleColSortOrder');
-  const titleCol = document.querySelector('.titleCol');
-  let titleSortCount = 0;
-
-  titleCol.addEventListener('click', async () => {
-    const direction = titleSortCount % 2 === 0 ? 'asc' : 'desc';
-    titleColSortArrow.setAttribute('direction', '');
-    titleColSortArrow.setAttribute('direction', direction);
-    titleSortCount += 1;
-    addNotesToDocument(sortNotesByTitle(notes, direction));
-  });
-}
-
-/**
- * Initializes the event handler for filtering notes by search query.
- * @param {Object[]} notes - An array of note objects.
- */
-function initSearchBar(notes) {
-  const searchBar = document.querySelector('.searchBar');
-  searchBar.addEventListener('input', (event) => {
-    console.log(event.target.value);
-    addNotesToDocument(filterNotesByQuery(notes, event.target.value));
-  });
-}
-
-/**
- * Initializes the tag search functionality.
- */
-function initTagSearch() {
-  const searchButtons = document.getElementsByName('tag-search');
-  console.log(searchButtons);
-  searchButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      console.log(button.className);
-      tagQuery(button.className);
-    });
-  });
-}
-
-/**
- * @description Add necessary event handlers for the buttons on page
  */
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
+
+  addTagsToDocument(pageData.tags);
+  initTimeColumnSorting(notes);
+  initTitleColumnSorting(notes);
+  initSearchBar(notes);
+  initTagSearch();
 
   const button = document.querySelector('#newNote');
   button.addEventListener('click', async () => {
@@ -583,11 +122,6 @@ async function initEventHandler() {
     updateURL('');
   });
 
-  initTimeColumnSorting(notes);
-  initTitleColumnSorting(notes);
-  initSearchBar(notes);
-  initTagSearch();
-
   let currURL = window.location.search;
   window.addEventListener('popstate', () => {
     const newURL = window.location.search;
@@ -599,7 +133,14 @@ async function initEventHandler() {
 }
 
 /**
- * @description call all the functions after the DOM is loaded
+ * @description Main INIT function. Is called when dom is loaded.
+ *              Initializes:
+ *                Sidebar
+ *                Notes Dashboard
+ *                Note Editor
+ *                Database ( connects if one is existing )
+ 
+ * @returns {void} This function does not return a value.
  */
 async function init() {
   console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
@@ -608,10 +149,7 @@ async function init() {
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
   URLRoutingHandler();
   initEditor();
-
-  console.log('this is pageData.database ', pageData.database);
-  addTagsToDocument(pageData.tags); // PUT IN INIT EVENT HANDLER
-  await initEventHandler();
+  initEventHandler();
 }
 
 window.addEventListener('DOMContentLoaded', init);

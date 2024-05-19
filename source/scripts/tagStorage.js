@@ -7,6 +7,7 @@
  *   - saveTagToStorage()
  *   - deleteNoteFromStorage()
  */
+import { pageData } from './Routing.js';
 
 let tagDB;
 const TAG_STORE_NAME = 'tags';
@@ -133,4 +134,16 @@ export function deleteNoteFromStorage(database, tag) {
       reject(new Error(`Error deleting tag with id ${tag.id} from storage`));
     };
   });
+}
+
+/**
+ * @description Queries the notes database for notes with a specific tag.
+ *
+ * @param {string} className - The tag name to query for.
+ * @returns {Array<Object>} - An array of note objects with the specified tag.
+ */
+export function tagQuery(className) {
+  const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
+  const tagsIndex = notesDB.index('note_tags');
+  console.log(tagsIndex.getAll(className));
 }

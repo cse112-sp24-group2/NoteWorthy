@@ -5,7 +5,7 @@
  *   - addTagsToDocument()
  *   - initTagSearch()
  */
-import { tagQuery } from './noteStorage.js';
+import { tagQuery } from './tagStorage.js';
 
 /**
  * @description Adds tags as radio buttons and labels to a tags list element in the document.

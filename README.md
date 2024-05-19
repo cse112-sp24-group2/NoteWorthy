@@ -6,7 +6,7 @@
 
 ## Short description of project:
 
-Personal note taking app that enables users to share their notes with other users while maintaining of their own notes.
+Personal note-taking app that enables users to store, import, and export notes locally while keeping them in an organized manner.
 
 ## Important File(path)s
 
@@ -14,6 +14,8 @@ Personal note taking app that enables users to share their notes with other user
 - Workplans: [`admin/workplans`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/admin/workplans)
 - ADR's: [`specs/adrs`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/specs/adrs)
 - UML Diagrams: [`specs/Architecture-UML`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/specs/Architecture-UML)
+- HTML Entry point: [`source/index.html`](https://github.com/cse112-sp24-group2/NoteWorthy/blob/main/source/index.html)
+- Script Entry point: [`source/scripts/index.js`](https://github.com/cse112-sp24-group2/NoteWorthy/blob/main/source/scripts/index.js)
 
 ## Important Links
 

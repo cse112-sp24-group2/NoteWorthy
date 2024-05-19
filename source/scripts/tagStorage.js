@@ -1,3 +1,13 @@
+/*
+ * tagStorage.js provides general tags functionality and tags database management
+ *
+ * Functions inside this file:
+ *   - initializeTagDB()
+ *   - getTagsFromStorage()
+ *   - saveTagToStorage()
+ *   - deleteNoteFromStorage()
+ */
+
 let tagDB;
 const TAG_STORE_NAME = 'tags';
 const TAG_OBJECT = {

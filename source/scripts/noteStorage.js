@@ -1,3 +1,12 @@
+/*
+ * noteStorage.js initializes the main notes database and provides general
+ * CRUD functions
+ *
+ * Functions inside this file:
+ *   - exportNote()
+ *   - deleteNote()
+ */
+
 const DBNAME = 'NotesDB';
 const OBJECT_STORE_NAME = 'NotesOS';
 let db;
@@ -130,4 +139,16 @@ export function deleteNoteFromStorage(database, note) {
       reject(new Error(`Error deleting note with id ${note.uuid} from storage`));
     };
   });
+}
+
+/**
+ * @description Queries the notes database for notes with a specific tag.
+ *
+ * @param {string} className - The tag name to query for.
+ * @returns {Array<Object>} - An array of note objects with the specified tag.
+ */
+export function tagQuery(className) {
+  const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
+  const tagsIndex = notesDB.index('note_tags');
+  console.log(tagsIndex.getAll(className));
 }

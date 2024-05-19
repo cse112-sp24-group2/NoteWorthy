@@ -1,3 +1,14 @@
+/*
+ * utility.js provides utility functions that are called from multiple files and provide
+ * general purpose functionality
+ *
+ * Functions inside this file:
+ *   - toggleClassToArr()
+ *   - parseNoteDate()
+ *   - generateRandomString()
+ *   - getDate()
+ */
+
 /**
  * Toggles a specific class for every HTML element in an array
  * @param { Array<HTMLElement> } arr - arr of elements to use
@@ -42,4 +53,20 @@ export function generateRandomString(length) {
     str += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
   }
   return str;
+}
+
+/**
+ * @description get the current date and time for the dashboard
+ * @returns {string} current date in format of mm/dd/yyyy at XX:XX XM
+ */
+export function getDate() {
+  const date = new Date();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const time = date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return `${month}/${day}/${year} at ${time}`;
 }

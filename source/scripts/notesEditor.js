@@ -65,17 +65,18 @@ export async function addNoteToDocument(note) {
   // append the tags
   const tags = note.tags;
   console.log(note);
-  // for (let i = 0; i < tags.length; i += 1) {
-  //   tag.type = 'checkbox';
-  //   tag.id = 'tag';
-  //   tag.name = tags[i];
-  //   intPutArea.appendChild(tag);
+  for (let i = 0; i < tags.length; i += 1) {
+    tag.type = 'checkbox';
+    tag.id = 'tag';
+    tag.name = tags[i];
+    tag.checked = true;
+    intPutArea.appendChild(tag);
 
-  //   const label = document.createElement('label');
-  //   label.htmlFor = tags[i]; // replace with unique tag identifier
-  //   label.appendChild(document.createTextNode(tags[i]));
-  //   intPutArea.appendChild(label);
-  // }
+    const label = document.createElement('label');
+    label.htmlFor = tags[i]; // replace with unique tag identifier
+    label.appendChild(document.createTextNode(tags[i]));
+    intPutArea.appendChild(label);
+  }
 }
 
 /**
@@ -129,17 +130,24 @@ export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
   const tagDB = pageData.tagDB;
-  let tags;
-  if(id) {
-    // const note = getNoteFromStorage(id);
-    // console.log(note);
-    // const existingTags = note.tags;
-    // console.log(existingTags);
-    // tags = existingTags.concat(pageData.tags); 
-    tags = pageData.tags;
-  }
-  if(!id) {
-    tags = pageData.tags;
+  const tags = [];
+  // if(id) {
+  //   // const note = getNoteFromStorage(id);
+  //   // console.log(note);
+  //   // const existingTags = note.tags;
+  //   // console.log(existingTags);
+  //   // tags = existingTags.concat(pageData.tags); 
+  //   tags = pageData.tags;
+  // }
+  // if(!id) {
+  //   tags = pageData.tags;
+  // }
+
+  var elements = document.getElementById("notes-tags").elements;
+
+  for (var i = 0, element; element = elements[i++];) {
+      if (element.type === "checkbox" && element.checked === true)
+        tags.push(element.name);
   }
 
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
@@ -199,17 +207,12 @@ function addTags() {
   } else {
     // if existing note
     if (id) {
+      // console.log()
       // access note
       const note = getNoteFromStorage(id);
       const tags = note.tags;
-      let contains = false;
       // check to see if note is already tagged
-      for (let i = 0; i < tags.length; i += 1) {
-        if (tags[i] === tagname) {
-          alert('Note already tagged with'); // + tagname
-          contains = true;
-        }
-      }
+      const contains = tags.includes(tagname);
       if (!contains) {
         note.tags.push(tagname);
         // push HTML element
@@ -218,8 +221,9 @@ function addTags() {
         const uniqueID = generateRandomString(8); // Unique tag identifier
         newCheckBox.type = 'checkbox';
         newCheckBox.id = uniqueID;
-        newCheckBox.value = 'something <br/>';
-        newCheckBox.name = uniqueID;
+        // newCheckBox.value = 'something <br/>';
+        newCheckBox.checked = true;
+        newCheckBox.name = tagname;
         parentElement.appendChild(newCheckBox);
 
         const label = document.createElement('label');
@@ -237,13 +241,18 @@ function addTags() {
     if (!id) {
       // notes.tags.push(tagname);
       // push HTML element
+
+      // check html elements to see if tag is already there.
+
+
       const parentElement = document.getElementById('notes-tags');
       const newCheckBox = document.createElement('input');
       const uniqueID = generateRandomString(8); // Unique tag identifier
       newCheckBox.type = 'checkbox';
       newCheckBox.id = 'tag';
       newCheckBox.value = 'something <br/>';
-      newCheckBox.name = uniqueID; // replace with unique tag identifier
+      newCheckBox.checked = true;
+      newCheckBox.name = tagname; // replace with unique tag identifier
       parentElement.appendChild(newCheckBox);
 
       const label = document.createElement('label');

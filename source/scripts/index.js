@@ -92,6 +92,9 @@ function URLRoutingHandler() {
 
   if (id == null) {
     switchToDashboard(dom);
+    // const tags = document.getElementById('notes-tags');
+    // tags.remove();
+    document.getElementById('notes-tags').innerHTML = "";
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }

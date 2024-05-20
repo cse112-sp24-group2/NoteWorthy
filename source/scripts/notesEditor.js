@@ -15,6 +15,7 @@ import markdown from './markdown.js';
 import { saveNoteToStorage, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { generateRandomString, getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
+import { saveTagToStorage} from './tagStorage.js'
 
 /**
  * @description Switches between edit/view modes on the page
@@ -87,6 +88,8 @@ export function editNote(bool) {
   const editButton = document.querySelector('#change-view-button');
   const exportButton = document.querySelector('#export-button');
   const saveButton = document.querySelector('#save-button');
+  const tagButton = document.querySelector('#tag-button');
+  const tagInput = document.querySelector('#tag-input');
   pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
   const edit = pageData.editEnabled;
 
@@ -96,12 +99,22 @@ export function editNote(bool) {
     exportButton.disabled = true;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
+    tagButton.classList.remove('disabled-button');
+    tagButton.disabled = false;
+    tagInput.classList.remove('disabled-button');
+    tagInput.disabled = false;
   } else {
     editButton.firstChild.src = './images/preview-note.svg';
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
+    // Disable tag button after clicking save
+    tagButton.classList.add('disabled-button');
+    tagButton.disabled = true;
+    // Disable tag input after clicking save
+    tagInput.classList.add('disabled-button');
+    tagInput.disabled = true;
   }
 
   setEditable(edit);
@@ -115,6 +128,20 @@ export function editNote(bool) {
 export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
+  const tagDB = pageData.tagDB;
+  let tags;
+  if(id) {
+    // const note = getNoteFromStorage(id);
+    // console.log(note);
+    // const existingTags = note.tags;
+    // console.log(existingTags);
+    // tags = existingTags.concat(pageData.tags); 
+    tags = pageData.tags;
+  }
+  if(!id) {
+    tags = pageData.tags;
+  }
+
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
   if (title === '') {
     alert('Please enter a valid title.');
@@ -126,6 +153,7 @@ export function saveNote() {
   const noteObject = {
     title,
     lastModified,
+    tags,
     content,
   };
   if (id) noteObject.uuid = id;
@@ -138,31 +166,23 @@ export function saveNote() {
   }
   editNote(false); // Switch to preview mode
 
-  // Disable tag button after clicking save
-  const tagButton = document.querySelector('#tag-button');
-  tagButton.classList.add('disabled-button');
-  tagButton.disabled = true;
-  // Disable tag input after clicking save
-  const tagInput = document.querySelector('#tag-input');
-  tagInput.classList.add('disabled-button');
-  tagInput.disabled = true;
-
   const tagList = document.querySelectorAll('#tag');
   for (let i = 0; i < tagList.length; i += 1) {
     tagList[i].classList.add('disabled-button');
     tagList[i].disabled = true;
   }
 
-  //  const tagData = pageData.tagDB;
-  //  // adding tags to the databases
-  //  for(let i = 0; i < pageData.tags.length; i++) {
-  //   // if tag already exists in tagDB, increment the assoc count
-  //   if() {
+  for(let i = 0; i < tags.length; i++) {
+    const TAG_OBJECT = {
+      tag_name : tags[i],
+      num_notes : 1,
+    };
+    saveTagToStorage(tagDB, TAG_OBJECT);
 
-  //   }
-  //   else {
-  //     // create tag in database with value 1.
-  //   }
+  }
+  //  // adding tags to the databases
+  // // instead of using pageData.tagDB, could just grab this list from actual index
+      // so like objectStore.get(tagname)
   //  }
 }
 
@@ -208,6 +228,7 @@ function addTags() {
         label.appendChild(document.createTextNode(tagname));
         parentElement.appendChild(label);
 
+        // storing tag info to be used in saveNote()
         pageData.tags.push(tagname);
         // adding to database
         // db.transaction('NotesOS', 'readwrite').objectStore('note_tags');

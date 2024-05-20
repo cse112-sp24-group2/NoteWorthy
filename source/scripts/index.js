@@ -78,8 +78,10 @@ function URLRoutingHandler() {
 
   if (id === '9999' || id == null) {
     pageData.noteID = null;
+    pageData.tags = [];
   } else {
     pageData.noteID = parseInt(id, 10);
+    // pageData.tags = 
   }
 
   // So that child functions can hide/unhide dashboard or editor
@@ -146,7 +148,7 @@ async function init() {
   console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
-  pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  // pageData.tags = await getTagsFromStorage(pageData.tagDB);
   URLRoutingHandler();
   initEditor();
   initEventHandler();

@@ -65,17 +65,17 @@ export async function addNoteToDocument(note) {
   // append the tags
   const tags = note.tags;
   console.log(note);
-  for (let i = 0; i < tags.length; i += 1) {
-    tag.type = 'checkbox';
-    tag.id = 'tag';
-    tag.name = tags[i];
-    intPutArea.appendChild(tag);
+  // for (let i = 0; i < tags.length; i += 1) {
+  //   tag.type = 'checkbox';
+  //   tag.id = 'tag';
+  //   tag.name = tags[i];
+  //   intPutArea.appendChild(tag);
 
-    const label = document.createElement('label');
-    label.htmlFor = tags[i]; // replace with unique tag identifier
-    label.appendChild(document.createTextNode(tags[i]));
-    intPutArea.appendChild(label);
-  }
+  //   const label = document.createElement('label');
+  //   label.htmlFor = tags[i]; // replace with unique tag identifier
+  //   label.appendChild(document.createTextNode(tags[i]));
+  //   intPutArea.appendChild(label);
+  // }
 }
 
 /**
@@ -178,7 +178,6 @@ export function saveNote() {
       num_notes : 1,
     };
     saveTagToStorage(tagDB, TAG_OBJECT);
-
   }
   //  // adding tags to the databases
   // // instead of using pageData.tagDB, could just grab this list from actual index
@@ -240,14 +239,15 @@ function addTags() {
       // push HTML element
       const parentElement = document.getElementById('notes-tags');
       const newCheckBox = document.createElement('input');
+      const uniqueID = generateRandomString(8); // Unique tag identifier
       newCheckBox.type = 'checkbox';
       newCheckBox.id = 'tag';
       newCheckBox.value = 'something <br/>';
-      newCheckBox.name = 'tag43'; // replace with unique tag identifier
+      newCheckBox.name = uniqueID; // replace with unique tag identifier
       parentElement.appendChild(newCheckBox);
 
       const label = document.createElement('label');
-      label.htmlFor = 'tag43'; // replace with unique tag identifier
+      label.htmlFor = uniqueID; // replace with unique tag identifier
       label.appendChild(document.createTextNode(tagname));
       parentElement.appendChild(label);
 
@@ -256,19 +256,6 @@ function addTags() {
 
     // if not contained in tag database, then push to that as well.
   }
-  // const tagButton = document.querySelector('#tag-button');
-  // const tagInput = document.querySelector('#tag-input');
-  // const tagList = document.querySelectorAll('#tag');
-  // saveButton.classList.add('disabled-button');
-  // saveButton.disabled = true;
-  // tagButton.classList.add('disabled-button');
-  // tagButton.disabled = true;
-  // tagInput.classList.add('disabled-button');
-  // tagInput.disabled = true;
-  // for(let i = 0; i < tagList.length; i++ ){
-  //   tagList[i].classList.add('disabled-button');
-  //   tagList[i].disabled = true;
-  // }
 }
 
 /**

@@ -56,7 +56,6 @@ class dashboardRow extends HTMLElement {
     const newTitle = document.createTextNode(note.title);
     const newModified = document.createTextNode(note.lastModified);
     const newContent = note.content;
-    
     const noteContent = markdown(newContent);
 
     this.dom.title.replaceChildren(newTitle);

@@ -113,6 +113,38 @@ export function editNote(bool) {
 }
 
 /**
+ * @description Imports a note from a file and writes its content to the
+ * editor, setting the title and last modified date.
+ *
+ * @returns {void} This function does not return a value.
+ */
+function importNote() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt';
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = async () => {
+      const content = reader.result;
+      const title = file.name.replace('.txt', '');
+      const lastModified = getDate();
+      const noteObject = {
+        title,
+        lastModified,
+        content,
+      };
+      await addNoteToDocument(noteObject);
+    };
+  };
+  // Enable editing mode
+  setEditable(true);
+}
+
+/**
  * @description Saves the note content and updates the URL with the new note ID.
  *
  * @returns {void} This function does not return a value.
@@ -317,36 +349,4 @@ export async function initEditor() {
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
   }
-}
-
-/**
- * @description Imports a note from a file and writes its content to the 
- * editor, setting the title and last modified date.
- *
- * @returns {void} This function does not return a value.
- */
-function importNote() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.txt';
-  input.click();
-
-  input.onchange = async () => {
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = async () => {
-      const content = reader.result;
-      const title = file.name.replace('.txt', '');
-      const lastModified = getDate();
-      const noteObject = {
-        title,
-        lastModified,
-        content,
-      };
-      await addNoteToDocument(noteObject);
-    };
-  };
-  // Enable editing mode
-  setEditable(true);
 }

@@ -15,29 +15,24 @@ import { tagQuery } from './tagStorage.js';
  */
 export function addTagsToDocument(tags) {
   const tagList = document.querySelector('.tags-list');
-  console.log(tags);
   tags.forEach((tag) => {
     const tagButton = document.createElement('input');
-    tagButton.textContent = tag.tag_name;
-    tagButton.classList.add(tag.tag_name);
-    tagButton.type = 'radio';
-    tagButton.name = 'tag-search';
-    tagList.appendChild(tagButton);
+    tagButton.classList.add('tags-input');
+    tagButton.type = 'checkbox';
+    tagButton.id = `tag-${tag.tag_name}`;
+    tagButton.name = tag.tag_name;
+
+    const tagSpan = document.createElement('span');
+    tagSpan.innerText = tag.tag_name;
+    tagSpan.classList.add('tags-span');
+
     const tagLabel = document.createElement('label');
-    tagLabel.htmlFor = tag.tag_name;
-    tagLabel.textContent = tag.tag_name;
+    tagLabel.htmlFor = `tag-${tag.tag_name}`;
+    tagLabel.classList.add('tags-label');
+    tagLabel.appendChild(tagButton);
+    tagLabel.appendChild(tagSpan);
     tagList.appendChild(tagLabel);
   });
-  const removeTagButton = document.createElement('button');
-  removeTagButton.textContent = 'uncheck all';
-  removeTagButton.type = 'uncheck';
-  removeTagButton.onclick = () => {
-    const tagButtons = document.getElementsByName('tag-search');
-    tagButtons.forEach((tagButton) => {
-      tagButton.checked = false; // eslint-disable-line no-param-reassign
-    });
-  };
-  tagList.appendChild(removeTagButton);
 }
 
 /**

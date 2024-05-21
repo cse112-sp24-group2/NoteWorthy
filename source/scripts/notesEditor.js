@@ -86,6 +86,7 @@ export async function addNoteToDocument(note) {
 export function editNote(bool) {
   const editButton = document.querySelector('#change-view-button');
   const exportButton = document.querySelector('#export-button');
+  const importButton = document.querySelector('#import-button');
   const saveButton = document.querySelector('#save-button');
   pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
   const edit = pageData.editEnabled;
@@ -94,12 +95,16 @@ export function editNote(bool) {
     editButton.firstChild.src = './images/edit-note.svg';
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
+    importButton.classList.add('disabled-button');
+    importButton.disabled = true;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
   } else {
     editButton.firstChild.src = './images/preview-note.svg';
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
+    importButton.classList.remove('disabled-button');
+    importButton.disabled = false;
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
   }
@@ -262,6 +267,7 @@ export async function initEditor() {
   const editButton = document.querySelector('#change-view-button');
   const tagButton = document.querySelector('#tag-button');
   const exportButton = document.querySelector('#export-button');
+  const importButton = document.querySelector('#import-button');
   const editContent = document.querySelector('#notes-content');
 
   editContent.addEventListener('click', () => {
@@ -292,15 +298,55 @@ export async function initEditor() {
     exportNote();
   });
 
+  importButton.addEventListener('click', () => {
+    importNote();
+  });
+
   if (pageData.editEnabled == null || !pageData.editEnabled) {
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
+    importButton.classList.add('disabled-button');
+    importButton.disabled = true;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
   } else {
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
+    importButton.classList.remove('disabled-button');
+    importButton.disabled = false;
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
   }
+}
+
+/**
+ * @description Imports a note from a file and writes its content to the 
+ * editor, setting the title and last modified date.
+ *
+ * @returns {void} This function does not return a value.
+ */
+function importNote() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt';
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = async () => {
+      const content = reader.result;
+      const title = file.name.replace('.txt', '');
+      const lastModified = getDate();
+      const noteObject = {
+        title,
+        lastModified,
+        content,
+      };
+      await addNoteToDocument(noteObject);
+    };
+  };
+  // Enable editing mode
+  setEditable(true);
 }

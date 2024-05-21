@@ -115,7 +115,6 @@ main {
 }
 
 .tags-list {
-  list-style-type: none;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -124,17 +123,34 @@ main {
   align-items: center;
 }
 
-.tags-list > li {
+.tags-label {
+  width: 100%;
+}
+
+.tags-input {
+  appearance: none;
+}
+
+.tags-span {
   display: flex;
-  background: red;
   justify-content: space-between;
   padding: 0.8rem 1.4rem;
   font-size: 1rem;
-  background: var(--white);
   border-radius: 0.4rem;
   font-weight: 700;
   width: 100%;
+  background: var(--white);
   cursor: pointer;
+  transition: 0.3s
+}
+
+.tags-span:hover {
+  background: lightgray;
+}
+
+.tags-list .tags-label input:checked + .tags-span {
+  background: var(--dark-purple);
+  color: var(--white);
 }
 
 /* "View all" */

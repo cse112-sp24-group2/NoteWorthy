@@ -15,7 +15,7 @@ import markdown from './markdown.js';
 import { saveNoteToStorage, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { generateRandomString, getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { saveTagToStorage} from './tagStorage.js'
+import { saveTagToStorage } from './tagStorage.js';
 
 /**
  * @description Switches between edit/view modes on the page
@@ -30,9 +30,9 @@ export function setEditable(editable) {
     viewContent.innerHTML = markdown(editContent.value);
     viewContent.hidden = false;
     editContent.hidden = true;
-    titleInput.setAttribute('disabled', true);
+    titleInput.setAttribute('disabled', false);
     saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
+    saveButton.disabled = false;
   } else {
     editContent.hidden = false;
     viewContent.hidden = true;
@@ -52,7 +52,6 @@ export async function addNoteToDocument(note) {
   const lastModified = document.querySelector('#notes-last-modified');
   const content = document.querySelector('#edit-content');
   const intPutArea = document.getElementById('notes-tags');
-  const tag = document.createElement('input');
 
   // empty the html items
   // populate html with notes data
@@ -62,16 +61,19 @@ export async function addNoteToDocument(note) {
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
   content.value = `${note.content}`;
 
+  const tagInput = document.querySelector('#tag-input');
+  tagInput.setAttribute('placeholder', 'Add tag...');
+
   // append the tags
   const tags = note.tags;
-  console.log(note);
   for (let i = 0; i < tags.length; i += 1) {
-    tag.type = 'checkbox';
-    tag.id = 'tag';
-    tag.name = tags[i];
-    tag.checked = true;
-    intPutArea.appendChild(tag);
-
+    const tagCheckbox = document.createElement('input');
+    console.log(tags[i]);
+    tagCheckbox.type = 'checkbox';
+    tagCheckbox.className = 'tag';
+    tagCheckbox.name = tags[i];
+    tagCheckbox.checked = true;
+    intPutArea.appendChild(tagCheckbox);
     const label = document.createElement('label');
     label.htmlFor = tags[i]; // replace with unique tag identifier
     label.appendChild(document.createTextNode(tags[i]));
@@ -91,31 +93,40 @@ export function editNote(bool) {
   const saveButton = document.querySelector('#save-button');
   const tagButton = document.querySelector('#tag-button');
   const tagInput = document.querySelector('#tag-input');
+  const tagCheckBoxes = document.querySelectorAll('input[type=checkbox]');
   pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
   const edit = pageData.editEnabled;
 
   if (edit) {
     editButton.firstChild.src = './images/edit-note.svg';
     exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
+    exportButton.disabled = false;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
     tagButton.classList.remove('disabled-button');
     tagButton.disabled = false;
     tagInput.classList.remove('disabled-button');
     tagInput.disabled = false;
+    tagCheckBoxes.forEach((tag) => {
+      tag.classList.remove('disabled-button');
+      tag.setAttribute('disabled', false);
+    });
   } else {
     editButton.firstChild.src = './images/preview-note.svg';
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
     saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
+    saveButton.disabled = false;
     // Disable tag button after clicking save
     tagButton.classList.add('disabled-button');
-    tagButton.disabled = true;
+    tagButton.disabled = false;
     // Disable tag input after clicking save
     tagInput.classList.add('disabled-button');
-    tagInput.disabled = true;
+    tagInput.disabled = false;
+    tagCheckBoxes.forEach((tag) => {
+      tag.classList.add('disabled-button');
+      // tag.setAttribute('disabled', true);
+    });
   }
 
   setEditable(edit);
@@ -136,19 +147,27 @@ export function saveNote() {
   //   // console.log(note);
   //   // const existingTags = note.tags;
   //   // console.log(existingTags);
-  //   // tags = existingTags.concat(pageData.tags); 
+  //   // tags = existingTags.concat(pageData.tags);
   //   tags = pageData.tags;
   // }
   // if(!id) {
   //   tags = pageData.tags;
   // }
 
-  var elements = document.getElementById("notes-tags").elements;
-
-  for (var i = 0, element; element = elements[i++];) {
-      if (element.type === "checkbox" && element.checked === true)
-        tags.push(element.name);
+  const elements = document.getElementById('notes-tags').elements;
+  for (let i = 0; i < elements.length; i+= 1) {
+    const currElement = elements[i];
+    if (currElement.type === 'checkbox' && currElement.checked === true) {
+      console.log(currElement.name);
+      tags.push(currElement.name);
+    }
   }
+  // for (let i = 0, element; (element = elements[i++]); ) {
+  //   if (element.type === 'checkbox' && element.checked === true) {
+  //     console.log(element.name);
+  //     tags.push(element.name);
+  //   }
+  // }
 
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
   if (title === '') {
@@ -164,6 +183,7 @@ export function saveNote() {
     tags,
     content,
   };
+  noteObject.tags = tags;
   if (id) noteObject.uuid = id;
   saveNoteToStorage(db, noteObject);
   if (!id) {
@@ -177,19 +197,19 @@ export function saveNote() {
   const tagList = document.querySelectorAll('#tag');
   for (let i = 0; i < tagList.length; i += 1) {
     tagList[i].classList.add('disabled-button');
-    tagList[i].disabled = true;
+    tagList[i].disabled = false;
   }
 
-  for(let i = 0; i < tags.length; i++) {
+  for (let i = 0; i < tags.length; i += 1) {
     const TAG_OBJECT = {
-      tag_name : tags[i],
-      num_notes : 1,
+      tag_name: tags[i],
+      num_notes: 1,
     };
     saveTagToStorage(tagDB, TAG_OBJECT);
   }
   //  // adding tags to the databases
   // // instead of using pageData.tagDB, could just grab this list from actual index
-      // so like objectStore.get(tagname)
+  // so like objectStore.get(tagname)
   //  }
 }
 
@@ -205,13 +225,37 @@ function addTags() {
   if (tagname === '') {
     alert('Please enter a valid tag name');
   } else {
+    const allTags = [];
+    document.querySelectorAll('.tag').forEach((tag) => {
+      allTags.push(tag.name);
+    });
+    console.log(allTags);
+    if (allTags.includes(tagname)) {
+      alert('Tag already exists');
+    } else {
+      const parentElement = document.getElementById('notes-tags');
+      const newCheckBox = document.createElement('input');
+      newCheckBox.type = 'checkbox';
+      newCheckBox.checked = true;
+      newCheckBox.className = 'tag';
+      newCheckBox.name = tagname;
+      // newCheckBox.setAttribute('disabled', true);
+      parentElement.appendChild(newCheckBox);
+      const label = document.createElement('label');
+      label.htmlFor = tagname;
+      label.appendChild(document.createTextNode(tagname));
+      parentElement.appendChild(label);
+    }
     // if existing note
+    /** 
     if (id) {
       // console.log()
       // access note
       const note = getNoteFromStorage(id);
+      console.log(note);
       const tags = note.tags;
       // check to see if note is already tagged
+      console.log(tags);
       const contains = tags.includes(tagname);
       if (!contains) {
         note.tags.push(tagname);
@@ -244,7 +288,6 @@ function addTags() {
 
       // check html elements to see if tag is already there.
 
-
       const parentElement = document.getElementById('notes-tags');
       const newCheckBox = document.createElement('input');
       const uniqueID = generateRandomString(8); // Unique tag identifier
@@ -262,7 +305,7 @@ function addTags() {
 
       pageData.tags.push(tagname);
     }
-
+*/
     // if not contained in tag database, then push to that as well.
   }
 }
@@ -311,13 +354,13 @@ export async function initEditor() {
 
   if (pageData.editEnabled == null || !pageData.editEnabled) {
     exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
+    exportButton.disabled = false;
     saveButton.classList.remove('disabled-button');
     saveButton.disabled = false;
   } else {
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
     saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
+    saveButton.disabled = false;
   }
 }

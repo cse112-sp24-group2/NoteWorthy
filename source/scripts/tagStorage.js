@@ -80,8 +80,6 @@ export function getTagsFromStorage(database) {
   });
 }
 
-
-
 /**
  * Gets a single tag from storage, if it exists.
  * @param {*} database The initialized indexedDB object.
@@ -100,8 +98,6 @@ export function getTagFromStorage(database, tag_name) {
     };
   });
 }
-
-
 
 /**
  * Takes the given tag and saves it to the database. To make a new tag,

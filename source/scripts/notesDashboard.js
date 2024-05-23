@@ -12,6 +12,8 @@
  *   - initSearchBar()
  */
 import { parseNoteDate } from './utility.js';
+import { pageData } from './Routing.js'
+import { getNotesFromStorage } from './noteStorage.js';
 
 /**
  * @description append the new row to the dashboard in the document
@@ -134,13 +136,24 @@ export function initTitleColumnSorting(notes) {
 }
 
 /**
+ * Searched for notes within the database
+ * @param {string} str note name to search for
+ * @returns {void} this function does not return a value.
+ */
+async function search(str) {
+  const db = pageData.database;
+  const notes = await getNotesFromStorage(db);
+  addNotesToDocument(filterNotesByQuery(notes, str));
+}
+
+/**
  * Initializes the event handler for filtering notes by search query.
  * @param {Object[]} notes - An array of note objects.
  */
-export function initSearchBar(notes) {
+export async function initSearchBar() {
   const searchBar = document.querySelector('.searchBar');
+
   searchBar.addEventListener('input', (event) => {
-    console.log(event.target.value);
-    addNotesToDocument(filterNotesByQuery(notes, event.target.value));
+    search(event.target.value);
   });
 }

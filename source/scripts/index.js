@@ -111,10 +111,10 @@ async function initEventHandler() {
   const notes = await getNotesFromStorage(db);
 
   addTagsToDocument(pageData.tags);
-  initTimeColumnSorting(notes);
-  initTitleColumnSorting(notes);
-  initSearchBar(notes);
-  initTagSearch();
+  initTimeColumnSorting();
+  initTitleColumnSorting();
+  initSearchBar();
+  initTagSearch(notes);
 
   const button = document.querySelector('#newNote');
   button.addEventListener('click', async () => {

@@ -200,6 +200,7 @@ export function saveNote() {
  */
 function addTags() {
   const id = pageData.noteID;
+  const db = pageData.database;
   // const db = pageData.database;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
   if (tagname === '') {

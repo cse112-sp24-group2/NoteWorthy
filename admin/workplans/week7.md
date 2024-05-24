@@ -4,7 +4,7 @@ May 24 2024
 
 ## Sprint Structure
 
-- Sprint length: 2 weeks
+- (UPDATED) Sprint length: 2 weeks
 - Retrospective day: Every week on Friday
 - Sprint-planning day: After class Monday/Wedneday + Meeting on Friday
 - Standups: After class Monday/Wednesday
@@ -32,25 +32,32 @@ May 24 2024
 
 ## Current Sprint
 
-Finish unresolved features
+Testing
 
-- Need to connect tag database to UI (12 hours)
-- Finish building out the SPA by next week (12 hours)
-- Add export as markdown (2 hours)
-- Add more styling (1 hour)
+- Everyone needs to write unit and end to end tests
+
+Backlog
+
 - Fix bugs (2 hours)
-- Add duplicate button (2 hours)
-- Notes for each tag (2 hours)
-- Add tags database (8 hours)
+- Display searched tags (4 hours)
+- Dark theme (5 hours)
+- Subscriptions? (idea)
+
+Imports Required:
+
+- Export as PDF
+  - Need to create ADR
+- Markdown Editor
+  - Maybe convert to rich text editor
+  - Need to create ADR
 
 ## Newer features
 
-- Display markdown on dashboard
-- Search by markdown text
+- Convert to rich text editor
 
 Goals for next sprint
 
-- Break down features into stories
 - Keep the same teams
-- Finish current issues
-- Get maintainability to at least B
+- Try to finish converting rich text editor
+- Write tests
+- Create ADR's and request imports

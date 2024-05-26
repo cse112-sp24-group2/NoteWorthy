@@ -56,11 +56,6 @@ class dashboardRow extends HTMLElement {
     const newModified = document.createTextNode(note.lastModified);
     const noteContent = note.htmlContent;
 
-    // const temp = document.createElement('div')
-    // const quill = (new Quill(temp)).setContents(noteDelta);
-    // console.log(quill);
-    // noteContent = quill.getText();
-
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);
     this.dom.content.innerHTML = noteContent;

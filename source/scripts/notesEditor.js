@@ -80,8 +80,6 @@ export function editNote(bool) {
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
   }
-
-  //setEditable(edit);
 }
 
 /**

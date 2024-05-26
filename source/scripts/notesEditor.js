@@ -3,7 +3,6 @@
  * of the note editor page (duh).
  *
  * Functions inside this file:
- *   - setEditable()
  *   - addNoteToDocument()
  *   - editNote()
  *   - saveNote()
@@ -17,31 +16,6 @@ import { generateRandomString, getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
 
 /**
- * @description Switches between edit/view modes on the page
- * @param {*} editable True for edit mode, false for preview mode
- */
-export function setEditable(editable) {
-  const editContent = document.querySelector('#edit-content');
-  const viewContent = document.querySelector('#view-content');
-  const titleInput = document.querySelector('#title-input');
-  const saveButton = document.querySelector('#save-button');
-  if (!editable) {
-    viewContent.innerHTML = markdown(editContent.value);
-    viewContent.hidden = false;
-    editContent.hidden = true;
-    titleInput.setAttribute('disabled', true);
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  } else {
-    editContent.hidden = false;
-    viewContent.hidden = true;
-    titleInput.removeAttribute('disabled');
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  }
-}
-
-/**
  * @description append the notes title, last modified date, and content to page
  * @param {*} note note object with data
  */
@@ -49,7 +23,6 @@ export async function addNoteToDocument(note) {
   // select html items
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
-  const content = document.querySelector('#edit-content');
   const intPutArea = document.getElementById('notes-tags');
   const tag = document.createElement('input');
 
@@ -59,7 +32,6 @@ export async function addNoteToDocument(note) {
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
-  content.value = `${note.content}`;
 
   // append the tags
   const tags = note.tags;
@@ -109,7 +81,7 @@ export function editNote(bool) {
     saveButton.disabled = true;
   }
 
-  setEditable(edit);
+  //setEditable(edit);
 }
 
 /**
@@ -140,8 +112,6 @@ function importNote() {
       await addNoteToDocument(noteObject);
     };
   };
-  // Enable editing mode
-  setEditable(true);
 }
 
 /**
@@ -157,7 +127,7 @@ export function saveNote() {
     alert('Please enter a valid title.');
     return;
   }
-  const content = document.querySelector('#edit-content').value;
+  const content = quill.getContents();
   const lastModified = getDate();
   // TODO: Need to add tags
   const noteObject = {

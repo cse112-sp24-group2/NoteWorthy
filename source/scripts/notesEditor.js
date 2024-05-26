@@ -14,6 +14,7 @@ import { saveNoteToStorage, getNotesFromStorage, getNoteFromStorage } from './no
 import { generateRandomString, getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
 
+let quill;
 /**
  * @description append the notes title, last modified date, and content to page
  * @param {*} note note object with data
@@ -271,6 +272,10 @@ export async function initEditor() {
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
   const editContent = document.querySelector('#notes-content');
+
+  quill = new Quill('#editor', {
+    theme: 'snow'
+  });
 
   editContent.addEventListener('click', () => {
     editNote(true);

@@ -10,7 +10,6 @@
  *   - initEditor()
  */
 import { updateURL, pageData } from './Routing.js';
-import markdown from './markdown.js';
 import { saveNoteToStorage, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { generateRandomString, getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
@@ -129,12 +128,14 @@ export function saveNote() {
     return;
   }
   const content = quill.getContents();
+  const htmlContent = quill.getSemanticHTML();
   const lastModified = getDate();
   // TODO: Need to add tags
   const noteObject = {
     title,
     lastModified,
     content,
+    htmlContent,
   };
   if (id) noteObject.uuid = id;
   saveNoteToStorage(db, noteObject);

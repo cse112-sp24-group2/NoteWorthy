@@ -2,7 +2,6 @@ import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToSto
 import { updateURL } from './Routing.js';
 import { addNotesToDocument } from './notesDashboard.js';
 import { toggleClassToArr } from './utility.js';
-import markdown from './markdown.js';
 
 const template = document.getElementById('dashboard-note-template');
 
@@ -55,8 +54,12 @@ class dashboardRow extends HTMLElement {
   set note(note) {
     const newTitle = document.createTextNode(note.title);
     const newModified = document.createTextNode(note.lastModified);
-    const newContent = note.content;
-    const noteContent = markdown(newContent);
+    const noteContent = note.htmlContent;
+
+    // const temp = document.createElement('div')
+    // const quill = (new Quill(temp)).setContents(noteDelta);
+    // console.log(quill);
+    // noteContent = quill.getText();
 
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);

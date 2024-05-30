@@ -273,8 +273,9 @@ export async function initEditor() {
   const importButton = document.querySelector('#import-button');
   const editContent = document.querySelector('#notes-content');
 
+  // eslint-disable-next-line
   quill = new Quill('#editor', {
-    theme: 'snow'
+    theme: 'snow',
   });
 
   editContent.addEventListener('click', () => {

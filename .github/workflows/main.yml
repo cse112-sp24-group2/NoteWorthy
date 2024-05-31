@@ -7,11 +7,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: yarn
+        run: npm install
+
+      - name: Start server
+        run: npm run start
+
       - name: Run tests
-        run: yarn test
+        run: npm run test
+
       - name: Check linting and formatting
-        run: yarn lint:check
+        run: npm run lint:check
 
       - name: Create Coverage
         run: node ./node_modules/jest/bin/jest.js --coverage

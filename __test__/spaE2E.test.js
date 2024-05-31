@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 
-const URL = 'http://127.0.0.1:8080/source/index.html';
+const URL = 'http://localhost:5500/source/index.html';
 
 let browser;
 let page;

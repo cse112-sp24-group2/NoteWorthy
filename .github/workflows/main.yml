@@ -8,19 +8,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install modules
         run: npm install
-
       - name: Start server
-        run: npm run start
-
+        run: npm run start &
       - name: Run tests
         run: npm run test
-
       - name: Check linting and formatting
         run: npm run lint:check
-
       - name: Create Coverage
         run: node ./node_modules/jest/bin/jest.js --coverage
-
       - name: Coveralls- post coverage report
         uses: coverallsapp/github-action@master
         with:

@@ -6,7 +6,7 @@ let browser;
 let page;
 
 const beforebefore = async () => {
-  browser = await puppeteer.launch({ headless: false });
+  browser = await puppeteer.launch({ headless: "new" });
   page = await browser.newPage();
   page.setDefaultTimeout(0);
 };

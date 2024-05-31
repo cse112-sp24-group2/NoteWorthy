@@ -10,7 +10,7 @@
  */
 import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
-import { editNote, setEditable, addNoteToDocument, initEditor } from './notesEditor.js';
+import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
 import { getTagsFromStorage, initializeTagDB } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
 import { getDate } from './utility.js';
@@ -50,7 +50,6 @@ async function switchToEditor(id, dom) {
     const note = await getNoteFromStorage(db, id);
     pageData.editEnabled = false;
     addNoteToDocument(note);
-    setEditable(pageData.editEnabled);
   } else {
     const noteObject = {
       title: '',

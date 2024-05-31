@@ -34,6 +34,7 @@ class dashboardRow extends HTMLElement {
       noteFront: this.shadowRoot.querySelector('.note-front'),
       noteBack: this.shadowRoot.querySelector('.note-back'),
       title: this.shadowRoot.querySelector('.note-title'),
+      content: this.shadowRoot.querySelector('.note-text'),
       copyButton: this.shadowRoot.querySelector('.note-copy-button'),
       lastModified: this.shadowRoot.querySelector('.note-last-modified'),
       noteMore: this.shadowRoot.querySelector('.note-more'),
@@ -53,9 +54,11 @@ class dashboardRow extends HTMLElement {
   set note(note) {
     const newTitle = document.createTextNode(note.title);
     const newModified = document.createTextNode(note.lastModified);
+    const noteContent = note.htmlContent;
 
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);
+    this.dom.content.innerHTML = noteContent;
 
     this.dom.deleteBtn.addEventListener('click', async (event) => {
       event.stopPropagation();

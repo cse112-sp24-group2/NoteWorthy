@@ -77,8 +77,10 @@ export function filterNotesByQuery(notes, query) {
   return notes.filter(
     (note) =>
       note.title.toLowerCase().includes(queryString) ||
+      note.content.toLowerCase().includes(queryString) ||
       note.lastModified.replace('at', '').toLowerCase().includes(queryString)
   );
+  // TODO: add some feature to highlight the search query in the notes
 }
 
 /**

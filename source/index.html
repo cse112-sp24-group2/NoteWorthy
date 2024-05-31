@@ -16,6 +16,9 @@
     <script src="./scripts/index.js" type="module"></script>
     <script src="./scripts/dashboardRow.js" type="module"></script>
     <script src="./scripts/noteStorage.js" type="module"></script>
+    <!-- Quill Rich Text Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <template id="dashboard-note-template">
       <style>
         @import url('./styling/index.css');
@@ -24,11 +27,11 @@
         <section class="note-front">
           <div class="note-front-top">
             <h4 class="note-title"></h4>
-            <p class="note-text">
+            <div class="note-text">
               It is a long established fact that a reader will be distracted by the readable content of a page when
               looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of
               letters, as opposed to using 'Content here, content here', making it look like readable
-            </p>
+            </div>
           </div>
           <div class="note-front-bottom">
             <p class="note-last-modified"></p>
@@ -144,19 +147,22 @@
               </div>
             </div>
             <div class="note-control-bar">
-              <button id="back-button">
+              <button id="back-button" title="Back">
                 <img alt="back arrow icon" src="./images/back-arrow.svg" />
               </button>
-              <button id="change-view-button">
+              <button id="change-view-button" title="Preview">
                 <img alt="toggle view button" src="./images/preview-note.svg" />
               </button>
-              <button id="save-button">
+              <button id="save-button" title="Save">
                 <img alt="save icon" src="./images/save-note.svg" />
               </button>
-              <button id="export-button">
+              <button id="export-button" title="Export">
                 <img alt="export icon" src="./images/download.svg" />
               </button>
-              <button id="delete-button">
+              <button id="import-button">
+                <img style="transform: rotate(180deg)" alt="import icon" src="./images/download.svg" />
+              </button>
+              <button id="delete-button" title="Delete">
                 <img alt="delete icon" src="./images/delete.svg" />
               </button>
               <button id="tag-button" style="color:red" > Add Tag</button>
@@ -170,12 +176,7 @@
             </form>
           </header>
           <div id="notes-content">
-            <textarea
-              id="edit-content"
-              placeholder="Take a note... (Styling with Markdown is supported)"
-              hidden
-            ></textarea>
-            <div id="view-content" hidden></div>
+            <div id="editor"></div>
           </div>
         </div>
       </section>

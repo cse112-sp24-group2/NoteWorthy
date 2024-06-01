@@ -33,6 +33,8 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
-    "quill": "^2.0.2"
+    "quill": "^2.0.2",
+    "quill-to-pdf": "^1.1.0",
+    "file-saver": "^2.0.5"
   }
 }

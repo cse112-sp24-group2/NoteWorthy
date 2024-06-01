@@ -286,11 +286,8 @@ export async function initEditor() {
     deleteNote();
   });
 
-  saveButton.addEventListener('click', () => {
-    saveNote();
-  });
-
   backButton.addEventListener('click', () => {
+    saveNote();
     updateURL('');
   });
 

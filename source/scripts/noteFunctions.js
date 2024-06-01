@@ -7,6 +7,8 @@
  *   - exportNote()
  *   - deleteNote()
  */
+import QuillToPdf from 'quill-to-pdf';
+import { saveAs } from 'file-saver';
 import { pageData, updateURL } from './Routing.js';
 import { deleteNoteFromStorage, getNoteFromStorage } from './noteStorage.js';
 
@@ -20,7 +22,11 @@ export async function exportNote(uuid) {
   const id = uuid || pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
-  const blob = new Blob([note.content], { type: 'text/plain' });
+  const quillToPdf = new QuillToPdf();
+  const pdfBlob = await quillToPdf.generatePdf(note.content);
+  
+  saveAs(pdfBlob, `${note.title}.pdf`);
+  /*const blob = new Blob([note.content], { type: 'text/plain' });
   const href = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = href;
@@ -28,7 +34,7 @@ export async function exportNote(uuid) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  URL.revokeObjectURL(href);
+  URL.revokeObjectURL(href);*/
 }
 
 /**

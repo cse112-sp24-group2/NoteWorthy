@@ -8,6 +8,7 @@
  *   - deleteNoteFromStorage()
  */
 import { pageData } from './Routing.js';
+import { OBJECT_STORE_NAME } from './noteStorage.js';
 
 let tagDB;
 const TAG_STORE_NAME = 'tags';
@@ -83,18 +84,18 @@ export function getTagsFromStorage(database) {
 /**
  * Gets a single tag from storage, if it exists.
  * @param {*} database The initialized indexedDB object.
- * @param {*} tag_name tag_name of the tag.
+ * @param {*} tagName tagName of the tag.
  * @returns The note object stored with the given UUID.
  */
-export function getTagFromStorage(database, tag_name) {
+export function getTagFromStorage(database, tagName) {
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
-    const getTagRequest = objectStore.get(tag_name);
+    const getTagRequest = objectStore.get(tagName);
     getTagRequest.onsuccess = () => {
       resolve(getTagRequest.result);
     };
     getTagRequest.onerror = () => {
-      reject(new Error(`Error fetching tag with tag_name ${tag_name} from storage.`));
+      reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
     };
   });
 }
@@ -103,11 +104,12 @@ export function getTagFromStorage(database, tag_name) {
  * Takes the given tag and saves it to the database. To make a new tag,
  * pass in a Tag object where the name is undefined and a new note will be made.
  * @param {*} database The initialized indexedDB object.
- * @param {*} tag The tag object to save.
+ * @param {*} tagObj The tag object to save.
  * @returns Promise<int> The name of the newly saved tag.
  */
 
-export function saveTagToStorage(database, tag) {
+export function saveTagToStorage(database, tagObj) {
+  const tag = tagObj;
   if (!tag.tag_name) {
     return new Promise((resolve, reject) => {
       const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);

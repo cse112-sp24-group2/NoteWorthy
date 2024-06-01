@@ -8,8 +8,8 @@
  *   - getNoteFromStorage()
  */
 
-const DBNAME = 'NotesDB';
-const OBJECT_STORE_NAME = 'NotesOS';
+export const DBNAME = 'NotesDB';
+export const OBJECT_STORE_NAME = 'NotesOS';
 let db;
 
 /**

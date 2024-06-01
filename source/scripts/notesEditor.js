@@ -10,35 +10,10 @@
  *   - initEditor()
  */
 import { updateURL, pageData } from './Routing.js';
-import { saveNoteToStorage, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
-import { generateRandomString, getDate } from './utility.js';
+import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
+import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
 import { saveTagToStorage } from './tagStorage.js';
-
-/**
- * @description Switches between edit/view modes on the page
- * @param {*} editable True for edit mode, false for preview mode
- */
-export function setEditable(editable) {
-  const editContent = document.querySelector('#edit-content');
-  const viewContent = document.querySelector('#view-content');
-  const titleInput = document.querySelector('#title-input');
-  const saveButton = document.querySelector('#save-button');
-  if (!editable) {
-    viewContent.innerHTML = markdown(editContent.value);
-    viewContent.hidden = false;
-    editContent.hidden = true;
-    titleInput.setAttribute('disabled', false);
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    editContent.hidden = false;
-    viewContent.hidden = true;
-    titleInput.removeAttribute('disabled');
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  }
-}
 
 let quill;
 
@@ -87,7 +62,6 @@ export async function addNoteToDocument(note) {
  * @returns {void} this function does not return a value.
  */
 export function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
   const saveButton = document.querySelector('#save-button');
@@ -98,9 +72,7 @@ export function editNote(bool) {
   const edit = pageData.editEnabled;
 
   if (edit) {
-    editButton.firstChild.src = './images/edit-note.svg';
     exportButton.classList.add('disabled-button');
-
     exportButton.disabled = true;
     importButton.classList.add('disabled-button');
     importButton.disabled = true;
@@ -115,7 +87,6 @@ export function editNote(bool) {
       tag.setAttribute('disabled', false);
     });
   } else {
-    editButton.firstChild.src = './images/preview-note.svg';
     exportButton.classList.remove('disabled-button');
     exportButton.disabled = false;
     importButton.classList.remove('disabled-button');
@@ -188,7 +159,7 @@ export function saveNote() {
   // }
 
   const elements = document.getElementById('notes-tags').elements;
-  for (let i = 0; i < elements.length; i+= 1) {
+  for (let i = 0; i < elements.length; i += 1) {
     const currElement = elements[i];
     if (currElement.type === 'checkbox' && currElement.checked === true) {
       console.log(currElement.name);
@@ -254,7 +225,7 @@ export function saveNote() {
  * @returns {void} This function does not return a value.
  */
 function addTags() {
-  const id = pageData.noteID;
+  // const id = pageData.noteID;
   // const db = pageData.database;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
   if (tagname === '') {
@@ -354,7 +325,6 @@ export async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
   const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
-  const editButton = document.querySelector('#change-view-button');
   const tagButton = document.querySelector('#tag-button');
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
@@ -365,37 +335,13 @@ export async function initEditor() {
     theme: 'snow',
   });
 
-  editContent.addEventListener('click', () => {
-    editNote(true);
-  });
-
-  deleteButton.addEventListener('click', () => {
-    deleteNote();
-  });
-
-  saveButton.addEventListener('click', () => {
-    saveNote();
-  });
-
-  backButton.addEventListener('click', () => {
-    updateURL('');
-  });
-
-  editButton.addEventListener('click', () => {
-    editNote();
-  });
-
-  tagButton.addEventListener('click', () => {
-    addTags();
-  });
-
-  exportButton.addEventListener('click', () => {
-    exportNote();
-  });
-
-  importButton.addEventListener('click', () => {
-    importNote();
-  });
+  editContent.addEventListener('click', () => editNote(true));
+  deleteButton.addEventListener('click', () => deleteNote());
+  saveButton.addEventListener('click', () => saveNote());
+  backButton.addEventListener('click', () => updateURL(''));
+  tagButton.addEventListener('click', () => addTags());
+  exportButton.addEventListener('click', () => exportNote());
+  importButton.addEventListener('click', () => importNote());
 
   if (pageData.editEnabled == null || !pageData.editEnabled) {
     exportButton.classList.add('disabled-button');

@@ -77,8 +77,10 @@ function URLRoutingHandler() {
 
   if (id === '9999' || id == null) {
     pageData.noteID = null;
+    pageData.tags = [];
   } else {
     pageData.noteID = parseInt(id, 10);
+    // pageData.tags =
   }
 
   // So that child functions can hide/unhide dashboard or editor
@@ -89,6 +91,9 @@ function URLRoutingHandler() {
 
   if (id == null) {
     switchToDashboard(dom);
+    // const tags = document.getElementById('notes-tags');
+    // tags.remove();
+    document.getElementById('notes-tags').innerHTML = '';
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }
@@ -103,7 +108,7 @@ function URLRoutingHandler() {
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
-
+  console.log('the pageData.tags is', pageData.tags);
   addTagsToDocument(pageData.tags);
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
@@ -145,7 +150,7 @@ async function init() {
   console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
-  pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  // pageData.tags = await getTagsFromStorage(pageData.tagDB);
   URLRoutingHandler();
   initEditor();
   initEventHandler();

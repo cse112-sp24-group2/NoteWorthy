@@ -107,34 +107,27 @@ export function getTagFromStorage(database, tagName) {
  * @param {*} tagObj The tag object to save.
  * @returns Promise<int> The name of the newly saved tag.
  */
-
 export function saveTagToStorage(database, tagObj) {
   const tag = tagObj;
-  if (!tag.tag_name) {
-    return new Promise((resolve, reject) => {
-      const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-      const saveTagRequest = objectStore.add(tag);
-      saveTagRequest.onsuccess = () => {
-        console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
-        console.log(saveTagRequest.result);
-        resolve(saveTagRequest.result);
-      };
-      saveTagRequest.onerror = () => {
-        reject(new Error('Error saving new tag to storage'));
-      };
-    });
-  }
+
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    const oldTag = objectStore.get(tag.tag_name);
-    tag.num_notes = oldTag.num_notes + 1;
-    const saveTagRequest = objectStore.put(tag);
+    let saveTagRequest;
+
+    if (!tag.tag_name) {
+      saveTagRequest = objectStore.add(tag);
+    } else {
+      const oldTag = objectStore.get(tag.tag_name);
+      tag.num_notes = oldTag.num_notes + 1;
+      saveTagRequest = objectStore.put(tag);
+    }
+
     saveTagRequest.onsuccess = () => {
       console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
-      reject(new Error(`Error saving tag with tag_name ${tag.tag_name} to storage`));
+      reject(new Error('Error saving new tag to storage'));
     };
   });
 }

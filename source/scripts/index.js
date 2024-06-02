@@ -11,7 +11,7 @@
 import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
-import { initializeTagDB } from './tagStorage.js';
+import { initializeTagDB, getTagsFromStorage } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
 import { getDate } from './utility.js';
 import {

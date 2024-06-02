@@ -74,11 +74,13 @@ export function editNote(bool) {
   pageData.editEnabled = enableEditMode;
 
   const setButtonState = (button, isEnabled) => {
+    /* eslint-disable-next-line */
     button.disabled = !isEnabled;
     button.classList.toggle('disabled-button', !isEnabled);
   };
 
   const setInputState = (input, isEnabled) => {
+    /* eslint-disable-next-line */
     input.disabled = !isEnabled;
     input.classList.toggle('disabled-button', !isEnabled);
   };

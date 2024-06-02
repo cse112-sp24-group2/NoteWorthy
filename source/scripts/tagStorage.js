@@ -112,7 +112,7 @@ export function saveTagToStorage(database, tagObj) {
 
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    let saveTagRequest
+    let saveTagRequest;
 
     if (!tag.tag_name) {
       saveTagRequest = objectStore.add(tag);
@@ -129,7 +129,7 @@ export function saveTagToStorage(database, tagObj) {
     saveTagRequest.onerror = () => {
       reject(new Error('Error saving new tag to storage'));
     };
-  })
+  });
 }
 
 /**

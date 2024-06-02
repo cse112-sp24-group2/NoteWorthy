@@ -5,6 +5,26 @@ import { toggleClassToArr } from './utility.js';
 
 const template = document.getElementById('dashboard-note-template');
 
+async function deleteNote(note) {
+  if (window.confirm('Are you sure you want to delete this note?')) {
+    const db = await initializeDB(indexedDB);
+    deleteNoteFromStorage(db, note);
+    window.location.reload();
+  }
+}
+
+async function copyNote(note) {
+  const db = await initializeDB(indexedDB);
+  const newNote = { ...note };
+  newNote.title = `${note.title} (copy)`;
+  newNote.uuid = Date.now();
+  newNote.lastModified = new Date().toLocaleString();
+  saveNoteToStorage(db, newNote);
+  //  Add new Note row without reloading
+  const notes = await getNotesFromStorage(db);
+  addNotesToDocument(notes);
+}
+
 class dashboardRow extends HTMLElement {
   /**
    * create the shadow dom for the dashboard row
@@ -71,31 +91,11 @@ class dashboardRow extends HTMLElement {
     const handleClick = (e) => {
       e.stopPropagation();
       this.flipNote();
-    }
+    };
 
-    this.dom.backBtn.onclick = handleClick
-    this.dom.noteMore.onclick = handleClick
+    this.dom.backBtn.onclick = handleClick;
+    this.dom.noteMore.onclick = handleClick;
     this.dom.noteFront.onclick = () => updateURL(`?id=${note.uuid}`);
-  }
-
-  async deleteNote(note) {
-    if (window.confirm('Are you sure you want to delete this note?')) {
-      const db = await initializeDB(indexedDB);
-      deleteNoteFromStorage(db, note);
-      window.location.reload();
-    } 
-  }
-
-  async copyNote(note) {
-      const db = await initializeDB(indexedDB);
-      const newNote = { ...note };
-      newNote.title = `${note.title} (copy)`;
-      newNote.uuid = Date.now();
-      newNote.lastModified = new Date().toLocaleString();
-      saveNoteToStorage(db, newNote);
-      //  Add new Note row without reloading
-      const notes = await getNotesFromStorage(db);
-      addNotesToDocument(notes);
   }
 
   flipNote() {

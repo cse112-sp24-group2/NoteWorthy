@@ -75,7 +75,7 @@ describe('Dashboard tests', () => {
     expect(page.url()).toBe(`${URL}?id=9999`);
 
     let titleText = await page.$eval('#notes-title', (el) => el.innerHTML);
-    expect(titleText).toBe(`'<input type="text" class="" id="title-input" placeholder="Untitled Note">'`);
+    expect(titleText).toBe(`<input type="text" class="" id="title-input" placeholder="Untitled Note">`);
     const inputTxt = await page.$('#title-input');
     await inputTxt.click({ clickCount: 1 });
     await page.type('#title-input', 'title text');

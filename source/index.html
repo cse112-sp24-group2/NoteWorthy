@@ -66,6 +66,7 @@
     <div class="header">
       <h1>NoteWorthy.</h1>
       <div class="controlPanel">
+        <button id="darkMode">Dark</button>
         <button id="newNote">+ New Note</button>
       </div>
     </div>
@@ -103,12 +104,10 @@
 
       <!-- SIDEBAR -->
       <section class="sidebar">
-        <h3>Tags</h3>
+        <h3 id="tags">Tags</h3>
         <form class="tags-list"></form>
         <button id="view-more">View all</button>
-        <h3>Pinned</h3>
 
-        <div id="divider"></div>
         <footer>
           <div id="profile-img"></div>
           <p>Username</p>
@@ -126,7 +125,7 @@
               <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
               <img alt="search note" src="images/search-icon.svg" />
             </div>
-            <span>Sort By: Recently Edited</span>
+            <span id="sort">Sort By: Recently Edited</span>
           </header>
           <div class="dashboardItems"></div>
           <div class="empty-dashboard hidden">

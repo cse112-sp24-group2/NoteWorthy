@@ -115,6 +115,69 @@ async function initEventHandler() {
   initSearchBar(notes);
   initTagSearch();
 
+  const darkModeButton = document.querySelector('#darkMode');
+  darkModeButton.addEventListener('click', () => {
+
+    document.body.classList.toggle('dark');
+    updateButtonText();
+
+    const sidebar = document.querySelector('.sidebar');
+    const tagsHeader = document.querySelector('#tags');
+    const viewMore = document.querySelector('#view-more');
+    const dashboardHeader = document.querySelector('.dashboard-header');
+    const sort = document.querySelector('#sort');
+    const searchBarWrapper = document.querySelector('.searchbar-wrapper');
+    // const emptyDashboard = document.querySelector('.empty-dashboard');
+    const view = document.querySelector('.view');
+    const editor = document.querySelector('.editor');
+    const notesTitle = document.querySelector('#notes-title');
+    const titleInput = document.querySelector('#title-input');
+
+    // const list = [sidebar, tagsHeader, viewMore, dashboardHeader, emptyDashboard, dashboard];
+    // list.forEach((element) => {
+    //   element.classList.toggle('dark');
+    // });
+
+    sidebar.classList.toggle('dark');
+    tagsHeader.classList.toggle('dark');
+    viewMore.classList.toggle('dark');
+    dashboardHeader.classList.toggle('dark');
+    sort.classList.toggle('dark');
+    searchBarWrapper.classList.toggle('dark');
+    view.classList.toggle('dark');
+    editor.classList.toggle('dark');
+    notesTitle.classList.toggle('dark');
+    titleInput.classList.toggle('dark');
+  });
+
+
+  function updateButtonText() {
+    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+  }
+
+  // function toggleTheme() {
+  //   const rootStyles = getComputedStyle(document.documentElement);
+  //   const whiteColor = rootStyles.getPropertyValue('--white');
+  //   const darkPurple = rootStyles.getPropertyValue('--dark-purple');
+  //   const lightPurple = rootStyles.getPropertyValue('--light-purple');
+  //   const textPurple = rootStyles.getPropertyValue('--text-purple');
+  //   const accentPurple = rootStyles.getPropertyValue('--accent-purple');
+
+  //   if (document.body.classList.contains('dark')) {
+  //     document.documentElement.style.setProperty('--white', darkPurple);
+  //   } else {
+  //     document.documentElement.style.setProperty('--white', whiteColor);
+  //     document.documentElement.style.setProperty('--dark-purple', darkPurple);
+  //     document.documentElement.style.setProperty('--light-purple', lightPurple);
+  //     document.documentElement.style.setProperty('--text-purple', textPurple);
+  //     document.documentElement.style.setProperty('--accent-purple', accentPurple);
+  //   }
+  // }
+
+  // // Apply the initial theme on page load based on the current state
+  // updateButtonText();
+  // toggleTheme();
+
   const button = document.querySelector('#newNote');
   button.addEventListener('click', async () => {
     // HACK: need to change and handle proper URL

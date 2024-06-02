@@ -62,18 +62,31 @@ class dashboardRow extends HTMLElement {
 
     this.dom.deleteBtn.addEventListener('click', async (event) => {
       event.stopPropagation();
-      // confirm note deletion with user
-      if (window.confirm('Are you sure you want to delete this note?')) {
-        const db = await initializeDB(indexedDB);
-        deleteNoteFromStorage(db, note);
-        window.location.reload();
-      } else {
-        // do nothing if user does not confirm deletion
-      }
+      deleteNote(note);
     });
-
     this.dom.copyButton.addEventListener('click', async (event) => {
       event.stopPropagation();
+      copyNote(note);
+    });
+    const handleClick = (e) => {
+      e.stopPropagation();
+      this.flipNote();
+    }
+
+    this.dom.backBtn.onclick = handleClick
+    this.dom.noteMore.onclick = handleClick
+    this.dom.noteFront.onclick = () => updateURL(`?id=${note.uuid}`);
+  }
+
+  async deleteNote(note) {
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      const db = await initializeDB(indexedDB);
+      deleteNoteFromStorage(db, note);
+      window.location.reload();
+    } 
+  }
+
+  async copyNote(note) {
       const db = await initializeDB(indexedDB);
       const newNote = { ...note };
       newNote.title = `${note.title} (copy)`;
@@ -83,22 +96,6 @@ class dashboardRow extends HTMLElement {
       //  Add new Note row without reloading
       const notes = await getNotesFromStorage(db);
       addNotesToDocument(notes);
-      //  window.location.reload();
-    });
-
-    this.dom.backBtn.onclick = (e) => {
-      e.stopPropagation();
-      this.flipNote();
-    };
-
-    this.dom.noteMore.onclick = (e) => {
-      e.stopPropagation();
-      this.flipNote();
-    };
-
-    this.dom.noteFront.onclick = () => {
-      updateURL(`?id=${note.uuid}`);
-    };
   }
 
   flipNote() {

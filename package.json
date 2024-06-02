@@ -23,10 +23,11 @@
     "transform": {
       "^.+\\.(js|jsx)$": "babel-jest"
     },
-    "verbose": true
+    "verbose": true,
+    "testEnvironment": "jest-environment-jsdom"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",

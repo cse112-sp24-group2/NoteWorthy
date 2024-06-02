@@ -1,10 +1,10 @@
 # Workplan
 
-May 31 2024
+May 17 2024
 
 ## Sprint Structure
 
-- (UPDATED) Sprint length: 1 week
+- (UPDATED) Sprint length: 2 weeks
 - Retrospective day: Every week on Friday
 - Sprint-planning day: After class Monday/Wedneday + Meeting on Friday
 - Standups: After class Monday/Wednesday
@@ -14,33 +14,31 @@ May 31 2024
 
 - Kavi and Andy
 
-  - Made new bug issues
-  - worked on bug testing
+  - Made progress on adding + displaying tags, still a bit buggy
+  - improved search query by tags
+  - Can merge today
 
 - Marc and Yash
 
-  - Worked on SPA testing - pain in the ass
+  - Added colors
+  - Added details for cards
+  - Finishs building out the SPA by next week
 
 - Andy + Ryan + Vrishank
 
-  - Implemented Quill rich text editor
+  - Export as txt
+  - Take on more tasks for next sprint
 
 - Robin + Grey
-
-  - testing duplicate notes
+  - Fix template button
+  - Fix bugs
+  - Add duplicate button
 
 ## Current Sprint
 
-- fix export/import
-- remove save button
-- remove previous
-- save on back button
-- testing
-- dark mode
-- custom dialog
-- subscriptions
-- tag bugs
-- responsive UI
+Testing
+
+- Everyone needs to write unit and end to end tests
 
 Backlog
 

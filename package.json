@@ -35,6 +35,7 @@
     "start": "serve -l 5500 ."
   },
   "dependencies": {
-    "serve": "^14.2.3"
+    "serve": "^14.2.3",
+    "quill": "^2.0.2"
   }
 }

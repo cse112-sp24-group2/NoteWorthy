@@ -6,20 +6,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install modules
-        run: yarn
-      - name: Run tests
-        run: yarn test
-      - name: Check linting and formatting
-        run: yarn lint:check
-
-      - name: Create Coverage
-        run: node ./node_modules/jest/bin/jest.js --coverage
-
-      - name: Coveralls- post coverage report
-        uses: coverallsapp/github-action@master
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '18'
+      - name: Installs
+        run: |
+          npm install jest
+          npm install --save-dev node-fetch
+          npm install -D jest-environment-jsdom
+          npm ci -l verbose
+      - name: Start server
+        run: |
+          npm start &
+        env:
+          CI: true
+      - name: Run TESTS
+        run: |
+          npm run test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          CI: true
 
       # Autogenerate jsDocs and output files to ./jsdocs
       - name: Generate jsDocs

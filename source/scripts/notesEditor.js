@@ -29,7 +29,7 @@ export async function addNoteToDocument(note) {
 
   // empty the html items
   // populate html with notes data
-  title.innerHTML = '<input type="text" id="title-input" placeholder = "Untitled Note">';
+  title.innerHTML = `<input type="text" ${title.classList.contains('dark') ? 'class="dark"' : 'class=""'} id="title-input" placeholder = "Untitled Note">`;
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;

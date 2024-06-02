@@ -115,6 +115,47 @@ async function initEventHandler() {
   initSearchBar(notes);
   initTagSearch();
 
+  const darkModeButton = document.querySelector('#darkMode');
+  function updateButtonText() {
+    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+  }
+
+  darkModeButton.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    updateButtonText();
+
+    const sidebar = document.querySelector('.sidebar');
+    const tagsHeader = document.querySelector('#tags');
+    const viewMore = document.querySelector('#view-more');
+    const dashboardHeader = document.querySelector('.dashboard-header');
+    const sort = document.querySelector('#sort');
+    const searchBarWrapper = document.querySelector('.searchbar-wrapper');
+    const emptyDashboard = document.querySelector('.empty-dashboard');
+    const view = document.querySelector('.view');
+    const editor = document.querySelector('.editor');
+    const notesTitle = document.querySelector('#notes-title');
+    const titleInput = document.querySelector('#title-input');
+    const noteControlBar = document.querySelector('.note-control-bar');
+
+    sidebar.classList.toggle('dark');
+    tagsHeader.classList.toggle('dark');
+    viewMore.classList.toggle('dark');
+    dashboardHeader.classList.toggle('dark');
+    sort.classList.toggle('dark');
+    searchBarWrapper.classList.toggle('dark');
+    emptyDashboard.classList.toggle('dark');
+    view.classList.toggle('dark');
+    editor.classList.toggle('dark');
+    notesTitle.classList.toggle('dark');
+    titleInput.classList.toggle('dark');
+    noteControlBar.classList.toggle('dark');
+  });
+
+  const button = document.querySelector('#newNote');
+  button.addEventListener('click', async () => {
+    // HACK: need to change and handle proper URL
+    updateURL('?id=9999');
+  });
   const h1 = document.querySelector('.header > h1');
   h1.addEventListener('click', async () => {
     updateURL('');

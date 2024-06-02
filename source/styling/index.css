@@ -252,6 +252,17 @@ main {
 
 .empty-dashboard > p {
   font-size: 1.3rem;
+  color: var(--dark-purple);
+}
+
+.empty-dashboard.dark > p {
+  color: var(--white);
+}
+
+.empty-dashboard.dark > img {
+  filter: invert(1);
+  mix-blend-mode: lighten;
+  z-index: 10;
 }
 
 /* ----------DASHBOARD HEADER---------- */
@@ -291,9 +302,13 @@ main {
 }
 
 .searchbar-wrapper > img {
-  filter: invert(100%);
   position: relative;
   right: 2.5rem;
+}
+
+.searchbar-wrapper > img {
+  filter: invert(50%);
+  mix-blend-mode: lighten;
 }
 
 /* Actual Search Bar */
@@ -315,6 +330,7 @@ main {
   color: var(--white);
   border-bottom: 2px solid var(--white);
 }
+
 
 .searchbar-wrapper > input:focus {
   outline: none;
@@ -476,7 +492,7 @@ main {
   font-weight: bold;
   border: none;
   border-bottom: 2px solid var(--accent-purple);
-  width: auto;
+  width: 100%;
 }
 
 #title-input.dark {
@@ -538,7 +554,7 @@ main {
   display: flex;
   justify-content: end;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -546,8 +562,12 @@ main {
   cursor: pointer;
   border: none;
   background: none;
-  filter: invert(100%);
+  filter: invert(50%);
   transition: transform 0.3s;
+}
+
+.note-control-bar.dark > button {
+  mix-blend-mode: lighten;
 }
 
 .note-control-bar > button:hover {

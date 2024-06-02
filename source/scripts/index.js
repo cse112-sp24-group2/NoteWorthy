@@ -115,12 +115,6 @@ async function initEventHandler() {
   initSearchBar(notes);
   initTagSearch();
 
-  const button = document.querySelector('#newNote');
-  button.addEventListener('click', async () => {
-    // HACK: need to change and handle proper URL
-    updateURL('?id=9999');
-  });
-
   const h1 = document.querySelector('.header > h1');
   h1.addEventListener('click', async () => {
     updateURL('');
@@ -147,13 +141,21 @@ async function initEventHandler() {
  * @returns {void} This function does not return a value.
  */
 async function init() {
+  const button = document.querySelector('#newNote');
+  button.addEventListener('click', () => {
+    // HACK: need to change and handle proper URL
+    updateURL('?id=9999');
+  });
+
+  console.log(performance.now())
   console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
-  // pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  console.log(performance.now())
+  initEventHandler();
   URLRoutingHandler();
   initEditor();
-  initEventHandler();
 }
 
 window.addEventListener('DOMContentLoaded', init);

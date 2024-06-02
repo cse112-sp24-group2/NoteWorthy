@@ -23,16 +23,19 @@
     "transform": {
       "^.+\\.(js|jsx)$": "babel-jest"
     },
-    "verbose": true
+    "verbose": true,
+    "testEnvironment": "jest-environment-jsdom"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "start": "serve -l 5500 ."
   },
   "dependencies": {
+    "serve": "^14.2.3",
     "quill": "^2.0.2"
   }
 }

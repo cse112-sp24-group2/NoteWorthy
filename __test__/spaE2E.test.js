@@ -70,7 +70,7 @@ describe('Dashboard tests', () => {
 
     let titleText = await page.$eval('#notes-title', (el) => el.innerHTML);
     expect(titleText).toBe(
-      '<input type="text" id="title-input" placeholder="Untitled Note">'
+      '<input type="text" class="" id="title-input" placeholder="Untitled Note">'
     );
     const inputTxt = await page.$('#title-input');
     await inputTxt.click({ clickCount: 1 });
@@ -151,13 +151,12 @@ describe('Dashboard tests', () => {
     await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
 
-    let front = await getClassList('>>> .note-front');
-    expect(front).not.toContain('flipped')
-
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
+    await page.waitForSelector('>>> .note-copy-button').then((el) => el.click());
 
-    front = await getClassList('>>> .note-front');
-    expect(front).toContain('flipped')
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(2);
   }, 5000);
 
   afterEach(afterafter);

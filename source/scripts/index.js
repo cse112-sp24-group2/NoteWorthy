@@ -116,8 +116,11 @@ async function initEventHandler() {
   initTagSearch();
 
   const darkModeButton = document.querySelector('#darkMode');
-  darkModeButton.addEventListener('click', () => {
+  function updateButtonText() {
+    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+  }
 
+  darkModeButton.addEventListener('click', () => {
     document.body.classList.toggle('dark');
     updateButtonText();
 
@@ -134,8 +137,6 @@ async function initEventHandler() {
     const titleInput = document.querySelector('#title-input');
     const noteControlBar = document.querySelector('.note-control-bar');
 
-    
-
     sidebar.classList.toggle('dark');
     tagsHeader.classList.toggle('dark');
     viewMore.classList.toggle('dark');
@@ -149,10 +150,6 @@ async function initEventHandler() {
     titleInput.classList.toggle('dark');
     noteControlBar.classList.toggle('dark');
   });
-
-  function updateButtonText() {
-    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
-  }
 
   const button = document.querySelector('#newNote');
   button.addEventListener('click', async () => {

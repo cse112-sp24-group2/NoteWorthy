@@ -1,17 +1,10 @@
-import { initializeDB, deleteNoteFromStorage, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
+import { initializeDB, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
+import { deleteNote } from './noteFunctions.js';
 import { updateURL } from './Routing.js';
 import { addNotesToDocument } from './notesDashboard.js';
 import { toggleClassToArr } from './utility.js';
 
 const template = document.getElementById('dashboard-note-template');
-
-async function deleteNote(note) {
-  if (window.confirm('Are you sure you want to delete this note?')) {
-    const db = await initializeDB(indexedDB);
-    deleteNoteFromStorage(db, note);
-    window.location.reload();
-  }
-}
 
 async function copyNote(note) {
   const db = await initializeDB(indexedDB);
@@ -82,7 +75,7 @@ class dashboardRow extends HTMLElement {
 
     this.dom.deleteBtn.addEventListener('click', async (event) => {
       event.stopPropagation();
-      deleteNote(note);
+      deleteNote(note.uuid);
     });
     this.dom.copyButton.addEventListener('click', async (event) => {
       event.stopPropagation();

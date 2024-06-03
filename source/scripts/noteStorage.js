@@ -133,7 +133,7 @@ export function deleteNoteFromStorage(database, note) {
     const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const deleteNoteRequest = objectStore.delete(note.uuid);
     deleteNoteRequest.onsuccess = () => {
-      console.log(`Successfully deleted note with uuid ${deleteNoteRequest.result}`);
+      console.log(`Successfully deleted note with uuid ${note.uuid}`);
       resolve();
     };
     deleteNoteRequest.onerror = () => {

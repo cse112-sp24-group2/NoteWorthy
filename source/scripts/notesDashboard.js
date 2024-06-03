@@ -14,6 +14,17 @@
 import { parseNoteDate } from './utility.js';
 
 /**
+ * @description Show/Hide empty notes on dashboard
+ *
+ * @param {bool} bool true to hide, false to show
+ * @returns {void} this function does not return a value.
+ */
+export function hideEmptyWojak(bool) {
+  const empty = document.querySelector('.empty-dashboard');
+  empty.classList.toggle('hidden', bool);
+}
+
+/**
  * @description append the new row to the dashboard in the document
  *
  * @param {Array<Object>} notes containing all the notes in the local storage
@@ -34,17 +45,7 @@ export function addNotesToDocument(notes) {
     row.note = note;
     dashboard.appendChild(row);
   });
-}
-
-/**
- * @description Show/Hide empty notes on dashboard
- *
- * @param {bool} bool true to hide, false to show
- * @returns {void} this function does not return a value.
- */
-export function hideEmptyWojak(bool) {
-  const empty = document.querySelector('.empty-dashboard');
-  empty.classList.toggle('hidden', bool);
+  hideEmptyWojak(notes.length !== 0);
 }
 
 /**

@@ -18,7 +18,7 @@ const beforebefore = async () => {
   // Change headless to false when testing locally if you want the browser to
   // pop up, before commiting, change back to "new" otherwise github actions will
   // fail
-  browser = await puppeteer.launch({ headless: 'new' });
+  browser = await puppeteer.launch({ headless: false });
   page = await browser.newPage();
   page.setDefaultTimeout(0);
   await page.goto(URL);
@@ -161,6 +161,184 @@ describe('Dashboard tests', () => {
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(2);
   }, 5000);
+
+  test('Custom Dialog opens when deleting note', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await page.waitForSelector('>>> .note-more').then((el) => el.click());
+    await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
+
+    const dialogElement = await page.$('dialog');
+    const isDialogOpen = await dialogElement.isVisible();
+
+    expect(isDialogOpen).toBe(true);
+  });
+
+  test('Pressing Yes on custom dialog deletes note', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await page.waitForSelector('>>> .note-more').then((el) => el.click());
+    await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
+
+    const dialogElement = await page.$('dialog');
+    const isDialogOpen = await dialogElement.isVisible();
+    expect(isDialogOpen).toBe(true);
+
+    await page.waitForSelector('>>> .dialog-confirm').then((el) => el.click());
+
+    await delay(200);
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(0);
+  });
+
+  test('Pressing No on custom dialog deletes note', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await page.waitForSelector('>>> .note-more').then((el) => el.click());
+    await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
+
+    const dialogElement = await page.$('dialog');
+    const isDialogOpen = await dialogElement.isVisible();
+
+    expect(isDialogOpen).toBe(true);
+
+    await page.waitForSelector('>>> .dialog-cancel').then((el) => el.click());
+    await delay(200);
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(1);
+  });
+
+  afterEach(afterafter);
+}, 30000);
+
+describe('Editor tests', () => {
+  beforeEach(beforebefore);
+
+  test('Saving new note redirects to new ID url parameter', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await delay(200);
+    expect(page.url()).not.toBe(`${URL}?id=9999`);
+  });
+
+  test('Custom Dialog opens when deleting note', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('#delete-button').then((el) => el.click());
+    await delay(200);
+
+    const dialogElement = await page.$('dialog');
+    const isDialogOpen = await dialogElement.isVisible();
+
+    expect(isDialogOpen).toBe(true);
+  });
+
+  test('Pressing Yes on custom dialog deletes note', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('#delete-button').then((el) => el.click());
+    await delay(200);
+
+    const dialogElement = await page.$('dialog');
+    const isDialogOpen = await dialogElement.isVisible();
+
+    expect(isDialogOpen).toBe(true);
+
+    await page.waitForSelector('.dialog-confirm').then((el) => el.click());
+    await delay(200);
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(0);
+  });
+
+  test('Pressing No on custom dialog does not delete note', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('#delete-button').then((el) => el.click());
+    await delay(200);
+
+    const dialogElement = await page.$('dialog');
+    const isDialogOpen = await dialogElement.isVisible();
+
+    expect(isDialogOpen).toBe(true);
+
+    await page.waitForSelector('.dialog-cancel').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(1);
+  });
 
   afterEach(afterafter);
 }, 30000);

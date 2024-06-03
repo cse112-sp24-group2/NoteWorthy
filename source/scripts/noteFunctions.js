@@ -45,6 +45,8 @@ export async function deleteNote(toDelete) {
   const id = toDelete || pageData.noteID;
   const db = pageData.database;
 
+  console.log(id);
+
   if (!id) return;
 
   const confirm = await confirmDialog('Are you sure you want to delete this note?');

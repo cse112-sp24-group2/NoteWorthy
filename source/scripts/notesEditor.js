@@ -192,7 +192,10 @@ export function saveNote() {
   if (!noteObject) return;
   saveNoteToStorage(db, noteObject);
   if (!id) {
-    getNotesFromStorage(db).then((res) => window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`));
+    getNotesFromStorage(db).then((res) => {
+      window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
+      pageData.noteID = res[res.length - 1].uuid;
+    });
   }
   const tagList = document.querySelectorAll('#tag');
   for (let i = 0; i < tagList.length; i += 1) {

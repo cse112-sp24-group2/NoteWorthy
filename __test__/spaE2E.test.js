@@ -357,5 +357,104 @@ describe('Editor tests', () => {
     expect(numNotes).toBe(1);
   });
 
+  test('Saving note without title triggers alert', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', '');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await delay(200);
+
+    const dialogElement = await page.$('dialog');
+    let isDialogOpen = await dialogElement.isVisible();
+
+    expect(isDialogOpen).toBe(true);
+
+    await page.waitForSelector('.dialog-confirm').then((el) => el.click());
+    isDialogOpen = await dialogElement.isVisible();
+    expect(isDialogOpen).toBe(false);
+  });
+
+  afterEach(afterafter);
+}, 30000);
+
+
+
+describe('User flow tests', () => {
+  beforeEach(beforebefore);
+  test('Modifying saved note content persists', async () => {
+    await createNewNote();
+
+    let inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    let editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    let title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
+    expect(title).toBe('title text');
+
+    let content = await page.$eval('>>> .note-text > p', (el) => el.innerHTML);
+    expect(content).toBe('editor text');
+    expect(page.url()).toBe(URL);
+
+    await page.waitForSelector('>>> .note-front').then((el) => el.click());
+
+    inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 3 });
+    await page.type('#title-input', 'edited title');
+
+    editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 3 });
+    await page.type('.ql-editor', 'edited text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
+    expect(title).toBe('edited title');
+
+    content = await page.$eval('>>> .note-text > p', (el) => el.innerHTML);
+    expect(content).toBe('edited text');
+    expect(page.url()).toBe(URL);
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(1);
+  });
+
+  test('Multiple Notes added persist on dashboard (50)', async () => {
+    const NUM = 50;
+
+    for (let i = 0; i < NUM; i += 1) {
+      await createNewNote();
+
+      const inputTxt = await page.$('#title-input');
+      await inputTxt.click({ clickCount: 1 });
+      await page.type('#title-input', 'title text');
+
+      const editor = await page.$('.ql-editor');
+      await editor.click({ clickCount: 1 });
+      await page.type('.ql-editor', 'editor text');
+
+      await page.waitForSelector('#save-button').then((el) => el.click());
+      await page.waitForSelector('#back-button').then((el) => el.click());
+    }
+
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(NUM);
+  }, 5000);
+
   afterEach(afterafter);
 }, 30000);

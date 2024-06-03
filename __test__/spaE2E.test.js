@@ -263,6 +263,23 @@ describe('Editor tests', () => {
     expect(page.url()).not.toBe(`${URL}?id=9999`);
   });
 
+  test('Clicking on top left logo redirects to dashboard', async () => {
+    await createNewNote();
+
+    const inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    const editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('.header > h1').then((el) => el.click());
+    await delay(200);
+    expect(page.url()).toBe(`${URL}`);
+  });
+
   test('Custom Dialog opens when deleting note', async () => {
     await createNewNote();
 

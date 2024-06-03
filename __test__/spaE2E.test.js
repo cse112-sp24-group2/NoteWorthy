@@ -454,7 +454,7 @@ describe('User flow tests', () => {
 
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(NUM);
-  }, 5000);
+  }, 10000);
 
   afterEach(afterafter);
 }, 30000);

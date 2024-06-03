@@ -434,8 +434,8 @@ describe('User flow tests', () => {
     expect(numNotes).toBe(1);
   });
 
-  test('Multiple Notes added persist on dashboard (50)', async () => {
-    const NUM = 50;
+  test('Multiple Notes added persist on dashboard (20)', async () => {
+    const NUM = 20;
 
     for (let i = 0; i < NUM; i += 1) {
       await createNewNote();

@@ -14,6 +14,7 @@ import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
 import { saveTagToStorage } from './tagStorage.js';
+import { alertDialog } from './settings.js';
 
 let quill;
 
@@ -156,7 +157,7 @@ function getSelectedTags() {
 function createNoteObject(tags, id) {
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
   if (title === '') {
-    alert('Please enter a valid title.');
+    alertDialog('Please enter a valid title');
     return null;
   }
 
@@ -212,12 +213,12 @@ export function saveNote() {
  *
  * @returns {void} This function does not return a value.
  */
-function addTags() {
+async function addTags() {
   // const id = pageData.noteID;
   // const db = pageData.database;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
   if (tagname === '') {
-    alert('Please enter a valid tag name');
+    alertDialog('Please enter a valid tag name', 'alert');
   } else {
     const allTags = [];
     document.querySelectorAll('.tag').forEach((tag) => {

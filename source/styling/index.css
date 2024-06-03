@@ -100,6 +100,43 @@ h1 {
   color: var(--dark-purple);
 }
 
+
+/* -------------------------------DIALOG-------------------------------- */
+dialog {
+  padding: 1.8rem;
+  margin: auto;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 10%;
+  margin-top: 1rem;
+}
+
+.dialog-buttons > button {
+  border-radius: 3px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dialog-buttons > button:hover {
+  transform: scale(1.01);
+}
+
+.dialog-cancel {
+  width: 45%;
+  background: #ffcdc7;
+}
+
+.dialog-confirm {
+  flex-grow: 1;
+  background: #c7ffcd;
+}
+
 /* ------------------------------MAIN BODY------------------------------ */
 
 main {

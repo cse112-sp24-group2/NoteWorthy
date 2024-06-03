@@ -14,13 +14,8 @@ import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
 import { getDate, toggleClassToArr } from './utility.js';
-import {
-  addNotesToDocument,
-  hideEmptyWojak,
-  initTimeColumnSorting,
-  initTitleColumnSorting,
-  initSearchBar,
-} from './notesDashboard.js';
+import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
+import { initSettings } from './settings.js';
 
 /**
  * @description Switches current view to dashboard
@@ -34,7 +29,6 @@ async function switchToDashboard(dom) {
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
-  hideEmptyWojak(notes.length !== 0);
 }
 
 /**
@@ -167,12 +161,12 @@ async function initEventHandler() {
 async function init() {
   // HACK: need to change and handle proper URL
   document.querySelector('#newNote').addEventListener('click', () => updateURL('?id=9999'));
-
   console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
   initEventHandler();
+  initSettings();
   URLRoutingHandler();
   initEditor();
 }

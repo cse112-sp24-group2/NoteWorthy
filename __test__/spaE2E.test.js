@@ -384,8 +384,6 @@ describe('Editor tests', () => {
   afterEach(afterafter);
 }, 30000);
 
-
-
 describe('User flow tests', () => {
   beforeEach(beforebefore);
   test('Modifying saved note content persists', async () => {
@@ -438,17 +436,26 @@ describe('User flow tests', () => {
     const NUM = 20;
 
     for (let i = 0; i < NUM; i += 1) {
+      // eslint-disable-next-line
       await createNewNote();
 
+      // eslint-disable-next-line
       const inputTxt = await page.$('#title-input');
+      // eslint-disable-next-line
       await inputTxt.click({ clickCount: 1 });
+      // eslint-disable-next-line
       await page.type('#title-input', 'title text');
 
+      // eslint-disable-next-line
       const editor = await page.$('.ql-editor');
+      // eslint-disable-next-line
       await editor.click({ clickCount: 1 });
+      // eslint-disable-next-line
       await page.type('.ql-editor', 'editor text');
 
+      // eslint-disable-next-line
       await page.waitForSelector('#save-button').then((el) => el.click());
+      // eslint-disable-next-line
       await page.waitForSelector('#back-button').then((el) => el.click());
     }
 

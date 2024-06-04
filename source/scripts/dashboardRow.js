@@ -55,6 +55,7 @@ class dashboardRow extends HTMLElement {
       copyBtn: this.shadowRoot.querySelector('.note-copy-button'),
       deleteBtn: this.shadowRoot.querySelector('.note-delete-button'),
       backBtn: this.shadowRoot.querySelector('.note-back-button'),
+      tags: this.shadowRoot.querySelector('.note-tags'),
     };
   }
 
@@ -72,6 +73,8 @@ class dashboardRow extends HTMLElement {
     this.dom.title.replaceChildren(newTitle);
     this.dom.lastModified.replaceChildren(newModified);
     this.dom.content.innerHTML = noteContent;
+    // add tags to note back
+    this.dom.tags.innerHTML = note.tags.map((tag) => `<span class="tag">${tag}</span>`).join('');
 
     this.dom.deleteBtn.addEventListener('click', async (event) => {
       event.stopPropagation();

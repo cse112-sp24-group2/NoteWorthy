@@ -72,6 +72,18 @@ h1 {
   display: flex;
 }
 
+#darkMode {
+  font-size: 1.5em;
+  padding: 0.3rem 2rem 0.3rem 2rem;
+  background: var(--white);
+  color: var(--text-purple);
+  border-radius: 6px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
 #newNote {
   font-size: 1.5em;
   padding: 0.3rem 3rem 0.3rem 3rem;
@@ -86,6 +98,43 @@ h1 {
 #newNote:hover {
   background: var(--light-purple);
   color: var(--dark-purple);
+}
+
+
+/* -------------------------------DIALOG-------------------------------- */
+dialog {
+  padding: 1.8rem;
+  margin: auto;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 10%;
+  margin-top: 1rem;
+}
+
+.dialog-buttons > button {
+  border-radius: 3px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dialog-buttons > button:hover {
+  transform: scale(1.01);
+}
+
+.dialog-cancel {
+  width: 45%;
+  background: #ffcdc7;
+}
+
+.dialog-confirm {
+  flex-grow: 1;
+  background: #c7ffcd;
 }
 
 /* ------------------------------MAIN BODY------------------------------ */
@@ -103,6 +152,14 @@ main {
   width: 24%;
   padding: 1.5rem;
   position: relative;
+}
+
+.sidebar.dark {
+  background-color: var(--text-purple);
+}
+
+#tags.dark {
+  color: var(--white);
 }
 
 /* "Tags" and "Pinned" */
@@ -167,19 +224,16 @@ main {
   border: none;
 }
 
+#view-more.dark {
+  color: var(--white);
+}
+
 .sidebar > footer {
   position: absolute;
   bottom: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#divider {
-  width: 100%;
-  height: 1px;
-  background: var(--dark-purple);
-  margin: 5rem 0;
 }
 
 #profile-img {
@@ -201,6 +255,10 @@ main {
   flex: 1;
 }
 
+.view.dark {
+  background-color: var(--dark-purple);
+}
+
 .dashboard {
   display: flex;
   flex-direction: column;
@@ -208,6 +266,9 @@ main {
   flex: 1;
   position: relative;
 }
+
+
+
 
 .wojak {
   z-index: -1;
@@ -228,6 +289,17 @@ main {
 
 .empty-dashboard > p {
   font-size: 1.3rem;
+  color: var(--dark-purple);
+}
+
+.empty-dashboard.dark > p {
+  color: var(--white);
+}
+
+.empty-dashboard.dark > img {
+  filter: invert(1);
+  mix-blend-mode: lighten;
+  z-index: 10;
 }
 
 /* ----------DASHBOARD HEADER---------- */
@@ -239,6 +311,10 @@ main {
   align-items: center;
 }
 
+.dashboard-header.dark > h2 {
+  color: var(--white);
+}
+
 /* "Dashboard" */
 .dashboard-header > h2 {
   font-size: 1.5rem;
@@ -246,14 +322,30 @@ main {
   color: var(--dark-purple);
 }
 
+#sort {
+  font-size: 1rem;
+  background: none;
+  border: none;
+  color: var(--dark-purple);
+  cursor: pointer;
+}
+
+#sort.dark {
+  color: var(--white);
+}
+
 .searchbar-wrapper {
   display: flex;
 }
 
 .searchbar-wrapper > img {
-  filter: invert(100%);
   position: relative;
   right: 2.5rem;
+}
+
+.searchbar-wrapper > img {
+  filter: invert(50%);
+  mix-blend-mode: lighten;
 }
 
 /* Actual Search Bar */
@@ -264,7 +356,18 @@ main {
   font-size: 1rem;
   width: 13rem;
   transition: 0.3s;
+  background: none;
 }
+
+.searchbar-wrapper.dark > input::placeholder {
+  color: var(--light-purple);
+}
+
+.searchbar-wrapper.dark > input {
+  color: var(--white);
+  border-bottom: 2px solid var(--white);
+}
+
 
 .searchbar-wrapper > input:focus {
   outline: none;
@@ -333,7 +436,7 @@ main {
 }
 
 .note-text {
-  height: 70%;
+  height: 11rem;
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0.2)));
 }
 
@@ -409,6 +512,10 @@ main {
   flex: 1;
 }
 
+.editor.dark {
+  color: var(--white);
+}
+
 .editor > header {
   display: flex;
   align-items: center;
@@ -422,7 +529,11 @@ main {
   font-weight: bold;
   border: none;
   border-bottom: 2px solid var(--accent-purple);
-  width: auto;
+  width: 100%;
+}
+
+#title-input.dark {
+  color: var(--white);
 }
 
 #title-input[disabled='true'] {
@@ -480,7 +591,7 @@ main {
   display: flex;
   justify-content: end;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1rem;
   width: 100%;
 }
 
@@ -488,8 +599,12 @@ main {
   cursor: pointer;
   border: none;
   background: none;
-  filter: invert(100%);
+  filter: invert(50%);
   transition: transform 0.3s;
+}
+
+.note-control-bar.dark > button {
+  mix-blend-mode: lighten;
 }
 
 .note-control-bar > button:hover {

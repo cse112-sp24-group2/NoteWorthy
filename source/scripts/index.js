@@ -11,16 +11,11 @@
 import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
-import { getTagsFromStorage, initializeTagDB } from './tagStorage.js';
+import { initializeTagDB, getTagsFromStorage } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
-import { getDate } from './utility.js';
-import {
-  addNotesToDocument,
-  hideEmptyWojak,
-  initTimeColumnSorting,
-  initTitleColumnSorting,
-  initSearchBar,
-} from './notesDashboard.js';
+import { getDate, toggleClassToArr } from './utility.js';
+import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
+import { initSettings } from './settings.js';
 
 /**
  * @description Switches current view to dashboard
@@ -34,7 +29,6 @@ async function switchToDashboard(dom) {
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
-  hideEmptyWojak(notes.length !== 0);
 }
 
 /**
@@ -77,8 +71,10 @@ function URLRoutingHandler() {
 
   if (id === '9999' || id == null) {
     pageData.noteID = null;
+    pageData.tags = [];
   } else {
     pageData.noteID = parseInt(id, 10);
+    // pageData.tags =
   }
 
   // So that child functions can hide/unhide dashboard or editor
@@ -89,9 +85,38 @@ function URLRoutingHandler() {
 
   if (id == null) {
     switchToDashboard(dom);
+    // const tags = document.getElementById('notes-tags');
+    // tags.remove();
+    document.getElementById('notes-tags').innerHTML = '';
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }
+}
+
+function initThemeToggle() {
+  const darkModeButton = document.querySelector('#darkMode');
+  function updateButtonText() {
+    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+  }
+  darkModeButton.addEventListener('click', () => {
+    updateButtonText();
+    const elements = [
+      document.body,
+      document.querySelector('.sidebar'),
+      document.querySelector('#tags'),
+      document.querySelector('#view-more'),
+      document.querySelector('.dashboard-header'),
+      document.querySelector('#sort'),
+      document.querySelector('.searchbar-wrapper'),
+      document.querySelector('.empty-dashboard'),
+      document.querySelector('.view'),
+      document.querySelector('.editor'),
+      document.querySelector('#notes-title'),
+      document.querySelector('#title-input'),
+      document.querySelector('.note-control-bar'),
+    ];
+    toggleClassToArr(elements, 'dark');
+  });
 }
 
 /**
@@ -103,23 +128,15 @@ function URLRoutingHandler() {
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
-
+  console.log('the pageData.tags is', pageData.tags);
   addTagsToDocument(pageData.tags);
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
   initSearchBar(notes);
   initTagSearch();
+  initThemeToggle();
 
-  const button = document.querySelector('#newNote');
-  button.addEventListener('click', async () => {
-    // HACK: need to change and handle proper URL
-    updateURL('?id=9999');
-  });
-
-  const h1 = document.querySelector('.header > h1');
-  h1.addEventListener('click', async () => {
-    updateURL('');
-  });
+  document.querySelector('.header > h1').addEventListener('click', async () => updateURL(''));
 
   let currURL = window.location.search;
   window.addEventListener('popstate', () => {
@@ -142,13 +159,16 @@ async function initEventHandler() {
  * @returns {void} This function does not return a value.
  */
 async function init() {
+  // HACK: need to change and handle proper URL
+  document.querySelector('#newNote').addEventListener('click', () => updateURL('?id=9999'));
   console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  initEventHandler();
+  initSettings();
   URLRoutingHandler();
   initEditor();
-  initEventHandler();
 }
 
 window.addEventListener('DOMContentLoaded', init);

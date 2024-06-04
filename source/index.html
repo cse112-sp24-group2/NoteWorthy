@@ -63,9 +63,17 @@
   </head>
 
   <body>
+    <dialog>
+      <p class="dialog-prompt"></p>
+      <div class="dialog-buttons">
+        <button class="dialog-cancel">No</button>
+        <button class="dialog-confirm" autofocus>Yes</button>
+      </div>
+    </dialog>
     <div class="header">
       <h1>NoteWorthy.</h1>
       <div class="controlPanel">
+        <button id="darkMode">Dark</button>
         <button id="newNote">+ New Note</button>
       </div>
     </div>
@@ -103,12 +111,10 @@
 
       <!-- SIDEBAR -->
       <section class="sidebar">
-        <h3>Tags</h3>
+        <h3 id="tags">Tags</h3>
         <form class="tags-list"></form>
         <button id="view-more">View all</button>
-        <h3>Pinned</h3>
 
-        <div id="divider"></div>
         <footer>
           <div id="profile-img"></div>
           <p>Username</p>
@@ -126,7 +132,7 @@
               <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
               <img alt="search note" src="images/search-icon.svg" />
             </div>
-            <span>Sort By: Recently Edited</span>
+            <span id="sort">Sort By: Recently Edited</span>
           </header>
           <div class="dashboardItems"></div>
           <div class="empty-dashboard hidden">
@@ -150,29 +156,22 @@
               <button id="back-button" title="Back">
                 <img alt="back arrow icon" src="./images/back-arrow.svg" />
               </button>
-              <button id="change-view-button" title="Preview">
-                <img alt="toggle view button" src="./images/preview-note.svg" />
-              </button>
               <button id="save-button" title="Save">
                 <img alt="save icon" src="./images/save-note.svg" />
               </button>
               <button id="export-button" title="Export">
                 <img alt="export icon" src="./images/download.svg" />
               </button>
-              <button id="import-button">
+              <button id="import-button" title="Import">
                 <img style="transform: rotate(180deg)" alt="import icon" src="./images/download.svg" />
               </button>
               <button id="delete-button" title="Delete">
                 <img alt="delete icon" src="./images/delete.svg" />
               </button>
-              <button id="tag-button">Add Tag</button>
+              <button id="tag-button" style="color:red" > Add Tag</button>
               <input id="tag-input" type="text" placeholder="Add tag..." />
             </div>
             <form id="notes-tags">
-              <input type="checkbox" id="tag1" name="tag1" />
-              <label for="tag1">Tag 1</label>
-              <input type="checkbox" id="tag2" name="tag2" />
-              <label for="tag2">Tag 2</label>
             </form>
           </header>
           <div id="notes-content">

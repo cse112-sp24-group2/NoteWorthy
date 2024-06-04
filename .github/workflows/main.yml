@@ -6,20 +6,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install modules
-        run: yarn
-      - name: Run tests
-        run: yarn test
-      - name: Check linting and formatting
-        run: yarn lint:check
-
-      - name: Create Coverage
-        run: node ./node_modules/jest/bin/jest.js --coverage
-
-      - name: Coveralls- post coverage report
-        uses: coverallsapp/github-action@master
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '18'
+      - name: Installs
+        run: |
+          npm install jest
+          npm install --save-dev node-fetch
+          npm install -D jest-environment-jsdom
+          npm ci -l verbose
+      - name: Start server
+        run: |
+          npm start &
+        env:
+          CI: true
+      - name: Run TESTS
+        run: |
+          npm run test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          CI: true
+      - name: Check linting and formatting
+        run: npm run lint:check
+      - name: HTML5 Validator
+        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
+        with:
+          root: source/
+          css: true
+          skip_git_check: true
 
       # Autogenerate jsDocs and output files to ./jsdocs
       - name: Generate jsDocs
@@ -29,6 +47,10 @@ jobs:
           recurse: true
           output_dir: ./jsdocs
           front_page: README.md
+      - name: Minify JS
+        run: |
+          npm install uglify-js -g
+          find ./source/scripts -name "*.js" -exec uglifyjs {} -o {} --compress --mangle --module \;
 
       # Push generated files onto a external repository to deploy on GitHub pages
       - name: Deploy jsDocs
@@ -37,10 +59,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-
-      - name: HTML5 Validator
-        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
-        with:
-          root: source/
-          css: true
-          skip_git_check: true

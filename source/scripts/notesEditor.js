@@ -10,11 +10,14 @@
  *   - initEditor()
  */
 import { updateURL, pageData } from './Routing.js';
-import { saveNoteToStorage, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
-import { generateRandomString, getDate } from './utility.js';
+import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
+import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
+import { saveTagToStorage } from './tagStorage.js';
+import { alertDialog } from './settings.js';
 
 let quill;
+
 /**
  * @description append the notes title, last modified date, and content to page
  * @param {*} note note object with data
@@ -24,25 +27,29 @@ export async function addNoteToDocument(note) {
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
   const intPutArea = document.getElementById('notes-tags');
-  const tag = document.createElement('input');
 
   // empty the html items
   // populate html with notes data
-  title.innerHTML = '<input type="text" id="title-input" placeholder = "Untitled Note">';
+  title.innerHTML = `<input type="text"
+    ${title.classList.contains('dark') ? 'class="dark"' : 'class=""'} id="title-input" placeholder="Untitled Note">`;
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
   quill.setContents(note.content);
 
+  const tagInput = document.querySelector('#tag-input');
+  tagInput.setAttribute('placeholder', 'Add tag...');
+
   // append the tags
   const tags = note.tags;
-  console.log(note);
   for (let i = 0; i < tags.length; i += 1) {
-    tag.type = 'checkbox';
-    tag.id = 'tag';
-    tag.name = tags[i];
-    intPutArea.appendChild(tag);
-
+    const tagCheckbox = document.createElement('input');
+    console.log(tags[i]);
+    tagCheckbox.type = 'checkbox';
+    tagCheckbox.className = 'tag';
+    tagCheckbox.name = tags[i];
+    tagCheckbox.checked = true;
+    intPutArea.appendChild(tagCheckbox);
     const label = document.createElement('label');
     label.htmlFor = tags[i]; // replace with unique tag identifier
     label.appendChild(document.createTextNode(tags[i]));
@@ -57,30 +64,37 @@ export async function addNoteToDocument(note) {
  * @returns {void} this function does not return a value.
  */
 export function editNote(bool) {
-  const editButton = document.querySelector('#change-view-button');
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
   const saveButton = document.querySelector('#save-button');
-  pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
-  const edit = pageData.editEnabled;
+  const tagButton = document.querySelector('#tag-button');
+  const tagInput = document.querySelector('#tag-input');
+  const tagCheckBoxes = document.querySelectorAll('input[type=checkbox]');
 
-  /*if (edit) {
-    editButton.firstChild.src = './images/edit-note.svg';
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
-    importButton.classList.add('disabled-button');
-    importButton.disabled = true;
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    editButton.firstChild.src = './images/preview-note.svg';
-    exportButton.classList.remove('disabled-button');
-    exportButton.disabled = false;
-    importButton.classList.remove('disabled-button');
-    importButton.disabled = false;
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  }*/
+  const enableEditMode = bool || !pageData.editEnabled;
+  pageData.editEnabled = enableEditMode;
+
+  const setButtonState = (button, isEnabled) => {
+    /* eslint-disable-next-line */
+    button.disabled = !isEnabled;
+    button.classList.toggle('disabled-button', !isEnabled);
+  };
+
+  const setInputState = (input, isEnabled) => {
+    /* eslint-disable-next-line */
+    input.disabled = !isEnabled;
+    input.classList.toggle('disabled-button', !isEnabled);
+  };
+
+  setButtonState(exportButton, !enableEditMode);
+  setButtonState(importButton, !enableEditMode);
+  setButtonState(saveButton, enableEditMode);
+  setButtonState(tagButton, enableEditMode);
+  setInputState(tagInput, enableEditMode);
+
+  tagCheckBoxes.forEach((tag) => {
+    setInputState(tag, enableEditMode);
+  });
 }
 
 /**
@@ -114,6 +128,57 @@ function importNote() {
 }
 
 /**
+ * @description Retrieves the selected tags from the form.
+ *
+ * @returns {string[]} An array of selected tag names.
+ */
+function getSelectedTags() {
+  const elements = document.getElementById('notes-tags').elements;
+  const tags = [];
+
+  for (let i = 0; i < elements.length; i += 1) {
+    const currElement = elements[i];
+    if (currElement.type === 'checkbox' && currElement.checked === true) {
+      tags.push(currElement.name);
+    }
+  }
+
+  return tags;
+}
+
+/**
+ * @description Creates a note object from the form data.
+ *
+ * @param {string[]} tags - An array of selected tag names.
+ * @param {string} id - The note ID (optional).
+ *
+ * @returns {Object} A note object.
+ */
+function createNoteObject(tags, id) {
+  const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
+  if (title === '') {
+    alertDialog('Please enter a valid title');
+    return null;
+  }
+
+  const content = quill.getContents();
+  const htmlContent = quill.getSemanticHTML();
+  const lastModified = getDate();
+
+  const noteObject = {
+    title,
+    lastModified,
+    tags,
+    content,
+    htmlContent,
+  };
+
+  if (id) noteObject.uuid = id;
+
+  return noteObject;
+}
+
+/**
  * @description Saves the note content and updates the URL with the new note ID.
  *
  * @returns {void} This function does not return a value.
@@ -121,57 +186,29 @@ function importNote() {
 export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
-  const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
-  if (title === '') {
-    alert('Please enter a valid title.');
-    return;
-  }
-  const content = quill.getContents();
-  const htmlContent = quill.getSemanticHTML();
-  const lastModified = getDate();
-  // TODO: Need to add tags
-  const noteObject = {
-    title,
-    lastModified,
-    content,
-    htmlContent,
-  };
-  if (id) noteObject.uuid = id;
+  const tagDB = pageData.tagDB;
+  const tags = getSelectedTags();
+  const noteObject = createNoteObject(tags, id);
+  if (!noteObject) return;
   saveNoteToStorage(db, noteObject);
   if (!id) {
-    // replace current url with new note id
     getNotesFromStorage(db).then((res) => {
       window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
+      pageData.noteID = res[res.length - 1].uuid;
     });
   }
-  editNote(false); // Switch to preview mode
-
-  // Disable tag button after clicking save
-  /*const tagButton = document.querySelector('#tag-button');
-  tagButton.classList.add('disabled-button');
-  tagButton.disabled = true;*/
-  // Disable tag input after clicking save
-  /* const tagInput = document.querySelector('#tag-input');
-  tagInput.classList.add('disabled-button');
-  tagInput.disabled = true;
-
   const tagList = document.querySelectorAll('#tag');
   for (let i = 0; i < tagList.length; i += 1) {
     tagList[i].classList.add('disabled-button');
-    tagList[i].disabled = true;
-  }*/
-
-  //  const tagData = pageData.tagDB;
-  //  // adding tags to the databases
-  //  for(let i = 0; i < pageData.tags.length; i++) {
-  //   // if tag already exists in tagDB, increment the assoc count
-  //   if() {
-
-  //   }
-  //   else {
-  //     // create tag in database with value 1.
-  //   }
-  //  }
+    tagList[i].disabled = false;
+  }
+  for (let i = 0; i < tags.length; i += 1) {
+    const TAG_OBJECT = {
+      tag_name: tags[i],
+      num_notes: 1,
+    };
+    saveTagToStorage(tagDB, TAG_OBJECT);
+  }
 }
 
 /**
@@ -179,26 +216,45 @@ export function saveNote() {
  *
  * @returns {void} This function does not return a value.
  */
-function addTags() {
-  const id = pageData.noteID;
+async function addTags() {
+  // const id = pageData.noteID;
   // const db = pageData.database;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
   if (tagname === '') {
-    alert('Please enter a valid tag name');
+    alertDialog('Please enter a valid tag name', 'alert');
   } else {
+    const allTags = [];
+    document.querySelectorAll('.tag').forEach((tag) => {
+      allTags.push(tag.name);
+    });
+    console.log(allTags);
+    if (allTags.includes(tagname)) {
+      alert('Tag already exists');
+    } else {
+      const parentElement = document.getElementById('notes-tags');
+      const newCheckBox = document.createElement('input');
+      newCheckBox.type = 'checkbox';
+      newCheckBox.checked = true;
+      newCheckBox.className = 'tag';
+      newCheckBox.name = tagname;
+      // newCheckBox.setAttribute('disabled', true);
+      parentElement.appendChild(newCheckBox);
+      const label = document.createElement('label');
+      label.htmlFor = tagname;
+      label.appendChild(document.createTextNode(tagname));
+      parentElement.appendChild(label);
+    }
     // if existing note
+    /** 
     if (id) {
+      // console.log()
       // access note
       const note = getNoteFromStorage(id);
+      console.log(note);
       const tags = note.tags;
-      let contains = false;
       // check to see if note is already tagged
-      for (let i = 0; i < tags.length; i += 1) {
-        if (tags[i] === tagname) {
-          alert('Note already tagged with'); // + tagname
-          contains = true;
-        }
-      }
+      console.log(tags);
+      const contains = tags.includes(tagname);
       if (!contains) {
         note.tags.push(tagname);
         // push HTML element
@@ -207,8 +263,9 @@ function addTags() {
         const uniqueID = generateRandomString(8); // Unique tag identifier
         newCheckBox.type = 'checkbox';
         newCheckBox.id = uniqueID;
-        newCheckBox.value = 'something <br/>';
-        newCheckBox.name = uniqueID;
+        // newCheckBox.value = 'something <br/>';
+        newCheckBox.checked = true;
+        newCheckBox.name = tagname;
         parentElement.appendChild(newCheckBox);
 
         const label = document.createElement('label');
@@ -216,6 +273,7 @@ function addTags() {
         label.appendChild(document.createTextNode(tagname));
         parentElement.appendChild(label);
 
+        // storing tag info to be used in saveNote()
         pageData.tags.push(tagname);
         // adding to database
         // db.transaction('NotesOS', 'readwrite').objectStore('note_tags');
@@ -225,37 +283,29 @@ function addTags() {
     if (!id) {
       // notes.tags.push(tagname);
       // push HTML element
+
+      // check html elements to see if tag is already there.
+
       const parentElement = document.getElementById('notes-tags');
       const newCheckBox = document.createElement('input');
+      const uniqueID = generateRandomString(8); // Unique tag identifier
       newCheckBox.type = 'checkbox';
       newCheckBox.id = 'tag';
       newCheckBox.value = 'something <br/>';
-      newCheckBox.name = 'tag43'; // replace with unique tag identifier
+      newCheckBox.checked = true;
+      newCheckBox.name = tagname; // replace with unique tag identifier
       parentElement.appendChild(newCheckBox);
 
       const label = document.createElement('label');
-      label.htmlFor = 'tag43'; // replace with unique tag identifier
+      label.htmlFor = uniqueID; // replace with unique tag identifier
       label.appendChild(document.createTextNode(tagname));
       parentElement.appendChild(label);
 
       pageData.tags.push(tagname);
     }
-
+*/
     // if not contained in tag database, then push to that as well.
   }
-  // const tagButton = document.querySelector('#tag-button');
-  // const tagInput = document.querySelector('#tag-input');
-  // const tagList = document.querySelectorAll('#tag');
-  // saveButton.classList.add('disabled-button');
-  // saveButton.disabled = true;
-  // tagButton.classList.add('disabled-button');
-  // tagButton.disabled = true;
-  // tagInput.classList.add('disabled-button');
-  // tagInput.disabled = true;
-  // for(let i = 0; i < tagList.length; i++ ){
-  //   tagList[i].classList.add('disabled-button');
-  //   tagList[i].disabled = true;
-  // }
 }
 
 /**
@@ -267,7 +317,6 @@ export async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
   //const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
-  const editButton = document.querySelector('#change-view-button');
   const tagButton = document.querySelector('#tag-button');
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
@@ -278,48 +327,11 @@ export async function initEditor() {
     theme: 'snow',
   });
 
-  editContent.addEventListener('click', () => {
-    editNote(true);
-  });
-
-  deleteButton.addEventListener('click', () => {
-    deleteNote();
-  });
-
-  backButton.addEventListener('click', () => {
-    saveNote();
-    updateURL('');
-  });
-
-  editButton.addEventListener('click', () => {
-    editNote();
-  });
-
-  tagButton.addEventListener('click', () => {
-    addTags();
-  });
-
-  exportButton.addEventListener('click', () => {
-    exportNote();
-  });
-
-  importButton.addEventListener('click', () => {
-    importNote();
-  });
-
-  /*if (pageData.editEnabled == null || !pageData.editEnabled) {
-    exportButton.classList.add('disabled-button');
-    exportButton.disabled = true;
-    importButton.classList.add('disabled-button');
-    importButton.disabled = true;
-    saveButton.classList.remove('disabled-button');
-    saveButton.disabled = false;
-  } else {
-    exportButton.classList.remove('disabled-button');
-    exportButton.disabled = false;
-    importButton.classList.remove('disabled-button');
-    importButton.disabled = false;
-    saveButton.classList.add('disabled-button');
-    saveButton.disabled = true;
-  }*/
+  editContent.addEventListener('click', () => editNote(true));
+  deleteButton.addEventListener('click', () => deleteNote());
+  saveButton.addEventListener('click', () => saveNote());
+  backButton.addEventListener('click', () => updateURL(''));
+  tagButton.addEventListener('click', () => addTags());
+  exportButton.addEventListener('click', () => exportNote());
+  importButton.addEventListener('click', () => importNote());
 }

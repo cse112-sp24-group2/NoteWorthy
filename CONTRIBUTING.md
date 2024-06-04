@@ -4,24 +4,12 @@
 
 All documentation generated via JSDocs [here](https://cse110-fa22-group5.github.io/cse110-fa22-group5/jsdocs/index.html).
 
-## Running and Scripts
+## Installing necessary dependencies
 
 To install the CI/CD dependencies for this project, run
 
 ```
 npm install
-```
-
-To run unit and end-to-end tests, run
-
-```
-npm run test
-```
-
-To check code for linting and formatting using ESLint and Prettier, run
-
-```
-npm run lint:fix
 ```
 
 ## Linting and Validation
@@ -43,3 +31,24 @@ npm run lint:check
 ```
 
 Finally, we validate our HTML using [HTML5 Validator](https://github.com/marketplace/actions/html5-validator) in our CI/CD pipeline.
+
+## Testing
+
+List how to test our code (unit and E2E) and what we use to test.
+
+We use [Jest](https://jestjs.io/) for our backend unit testing (tests located in [./__test__](./__test__/)).
+
+Additionally, we use [Puppeteer](https://pptr.dev/) for end-to-end testing (tests located in [./puppeteerTesting](./puppeteerTesting/))
+
+To run unit and end-to-end tests:
+
+Start the local host on port `5500`
+```
+npm start
+```
+
+On a separate terminal, run the tests
+```
+npm run test
+```
+

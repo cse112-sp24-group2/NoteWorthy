@@ -10,7 +10,9 @@
 import QuillToPdf from 'quill-to-pdf';
 import { saveAs } from 'file-saver';
 import { pageData, updateURL } from './Routing.js';
-import { deleteNoteFromStorage, getNoteFromStorage } from './noteStorage.js';
+import { deleteNoteFromStorage, getNoteFromStorage, getNotesFromStorage } from './noteStorage.js';
+import { addNotesToDocument } from './notesDashboard.js';
+import { confirmDialog } from './settings.js';
 
 /**
  * @description Exports the note as a txt file
@@ -45,16 +47,25 @@ export async function exportNote(uuid) {
  *                  when deleting note from dashboard
  * @returns {void} This function does not return a value.
  */
-export function deleteNote(toDelete) {
+export async function deleteNote(toDelete) {
   const id = toDelete || pageData.noteID;
   const db = pageData.database;
 
+  console.log(id);
+
   if (!id) return;
-  if (!window.confirm('Are you sure you want to delete')) return;
+
+  const confirm = await confirmDialog('Are you sure you want to delete this note?');
+  if (!confirm) return;
 
   deleteNoteFromStorage(db, { uuid: id });
 
-  // This means we are deleting from the editor page, so we should return
-  // to the dashboard
-  if (!toDelete) updateURL('');
+  // different actions depending on deleting from dashboard or
+  // editor
+  if (toDelete) {
+    const notes = await getNotesFromStorage(db);
+    addNotesToDocument(notes);
+  } else {
+    updateURL('');
+  }
 }

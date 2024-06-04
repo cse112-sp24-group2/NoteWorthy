@@ -8,12 +8,13 @@
  *   - deleteNoteFromStorage()
  */
 import { pageData } from './Routing.js';
+import { OBJECT_STORE_NAME } from './noteStorage.js';
 
 let tagDB;
 const TAG_STORE_NAME = 'tags';
 const TAG_OBJECT = {
   tag_name: '',
-  assoc_notes: 0,
+  num_notes: 0,
 };
 
 /**
@@ -81,37 +82,52 @@ export function getTagsFromStorage(database) {
 }
 
 /**
- * Takes the given tag and saves it to the database. To make a new tag,
- * pass in a Tag object where the ID is undefined and a new note will be made.
+ * Gets a single tag from storage, if it exists.
  * @param {*} database The initialized indexedDB object.
- * @param {*} tag The tag object to save.
- * @returns Promise<int> The ID of the newly saved tag.
+ * @param {*} tagName tagName of the tag.
+ * @returns The note object stored with the given UUID.
  */
+export function getTagFromStorage(database, tagName) {
+  return new Promise((resolve, reject) => {
+    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
+    const getTagRequest = objectStore.get(tagName);
+    getTagRequest.onsuccess = () => {
+      resolve(getTagRequest.result);
+    };
+    getTagRequest.onerror = () => {
+      reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
+    };
+  });
+}
 
-export function saveTagToStorage(database, tag) {
-  if (!tag.id) {
-    return new Promise((resolve, reject) => {
-      const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-      const saveTagRequest = objectStore.add(tag);
-      saveTagRequest.onsuccess = () => {
-        console.log(`Successfully saved tag with id ${saveTagRequest.result}`);
-        console.log(saveTagRequest.result);
-        resolve(saveTagRequest.result);
-      };
-      saveTagRequest.onerror = () => {
-        reject(new Error('Error saving new tag to storage'));
-      };
-    });
-  }
+/**
+ * Takes the given tag and saves it to the database. To make a new tag,
+ * pass in a Tag object where the name is undefined and a new note will be made.
+ * @param {*} database The initialized indexedDB object.
+ * @param {*} tagObj The tag object to save.
+ * @returns Promise<int> The name of the newly saved tag.
+ */
+export function saveTagToStorage(database, tagObj) {
+  const tag = tagObj;
+
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    const saveTagRequest = objectStore.put(tag);
+    let saveTagRequest;
+
+    if (!tag.tag_name) {
+      saveTagRequest = objectStore.add(tag);
+    } else {
+      const oldTag = objectStore.get(tag.tag_name);
+      tag.num_notes = oldTag.num_notes + 1;
+      saveTagRequest = objectStore.put(tag);
+    }
+
     saveTagRequest.onsuccess = () => {
-      console.log(`Successfully saved note with uuid ${saveTagRequest.result}`);
+      console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
-      reject(new Error(`Error saving note with id ${tag.id} to storage`));
+      reject(new Error('Error saving new tag to storage'));
     };
   });
 }
@@ -122,16 +138,16 @@ export function saveTagToStorage(database, tag) {
  * @param {*} tag The note object to delete.
  * @returns Promise<void>
  */
-export function deleteNoteFromStorage(database, tag) {
+export function deleteTagFromStorage(database, tag) {
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    const deleteTagRequest = objectStore.delete(tag.id);
+    const deleteTagRequest = objectStore.delete(tag.tag_name);
     deleteTagRequest.onsuccess = () => {
-      console.log(`Successfully deleted tag with id ${deleteTagRequest.result}`);
+      console.log(`Successfully deleted tag with tag_name ${deleteTagRequest.result}`);
       resolve();
     };
     deleteTagRequest.onerror = () => {
-      reject(new Error(`Error deleting tag with id ${tag.id} from storage`));
+      reject(new Error(`Error deleting tag with tag_name ${tag.tag_name} from storage`));
     };
   });
 }

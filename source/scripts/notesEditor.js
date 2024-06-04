@@ -315,7 +315,6 @@ async function addTags() {
  */
 export async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
-  //const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
   const tagButton = document.querySelector('#tag-button');
   const exportButton = document.querySelector('#export-button');
@@ -329,7 +328,6 @@ export async function initEditor() {
 
   editContent.addEventListener('click', () => editNote(true));
   deleteButton.addEventListener('click', () => deleteNote());
-  saveButton.addEventListener('click', () => saveNote());
   backButton.addEventListener('click', () => updateURL(''));
   tagButton.addEventListener('click', () => addTags());
   exportButton.addEventListener('click', () => exportNote());

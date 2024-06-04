@@ -40,15 +40,22 @@ We use [Jest](https://jestjs.io/) for our backend unit testing (tests located in
 
 Additionally, we use [Puppeteer](https://pptr.dev/) for end-to-end testing (tests located in [./puppeteerTesting](./puppeteerTesting/))
 
-To run unit and end-to-end tests:
+Lastly, we use [Google's Lighthouse](https://developer.chrome.com/docs/lighthouse/overview) to test the performance of our frontend. This is done entirely through the command line with a configuration file at [./lighthouserc.js](./lighthouserc.js).
+
+### To run unit and end-to-end tests:
 
 Start the local host on port `5500`
 ```
 npm start
 ```
 
-On a separate terminal, run the tests
+On a separate terminal, run the tests:
 ```
 npm run test
 ```
 
+### To run the lighthouse tests:
+
+```
+lhci autorun
+```

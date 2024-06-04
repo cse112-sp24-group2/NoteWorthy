@@ -13,7 +13,7 @@ import { updateURL, pageData } from './Routing.js';
 import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { getTagFromStorage, saveTagToStorage } from './tagStorage.js';
+import { getTagFromStorage, getTagsFromStorage, saveTagToStorage } from './tagStorage.js';
 
 let quill;
 
@@ -39,18 +39,25 @@ export async function addNoteToDocument(note) {
   tagInput.setAttribute('placeholder', 'Add tag...');
 
   // append the tags
+  // TODO: add all tags from the database, only checking it off it its in "tags"
   const tags = note.tags;
-  for (let i = 0; i < tags.length; i += 1) {
+  const allTags = getTagsFromStorage(pageData.tagDB);
+  for (let i = 0; i < allTags.length; i += 1) {
     const tagCheckbox = document.createElement('input');
-    console.log(tags[i]);
+    console.log(allTags[i]);
     tagCheckbox.type = 'checkbox';
     tagCheckbox.className = 'tag';
-    tagCheckbox.name = tags[i];
-    tagCheckbox.checked = true;
+    tagCheckbox.name = allTags[i];
+    if(tags.includes(allTags[i])) {
+      tagCheckbox.checked = true;
+    }
+    else {
+      tagCheckbox.checked = false;
+    }
     intPutArea.appendChild(tagCheckbox);
     const label = document.createElement('label');
-    label.htmlFor = tags[i]; // replace with unique tag identifier
-    label.appendChild(document.createTextNode(tags[i]));
+    label.htmlFor = allTags[i]; // replace with unique tag identifier
+    label.appendChild(document.createTextNode(allTags[i]));
     intPutArea.appendChild(label);
   }
 }
@@ -207,7 +214,7 @@ export function saveNote() {
  *
  * @returns {void} This function does not return a value.
  */
-function addTags() {
+async function addTags() {
   // const id = pageData.noteID;
   // const db = pageData.database;
   const tagDB = pageData.tagDB;
@@ -230,7 +237,7 @@ function addTags() {
       newCheckBox.className = 'tag';
       newCheckBox.name = tagname;
       newCheckBox.addEventListener('change', function() {
-        if (this.checked) {
+        if (newCheckBox.checked === true) {
           saveTagToStorage(tagDB, TAG_OBJECT, false, true);
         } else {
           saveTagToStorage(tagDB, TAG_OBJECT, false, false);
@@ -248,7 +255,8 @@ function addTags() {
       num_notes: 1,
     };
     // get Tag from storage. see if its new or not.
-    const tagExists = getTagFromStorage(tagDB, tagname); // fill in, make this function work pre
+    const tagExists = await getTagFromStorage(tagDB, tagname); // fill in, make this function work pre
+    
     // maybe wrong value from tagExists
     console.log("tagExists is returning the value " + tagExists);
     saveTagToStorage(tagDB, TAG_OBJECT, tagExists, true);

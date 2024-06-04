@@ -87,29 +87,32 @@ export function getTagsFromStorage(database) {
  * @param {*} tagName tagName of the tag.
  * @returns The note object stored with the given UUID.
  */
-export function getTagFromStorage(database, tagName) {
+export async function getTagFromStorage(database, tagName) {
+    // const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
+    // const getTagRequest = objectStore.get(tagName);
+    // getTagRequest.onsuccess = function() {
+    //   if(getTagRequest.result === 0) {
+    //     console.log("should get in here first before checking tagExists value");
+    //     return false;
+    //   } else {
+    //     console.log("should get in here or maybe here first before checking tagExists value");
+    //     return true;
+    //   }
+    // }
+
+  return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
     const getTagRequest = objectStore.get(tagName);
-    getTagRequest.onsuccess = function() {
-      if(getTagRequest.result === 0) {
-        console.log("should get in here first before checking tagExists value");
-        return false;
-      } else {
-        console.log("should get in here or maybe here first before checking tagExists value");
-        return true;
-      }
-    }
-
-  // return new Promise((resolve, reject) => {
-  //   const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
-  //   const getTagRequest = objectStore.get(tagName);
-  //   getTagRequest.onsuccess = () => {
-  //     resolve(getTagRequest.result);
-  //   };
-  //   getTagRequest.onerror = () => {
-  //     reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
-  //   };
-  // });
+    console.log("before on success")
+    getTagRequest.onsuccess = () => {
+      console.log("on success")
+      console.log(getTagRequest.result);
+      resolve(getTagRequest.result === "undefined");
+    };
+    getTagRequest.onerror = () => {
+      reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
+    };
+  });
 }
 
 /**

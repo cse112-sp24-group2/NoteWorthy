@@ -197,7 +197,7 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
@@ -208,7 +208,7 @@ describe('Dashboard tests', () => {
 
     await page.waitForSelector('>>> .dialog-confirm').then((el) => el.click());
 
-    await delay(200);
+    await delay(400);
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(0);
   });
@@ -236,7 +236,7 @@ describe('Dashboard tests', () => {
     expect(isDialogOpen).toBe(true);
 
     await page.waitForSelector('>>> .dialog-cancel').then((el) => el.click());
-    await delay(200);
+    await delay(400);
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(1);
   });

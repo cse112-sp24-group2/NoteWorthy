@@ -18,7 +18,7 @@ const beforebefore = async () => {
   // Change headless to false when testing locally if you want the browser to
   // pop up, before commiting, change back to "new" otherwise github actions will
   // fail
-  browser = await puppeteer.launch({ headless: 'new' });
+  browser = await puppeteer.launch({ headless: false });
   page = await browser.newPage();
   page.setDefaultTimeout(0);
   await page.goto(URL);
@@ -374,84 +374,80 @@ describe('Editor tests', () => {
   afterEach(afterafter);
 }, 30000);
 
-// describe('User flow tests', () => {
-//   beforeEach(beforebefore);
-//   test('Modifying saved note content persists', async () => {
-//     await createNewNote();
-//
-//     let inputTxt = await page.$('#title-input');
-//     await inputTxt.click({ clickCount: 1 });
-//     await page.type('#title-input', 'title text');
-//
-//     let editor = await page.$('.ql-editor');
-//     await editor.click({ clickCount: 1 });
-//     await page.type('.ql-editor', 'editor text');
-//
-//     await page.waitForSelector('#save-button').then((el) => el.click());
-//     await page.waitForSelector('#back-button').then((el) => el.click());
-//     await delay(200);
-//
-//     let title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
-//     expect(title).toBe('title text');
-//
-//     let content = await page.$eval('>>> .note-text > p', (el) => el.innerHTML);
-//     expect(content).toBe('editor text');
-//     expect(page.url()).toBe(URL);
-//
-//     await page.waitForSelector('>>> .note-front').then((el) => el.click());
-//
-//     inputTxt = await page.$('#title-input');
-//     await inputTxt.click({ clickCount: 3 });
-//     await page.type('#title-input', 'edited title');
-//
-//     editor = await page.$('.ql-editor');
-//     await editor.click({ clickCount: 3 });
-//     await page.type('.ql-editor', 'edited text');
-//
-//     await page.waitForSelector('#save-button').then((el) => el.click());
-//     await page.waitForSelector('#back-button').then((el) => el.click());
-//     await delay(200);
-//
-//     title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
-//     expect(title).toBe('edited title');
-//
-//     content = await page.$eval('>>> .note-text > p', (el) => el.innerHTML);
-//     expect(content).toBe('edited text');
-//     expect(page.url()).toBe(URL);
-//     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
-//     expect(numNotes).toBe(1);
-//   });
-//
-//   test('Multiple Notes added persist on dashboard (20)', async () => {
-//     const NUM = 20;
-//
-//     for (let i = 0; i < NUM; i += 1) {
-//       // eslint-disable-next-line
-//       await createNewNote();
-//
-//       // eslint-disable-next-line
-//       const inputTxt = await page.$('#title-input');
-//       // eslint-disable-next-line
-//       await inputTxt.click({ clickCount: 1 });
-//       // eslint-disable-next-line
-//       await page.type('#title-input', 'title text');
-//
-//       // eslint-disable-next-line
-//       const editor = await page.$('.ql-editor');
-//       // eslint-disable-next-line
-//       await editor.click({ clickCount: 1 });
-//       // eslint-disable-next-line
-//       await page.type('.ql-editor', 'editor text');
-//
-//       // eslint-disable-next-line
-//       await page.waitForSelector('#save-button').then((el) => el.click());
-//       // eslint-disable-next-line
-//       await page.waitForSelector('#back-button').then((el) => el.click());
-//     }
-//
-//     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
-//     expect(numNotes).toBe(NUM);
-//   }, 10000);
-//
-//   afterEach(afterafter);
-// }, 30000);
+describe('User flow tests', () => {
+  beforeEach(beforebefore);
+  test('Modifying saved note content persists', async () => {
+    await createNewNote();
+
+    let inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 1 });
+    await page.type('#title-input', 'title text');
+
+    let editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 1 });
+    await page.type('.ql-editor', 'editor text');
+
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    let title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
+    expect(title).toBe('title text');
+
+    let content = await page.$eval('>>> .note-text > p', (el) => el.innerHTML);
+    expect(content).toBe('editor text');
+    expect(page.url()).toBe(URL);
+
+    await page.waitForSelector('>>> .note-front').then((el) => el.click());
+
+    inputTxt = await page.$('#title-input');
+    await inputTxt.click({ clickCount: 3 });
+    await page.type('#title-input', 'edited title');
+
+    editor = await page.$('.ql-editor');
+    await editor.click({ clickCount: 3 });
+    await page.type('.ql-editor', 'edited text');
+
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
+    expect(title).toBe('edited title');
+
+    content = await page.$eval('>>> .note-text > p', (el) => el.innerHTML);
+    expect(content).toBe('edited text');
+    expect(page.url()).toBe(URL);
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(1);
+  });
+
+  test('Multiple Notes added persist on dashboard (20)', async () => {
+    const NUM = 20;
+
+    for (let i = 0; i < NUM; i += 1) {
+      // eslint-disable-next-line
+      await createNewNote();
+
+      // eslint-disable-next-line
+      const inputTxt = await page.$('#title-input');
+      // eslint-disable-next-line
+      await inputTxt.click({ clickCount: 1 });
+      // eslint-disable-next-line
+      await page.type('#title-input', 'title text');
+
+      // eslint-disable-next-line
+      const editor = await page.$('.ql-editor');
+      // eslint-disable-next-line
+      await editor.click({ clickCount: 1 });
+      // eslint-disable-next-line
+      await page.type('.ql-editor', 'editor text');
+
+      // eslint-disable-next-line
+      await page.waitForSelector('#back-button').then((el) => el.click());
+      await delay(100)
+    }
+    const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
+    expect(numNotes).toBe(NUM);
+  }, 100000);
+
+  afterEach(afterafter);
+}, 30000);

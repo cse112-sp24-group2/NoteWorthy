@@ -3,27 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- <link -->
-    <!--   href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" -->
-    <!--   rel="stylesheet" -->
-    <!-- /> -->
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet"> -->
+    <meta name="description" content="Personal note-taking app that enables users to store, import, and export notes locally while keeping them in an organized manner." />
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com" /> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> -->
     <title>Notes</title>
     <!-- Main Stylesheets & Scripts -->
     <link rel="stylesheet" href="./styling/index.css" />
-    <script src="./scripts/index.js" type="module"></script>
-    <script src="./scripts/dashboardRow.js" type="module"></script>
-    <script src="./scripts/noteStorage.js" type="module"></script>
+    <script defer src="./scripts/index.js" type="module"></script>
+    <script defer src="./scripts/dashboardRow.js" type="module"></script>
     <!-- jsPDF HTML to PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
     <!-- Quill Rich Text Editor -->
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <template id="dashboard-note-template">
       <style>
-        @import url('./styling/index.css');
+      @import url('./styling/index.css');
       </style>
       <div class="note-wrapper">
         <section class="note-front">
@@ -44,7 +39,7 @@
           <div>
             <h4>Note details</h4>
             <div class="note-tags">
-              
+
 
             </div>
           </div>

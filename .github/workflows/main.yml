@@ -41,7 +41,7 @@ jobs:
       - name: Google Lighthouse
         run: |
           npm install -g @lhci/cli@0.13.x
-          lhci autorun --assertions
+          lhci autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 

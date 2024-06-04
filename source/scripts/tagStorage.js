@@ -88,16 +88,28 @@ export function getTagsFromStorage(database) {
  * @returns The note object stored with the given UUID.
  */
 export function getTagFromStorage(database, tagName) {
-  return new Promise((resolve, reject) => {
-    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
     const getTagRequest = objectStore.get(tagName);
-    getTagRequest.onsuccess = () => {
-      resolve(getTagRequest.result);
-    };
-    getTagRequest.onerror = () => {
-      reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
-    };
-  });
+    getTagRequest.onsuccess = function() {
+      if(getTagRequest.result === 0) {
+        console.log("should get in here first before checking tagExists value");
+        return false;
+      } else {
+        console.log("should get in here or maybe here first before checking tagExists value");
+        return true;
+      }
+    }
+
+  // return new Promise((resolve, reject) => {
+  //   const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
+  //   const getTagRequest = objectStore.get(tagName);
+  //   getTagRequest.onsuccess = () => {
+  //     resolve(getTagRequest.result);
+  //   };
+  //   getTagRequest.onerror = () => {
+  //     reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
+  //   };
+  // });
 }
 
 /**
@@ -108,9 +120,9 @@ export function getTagFromStorage(database, tagName) {
  * @returns Promise<int> The name of the newly saved tag.
  */
 
-export function saveTagToStorage(database, tagObj) {
+export function saveTagToStorage(database, tagObj, newTag, increment) {
   const tag = tagObj;
-  if (!tag.tag_name) {
+  if (newTag) {
     return new Promise((resolve, reject) => {
       const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
       const saveTagRequest = objectStore.add(tag);
@@ -127,7 +139,14 @@ export function saveTagToStorage(database, tagObj) {
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
     const oldTag = objectStore.get(tag.tag_name);
-    tag.num_notes = oldTag.num_notes + 1;
+    console.log(oldTag);
+    console.log(tag.tag_name + " num_notes is " + oldTag.num_notes);
+    if(increment) {
+      tag.num_notes = oldTag.num_notes + 1;
+    }
+    else  {
+      tag.num_notes = oldTag.num_notes -1;
+    }
     const saveTagRequest = objectStore.put(tag);
     saveTagRequest.onsuccess = () => {
       console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);

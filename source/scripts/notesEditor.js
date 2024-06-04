@@ -13,7 +13,7 @@ import { updateURL, pageData } from './Routing.js';
 import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { saveTagToStorage } from './tagStorage.js';
+import { getTagFromStorage, saveTagToStorage } from './tagStorage.js';
 
 let quill;
 
@@ -146,17 +146,6 @@ export function saveNote() {
   const id = pageData.noteID;
   const tagDB = pageData.tagDB;
   const tags = [];
-  // if(id) {
-  //   // const note = getNoteFromStorage(id);
-  //   // console.log(note);
-  //   // const existingTags = note.tags;
-  //   // console.log(existingTags);
-  //   // tags = existingTags.concat(pageData.tags);
-  //   tags = pageData.tags;
-  // }
-  // if(!id) {
-  //   tags = pageData.tags;
-  // }
 
   const elements = document.getElementById('notes-tags').elements;
   for (let i = 0; i < elements.length; i += 1) {
@@ -166,12 +155,6 @@ export function saveNote() {
       tags.push(currElement.name);
     }
   }
-  // for (let i = 0, element; (element = elements[i++]); ) {
-  //   if (element.type === 'checkbox' && element.checked === true) {
-  //     console.log(element.name);
-  //     tags.push(element.name);
-  //   }
-  // }
 
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
   if (title === '') {
@@ -206,13 +189,13 @@ export function saveNote() {
     tagList[i].disabled = false;
   }
 
-  for (let i = 0; i < tags.length; i += 1) {
-    const TAG_OBJECT = {
-      tag_name: tags[i],
-      num_notes: 1,
-    };
-    saveTagToStorage(tagDB, TAG_OBJECT);
-  }
+  // for (let i = 0; i < tags.length; i += 1) {
+  //   const TAG_OBJECT = {
+  //     tag_name: tags[i],
+  //     num_notes: 1,
+  //   };
+  //   saveTagToStorage(tagDB, TAG_OBJECT);
+  // }
   //  // adding tags to the databases
   // // instead of using pageData.tagDB, could just grab this list from actual index
   // so like objectStore.get(tagname)
@@ -227,6 +210,7 @@ export function saveNote() {
 function addTags() {
   // const id = pageData.noteID;
   // const db = pageData.database;
+  const tagDB = pageData.tagDB;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
   if (tagname === '') {
     alert('Please enter a valid tag name');
@@ -245,74 +229,30 @@ function addTags() {
       newCheckBox.checked = true;
       newCheckBox.className = 'tag';
       newCheckBox.name = tagname;
-      // newCheckBox.setAttribute('disabled', true);
+      newCheckBox.addEventListener('change', function() {
+        if (this.checked) {
+          saveTagToStorage(tagDB, TAG_OBJECT, false, true);
+        } else {
+          saveTagToStorage(tagDB, TAG_OBJECT, false, false);
+        }
+      });      // newCheckBox.setAttribute('disabled', true);
       parentElement.appendChild(newCheckBox);
       const label = document.createElement('label');
       label.htmlFor = tagname;
       label.appendChild(document.createTextNode(tagname));
       parentElement.appendChild(label);
+
+      // add to the storage.
+    const TAG_OBJECT = {
+      tag_name: tagname,
+      num_notes: 1,
+    };
+    // get Tag from storage. see if its new or not.
+    const tagExists = getTagFromStorage(tagDB, tagname); // fill in, make this function work pre
+    // maybe wrong value from tagExists
+    console.log("tagExists is returning the value " + tagExists);
+    saveTagToStorage(tagDB, TAG_OBJECT, tagExists, true);
     }
-    // if existing note
-    /** 
-    if (id) {
-      // console.log()
-      // access note
-      const note = getNoteFromStorage(id);
-      console.log(note);
-      const tags = note.tags;
-      // check to see if note is already tagged
-      console.log(tags);
-      const contains = tags.includes(tagname);
-      if (!contains) {
-        note.tags.push(tagname);
-        // push HTML element
-        const parentElement = document.getElementById('notes-tags');
-        const newCheckBox = document.createElement('input');
-        const uniqueID = generateRandomString(8); // Unique tag identifier
-        newCheckBox.type = 'checkbox';
-        newCheckBox.id = uniqueID;
-        // newCheckBox.value = 'something <br/>';
-        newCheckBox.checked = true;
-        newCheckBox.name = tagname;
-        parentElement.appendChild(newCheckBox);
-
-        const label = document.createElement('label');
-        label.htmlFor = uniqueID;
-        label.appendChild(document.createTextNode(tagname));
-        parentElement.appendChild(label);
-
-        // storing tag info to be used in saveNote()
-        pageData.tags.push(tagname);
-        // adding to database
-        // db.transaction('NotesOS', 'readwrite').objectStore('note_tags');
-        // objectStore.add({tagname, note});
-      }
-    }
-    if (!id) {
-      // notes.tags.push(tagname);
-      // push HTML element
-
-      // check html elements to see if tag is already there.
-
-      const parentElement = document.getElementById('notes-tags');
-      const newCheckBox = document.createElement('input');
-      const uniqueID = generateRandomString(8); // Unique tag identifier
-      newCheckBox.type = 'checkbox';
-      newCheckBox.id = 'tag';
-      newCheckBox.value = 'something <br/>';
-      newCheckBox.checked = true;
-      newCheckBox.name = tagname; // replace with unique tag identifier
-      parentElement.appendChild(newCheckBox);
-
-      const label = document.createElement('label');
-      label.htmlFor = uniqueID; // replace with unique tag identifier
-      label.appendChild(document.createTextNode(tagname));
-      parentElement.appendChild(label);
-
-      pageData.tags.push(tagname);
-    }
-*/
-    // if not contained in tag database, then push to that as well.
   }
 }
 
@@ -342,6 +282,9 @@ export async function initEditor() {
   tagButton.addEventListener('click', () => addTags());
   exportButton.addEventListener('click', () => exportNote());
   importButton.addEventListener('click', () => importNote());
+
+  // not sure how the logic works here. so here, the saveNote button and its corresponding logic is already established
+  // can i check for new checkboxes here?
 
   if (pageData.editEnabled == null || !pageData.editEnabled) {
     exportButton.classList.add('disabled-button');

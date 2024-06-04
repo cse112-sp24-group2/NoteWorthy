@@ -24,7 +24,7 @@ export async function exportNote(uuid) {
   const note = await getNoteFromStorage(db, id);
   const quillToPdf = new QuillToPdf();
   const pdfBlob = await quillToPdf.generatePdf(note.content);
-  
+
   saveAs(pdfBlob, `${note.title}.pdf`);
   /*const blob = new Blob([note.content], { type: 'text/plain' });
   const href = URL.createObjectURL(blob);

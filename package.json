@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "quill": "^2.0.2",
-    "quill-to-pdf": "^1.1.0",
+    "quill-to-pdf": "^1.0.5",
     "file-saver": "^2.0.5"
   }
 }

@@ -64,7 +64,7 @@ export function editNote(bool) {
   pageData.editEnabled = bool || !pageData.editEnabled; // Toggles the value
   const edit = pageData.editEnabled;
 
-  if (edit) {
+  /*if (edit) {
     editButton.firstChild.src = './images/edit-note.svg';
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
@@ -80,7 +80,7 @@ export function editNote(bool) {
     importButton.disabled = false;
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
-  }
+  }*/
 }
 
 /**
@@ -147,11 +147,11 @@ export function saveNote() {
   editNote(false); // Switch to preview mode
 
   // Disable tag button after clicking save
-  const tagButton = document.querySelector('#tag-button');
+  /*const tagButton = document.querySelector('#tag-button');
   tagButton.classList.add('disabled-button');
-  tagButton.disabled = true;
+  tagButton.disabled = true;*/
   // Disable tag input after clicking save
-  const tagInput = document.querySelector('#tag-input');
+  /* const tagInput = document.querySelector('#tag-input');
   tagInput.classList.add('disabled-button');
   tagInput.disabled = true;
 
@@ -159,7 +159,7 @@ export function saveNote() {
   for (let i = 0; i < tagList.length; i += 1) {
     tagList[i].classList.add('disabled-button');
     tagList[i].disabled = true;
-  }
+  }*/
 
   //  const tagData = pageData.tagDB;
   //  // adding tags to the databases
@@ -265,7 +265,7 @@ function addTags() {
  */
 export async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
-  const saveButton = document.querySelector('#save-button');
+  //const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
   const editButton = document.querySelector('#change-view-button');
   const tagButton = document.querySelector('#tag-button');
@@ -307,7 +307,7 @@ export async function initEditor() {
     importNote();
   });
 
-  if (pageData.editEnabled == null || !pageData.editEnabled) {
+  /*if (pageData.editEnabled == null || !pageData.editEnabled) {
     exportButton.classList.add('disabled-button');
     exportButton.disabled = true;
     importButton.classList.add('disabled-button');
@@ -321,5 +321,5 @@ export async function initEditor() {
     importButton.disabled = false;
     saveButton.classList.add('disabled-button');
     saveButton.disabled = true;
-  }
+  }*/
 }

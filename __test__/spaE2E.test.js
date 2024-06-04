@@ -86,8 +86,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(1);
@@ -106,8 +106,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     const title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
     expect(title).toBe('title text');
@@ -128,8 +128,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     let front = await getClassList('>>> .note-front');
     expect(front).not.toContain('flipped');
@@ -151,8 +151,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-copy-button').then((el) => el.click());
@@ -173,8 +173,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
@@ -196,8 +196,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
@@ -224,8 +224,8 @@ describe('Dashboard tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(100);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
@@ -247,22 +247,6 @@ describe('Dashboard tests', () => {
 describe('Editor tests', () => {
   beforeEach(beforebefore);
 
-  test('Saving new note redirects to new ID url parameter', async () => {
-    await createNewNote();
-
-    const inputTxt = await page.$('#title-input');
-    await inputTxt.click({ clickCount: 1 });
-    await page.type('#title-input', 'title text');
-
-    const editor = await page.$('.ql-editor');
-    await editor.click({ clickCount: 1 });
-    await page.type('.ql-editor', 'editor text');
-
-    await page.waitForSelector('#save-button').then((el) => el.click());
-    await delay(200);
-    expect(page.url()).not.toBe(`${URL}?id=9999`);
-  });
-
   test('Clicking on top left logo redirects to dashboard', async () => {
     await createNewNote();
 
@@ -274,7 +258,6 @@ describe('Editor tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('.header > h1').then((el) => el.click());
     await delay(200);
     expect(page.url()).toBe(`${URL}`);
@@ -291,7 +274,9 @@ describe('Editor tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('>>> .note-front').then((el) => el.click());
     await delay(200);
     await page.waitForSelector('#delete-button').then((el) => el.click());
     await delay(200);
@@ -313,7 +298,9 @@ describe('Editor tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('>>> .note-front').then((el) => el.click());
     await delay(200);
     await page.waitForSelector('#delete-button').then((el) => el.click());
     await delay(200);
@@ -340,7 +327,9 @@ describe('Editor tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('>>> .note-front').then((el) => el.click());
     await delay(200);
     await page.waitForSelector('#delete-button').then((el) => el.click());
     await delay(200);
@@ -353,6 +342,7 @@ describe('Editor tests', () => {
     await page.waitForSelector('.dialog-cancel').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
     await delay(200);
+
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(1);
   });
@@ -368,7 +358,7 @@ describe('Editor tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
     await delay(200);
 
     const dialogElement = await page.$('dialog');
@@ -397,7 +387,6 @@ describe('User flow tests', () => {
     await editor.click({ clickCount: 1 });
     await page.type('.ql-editor', 'editor text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
     await delay(200);
 
@@ -418,7 +407,6 @@ describe('User flow tests', () => {
     await editor.click({ clickCount: 3 });
     await page.type('.ql-editor', 'edited text');
 
-    await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
     await delay(200);
 
@@ -454,14 +442,13 @@ describe('User flow tests', () => {
       await page.type('.ql-editor', 'editor text');
 
       // eslint-disable-next-line
-      await page.waitForSelector('#save-button').then((el) => el.click());
-      // eslint-disable-next-line
       await page.waitForSelector('#back-button').then((el) => el.click());
+      // eslint-disable-next-line
+      await delay(100);
     }
-
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(NUM);
-  }, 10000);
+  }, 100000);
 
   afterEach(afterafter);
 }, 30000);

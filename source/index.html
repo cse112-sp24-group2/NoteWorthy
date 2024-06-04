@@ -16,6 +16,8 @@
     <script src="./scripts/index.js" type="module"></script>
     <script src="./scripts/dashboardRow.js" type="module"></script>
     <script src="./scripts/noteStorage.js" type="module"></script>
+    <!-- jsPDF HTML to PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
     <!-- Quill Rich Text Editor -->
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
@@ -158,9 +160,6 @@
             <div class="note-control-bar">
               <button id="back-button" title="Back">
                 <img alt="back arrow icon" src="./images/back-arrow.svg" />
-              </button>
-              <button id="save-button" title="Save">
-                <img alt="save icon" src="./images/save-note.svg" />
               </button>
               <button id="export-button" title="Export">
                 <img alt="export icon" src="./images/download.svg" />

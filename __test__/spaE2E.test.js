@@ -443,7 +443,8 @@ describe('User flow tests', () => {
 
       // eslint-disable-next-line
       await page.waitForSelector('#back-button').then((el) => el.click());
-      await delay(100)
+      // eslint-disable-next-line
+      await delay(100);
     }
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(NUM);

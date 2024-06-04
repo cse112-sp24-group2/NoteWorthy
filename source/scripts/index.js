@@ -93,7 +93,7 @@ function URLRoutingHandler() {
     switchToDashboard(dom);
     // const tags = document.getElementById('notes-tags');
     // tags.remove();
-    document.getElementById('notes-tags').innerHTML = '';
+    // document.getElementById('notes-tags').innerHTML = '';
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }
@@ -108,7 +108,7 @@ function URLRoutingHandler() {
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
-  console.log('the pageData.tags is', pageData.tags);
+  // 'the pageData.tags is', pageData.tags);
   addTagsToDocument(pageData.tags);
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
@@ -188,15 +188,15 @@ async function init() {
     updateURL('?id=9999');
   });
 
-  console.log(performance.now())
-  console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
+  // console.log(performance.now())
+  // console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
-  console.log(performance.now())
+  // console.log(performance.now())
   initEventHandler();
-  URLRoutingHandler();
   initEditor();
+  URLRoutingHandler();
 }
 
 window.addEventListener('DOMContentLoaded', init);

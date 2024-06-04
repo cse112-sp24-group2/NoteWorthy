@@ -27,7 +27,7 @@ describe('Backend: Read/Add notes', () => {
       content: 'Hello World!',
     };
     const id = await saveNoteToStorage(db, note);
-    console.log(id);
+    // console.log(id);
     expect(id).toEqual(1);
   });
 

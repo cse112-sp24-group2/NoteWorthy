@@ -100,8 +100,8 @@ export function saveNoteToStorage(database, note) {
       const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
       const saveNoteRequest = objectStore.add(note);
       saveNoteRequest.onsuccess = () => {
-        console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
-        console.log(saveNoteRequest.result);
+        // console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
+        // console.log(saveNoteRequest.result);
         resolve(saveNoteRequest.result);
       };
       saveNoteRequest.onerror = () => {
@@ -113,7 +113,7 @@ export function saveNoteToStorage(database, note) {
     const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const saveNoteRequest = objectStore.put(note);
     saveNoteRequest.onsuccess = () => {
-      console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
+      // console.log(`Successfully saved note with uuid ${saveNoteRequest.result}`);
       resolve(saveNoteRequest.result);
     };
     saveNoteRequest.onerror = () => {
@@ -133,7 +133,7 @@ export function deleteNoteFromStorage(database, note) {
     const objectStore = database.transaction(OBJECT_STORE_NAME, 'readwrite').objectStore(OBJECT_STORE_NAME);
     const deleteNoteRequest = objectStore.delete(note.uuid);
     deleteNoteRequest.onsuccess = () => {
-      console.log(`Successfully deleted note with uuid ${deleteNoteRequest.result}`);
+      // console.log(`Successfully deleted note with uuid ${deleteNoteRequest.result}`);
       resolve();
     };
     deleteNoteRequest.onerror = () => {

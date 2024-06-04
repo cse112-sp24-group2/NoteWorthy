@@ -88,26 +88,26 @@ export function getTagsFromStorage(database) {
  * @returns The note object stored with the given UUID.
  */
 export async function getTagFromStorage(database, tagName) {
-    // const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
-    // const getTagRequest = objectStore.get(tagName);
-    // getTagRequest.onsuccess = function() {
-    //   if(getTagRequest.result === 0) {
-    //     console.log("should get in here first before checking tagExists value");
-    //     return false;
-    //   } else {
-    //     console.log("should get in here or maybe here first before checking tagExists value");
-    //     return true;
-    //   }
-    // }
+  // const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
+  // const getTagRequest = objectStore.get(tagName);
+  // getTagRequest.onsuccess = function() {
+  //   if(getTagRequest.result === 0) {
+  //     console.log("should get in here first before checking tagExists value");
+  //     return false;
+  //   } else {
+  //     console.log("should get in here or maybe here first before checking tagExists value");
+  //     return true;
+  //   }
+  // }
 
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
     const getTagRequest = objectStore.get(tagName);
-    console.log("before on success")
+    // console.log("before on success")
     getTagRequest.onsuccess = () => {
-      console.log("on success")
-      console.log(getTagRequest.result);
-      resolve(getTagRequest.result === "undefined");
+      // console.log("on success")
+      // console.log(getTagRequest.result);
+      resolve(getTagRequest.result === 'undefined');
     };
     getTagRequest.onerror = () => {
       reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
@@ -130,8 +130,8 @@ export function saveTagToStorage(database, tagObj, newTag, increment) {
       const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
       const saveTagRequest = objectStore.add(tag);
       saveTagRequest.onsuccess = () => {
-        console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
-        console.log(saveTagRequest.result);
+        // console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
+        // console.log(saveTagRequest.result);
         resolve(saveTagRequest.result);
       };
       saveTagRequest.onerror = () => {
@@ -142,17 +142,16 @@ export function saveTagToStorage(database, tagObj, newTag, increment) {
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
     const oldTag = objectStore.get(tag.tag_name);
-    console.log(oldTag);
-    console.log(tag.tag_name + " num_notes is " + oldTag.num_notes);
-    if(increment) {
-      tag.num_notes = oldTag.num_notes + 1;
-    }
-    else  {
-      tag.num_notes = oldTag.num_notes -1;
-    }
+    // console.log(oldTag);
+    // console.log(tag.tag_name + " num_notes is " + oldTag.num_notes);
+    // if(increment) {
+    //   tag.num_notes = oldTag.num_notes + 1;
+    // } else  {
+    //   tag.num_notes = oldTag.num_notes - 1;
+    // }
     const saveTagRequest = objectStore.put(tag);
     saveTagRequest.onsuccess = () => {
-      console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
+      // console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
@@ -172,7 +171,7 @@ export function deleteTagFromStorage(database, tag) {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
     const deleteTagRequest = objectStore.delete(tag.tag_name);
     deleteTagRequest.onsuccess = () => {
-      console.log(`Successfully deleted tag with tag_name ${deleteTagRequest.result}`);
+      // console.log(`Successfully deleted tag with tag_name ${deleteTagRequest.result}`);
       resolve();
     };
     deleteTagRequest.onerror = () => {
@@ -190,5 +189,5 @@ export function deleteTagFromStorage(database, tag) {
 export function tagQuery(className) {
   const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
   const tagsIndex = notesDB.index('note_tags');
-  console.log(tagsIndex.getAll(className));
+  // console.log(tagsIndex.getAll(className));
 }

@@ -12,10 +12,10 @@ const beforebefore = async () => {
   // Change headless to false when testing locally if you want the browser to
   // pop up, before commiting, change back to "new" otherwise github actions will
   // fail
-  browser = await puppeteer.launch({ headless: "new" });
+  browser = await puppeteer.launch({ headless: 'new' });
   page = await browser.newPage();
   page.setDefaultTimeout(0);
-  await page.goto(URL)
+  await page.goto(URL);
   await new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
@@ -50,28 +50,26 @@ describe('Dashboard tests', () => {
     let dashboard = await getClassList('.dashboard');
     let editor = await getClassList('.editor');
 
-    expect(editor).toContain('hidden')
-    expect(dashboard).not.toContain('hidden')
+    expect(editor).toContain('hidden');
+    expect(dashboard).not.toContain('hidden');
 
     await createNewNote();
 
     dashboard = await getClassList('.dashboard');
     editor = await getClassList('.editor');
 
-    expect(editor).not.toContain('hidden')
-    expect(dashboard).toContain('hidden')
-    expect(page.url()).toBe(URL + '?id=9999');
+    expect(editor).not.toContain('hidden');
+    expect(dashboard).toContain('hidden');
+    expect(page.url()).toBe(`${URL}?id=9999`);
   }, 5000);
 
   test('New Note is added to dashboard', async () => {
     await createNewNote();
 
-    expect(page.url()).toBe(URL + '?id=9999');
+    expect(page.url()).toBe(`${URL}?id=9999`);
 
     let titleText = await page.$eval('#notes-title', (el) => el.innerHTML);
-    expect(titleText).toBe(
-      '<input type="text" class="" id="title-input" placeholder="Untitled Note">'
-    );
+    expect(titleText).toBe('<input type="text" class="" id="title-input" placeholder="Untitled Note">');
     const inputTxt = await page.$('#title-input');
     await inputTxt.click({ clickCount: 1 });
     await page.type('#title-input', 'title text');
@@ -84,7 +82,7 @@ describe('Dashboard tests', () => {
 
     await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
-    
+
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(1);
   }, 5000);
@@ -92,7 +90,7 @@ describe('Dashboard tests', () => {
   test('New Note on dashboard contains correct title and content', async () => {
     await createNewNote();
 
-    expect(page.url()).toBe(URL + '?id=9999');
+    expect(page.url()).toBe(`${URL}?id=9999`);
 
     const inputTxt = await page.$('#title-input');
     await inputTxt.click({ clickCount: 1 });
@@ -104,7 +102,6 @@ describe('Dashboard tests', () => {
 
     await page.waitForSelector('#save-button').then((el) => el.click());
     await page.waitForSelector('#back-button').then((el) => el.click());
-
 
     const title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
     expect(title).toBe('title text');
@@ -129,12 +126,12 @@ describe('Dashboard tests', () => {
     await page.waitForSelector('#back-button').then((el) => el.click());
 
     let front = await getClassList('>>> .note-front');
-    expect(front).not.toContain('flipped')
+    expect(front).not.toContain('flipped');
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
 
     front = await getClassList('>>> .note-front');
-    expect(front).toContain('flipped')
+    expect(front).toContain('flipped');
   }, 5000);
 
   test('Duplicating notes', async () => {

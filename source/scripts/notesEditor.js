@@ -154,6 +154,12 @@ function getSelectedTags() {
  */
 function createNoteObject(tags, id) {
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
+
+  if (title === '' && quill.getLength() == 1) {
+    updateURL('');
+    return null;
+  }
+
   if (title === '') {
     alertDialog('Please enter a valid title');
     return null;

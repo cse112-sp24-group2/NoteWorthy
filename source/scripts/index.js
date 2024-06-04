@@ -74,7 +74,6 @@ function URLRoutingHandler() {
     pageData.tags = [];
   } else {
     pageData.noteID = parseInt(id, 10);
-    // pageData.tags =
   }
 
   // So that child functions can hide/unhide dashboard or editor
@@ -114,6 +113,7 @@ function initThemeToggle() {
       document.querySelector('#notes-title'),
       document.querySelector('#title-input'),
       document.querySelector('.note-control-bar'),
+      document.querySelectorAll('.note-more'),
     ];
     toggleClassToArr(elements, 'dark');
   });

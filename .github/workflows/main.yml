@@ -38,6 +38,10 @@ jobs:
           root: source/
           css: true
           skip_git_check: true
+      - name: Google Lighthouse
+        run: |
+          npm install -g @lhci/cli@0.13.x
+          lhci autorun
 
       # Autogenerate jsDocs and output files to ./jsdocs
       - name: Generate jsDocs

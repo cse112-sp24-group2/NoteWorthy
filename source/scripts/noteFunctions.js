@@ -22,9 +22,9 @@ export async function exportNote(uuid) {
   const id = uuid || pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
-  const { jsPDF } = window.jspdf;
+  // eslint-disable-next-line
   const doc = new jsPDF();
-  doc.text(note.content, 10, 20);
+  doc.text(note.content.ops[0].insert, 10, 20);
   doc.save(`${note.title}.pdf`);
 }
 

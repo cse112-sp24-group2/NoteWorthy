@@ -66,7 +66,6 @@ export async function addNoteToDocument(note) {
 export function editNote(bool) {
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
-  const saveButton = document.querySelector('#save-button');
   const tagButton = document.querySelector('#tag-button');
   const tagInput = document.querySelector('#tag-input');
   const tagCheckBoxes = document.querySelectorAll('input[type=checkbox]');
@@ -88,7 +87,6 @@ export function editNote(bool) {
 
   setButtonState(exportButton, !enableEditMode);
   setButtonState(importButton, !enableEditMode);
-  setButtonState(saveButton, enableEditMode);
   setButtonState(tagButton, enableEditMode);
   setInputState(tagInput, enableEditMode);
 
@@ -189,11 +187,11 @@ export function saveNote() {
   const tagDB = pageData.tagDB;
   const tags = getSelectedTags();
   const noteObject = createNoteObject(tags, id);
-  if (!noteObject) return;
+  if (!noteObject || noteObject == null) return false;
   saveNoteToStorage(db, noteObject);
   if (!id) {
     getNotesFromStorage(db).then((res) => {
-      window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
+      // window.history.replaceState({}, null, `?id=${res[res.length - 1].uuid}`);
       pageData.noteID = res[res.length - 1].uuid;
     });
   }
@@ -209,6 +207,7 @@ export function saveNote() {
     };
     saveTagToStorage(tagDB, TAG_OBJECT);
   }
+  return true;
 }
 
 /**
@@ -315,7 +314,6 @@ async function addTags() {
  */
 export async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
-  const saveButton = document.querySelector('#save-button');
   const backButton = document.querySelector('#back-button');
   const tagButton = document.querySelector('#tag-button');
   const exportButton = document.querySelector('#export-button');
@@ -329,8 +327,9 @@ export async function initEditor() {
 
   editContent.addEventListener('click', () => editNote(true));
   deleteButton.addEventListener('click', () => deleteNote());
-  saveButton.addEventListener('click', () => saveNote());
-  backButton.addEventListener('click', () => updateURL(''));
+  backButton.addEventListener('click', () => {
+    if (saveNote()) updateURL('');
+  });
   tagButton.addEventListener('click', () => addTags());
   exportButton.addEventListener('click', () => exportNote());
   importButton.addEventListener('click', () => importNote());

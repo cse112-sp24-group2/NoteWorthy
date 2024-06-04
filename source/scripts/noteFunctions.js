@@ -22,15 +22,10 @@ export async function exportNote(uuid) {
   const id = uuid || pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
-  const blob = new Blob([note.content], { type: 'text/plain' });
-  const href = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = href;
-  link.download = `${note.title}.txt`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(href);
+  // eslint-disable-next-line
+  const doc = new jsPDF();
+  doc.text(note.content.ops[0].insert, 10, 20);
+  doc.save(`${note.title}.pdf`);
 }
 
 /**

@@ -28,14 +28,16 @@
   },
   "scripts": {
     "test": "jest --passWithNoTests",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --check --cache .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
     "start": "serve -l 5500 ."
   },
   "dependencies": {
-    "serve": "^14.2.3",
-    "quill": "^2.0.2"
+    "quill": "^2.0.2",
+    "quill-to-pdf": "^1.0.5",
+    "file-saver": "^2.0.5",
+    "serve": "^14.2.3"
   }
 }

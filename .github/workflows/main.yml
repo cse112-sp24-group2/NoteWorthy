@@ -38,6 +38,10 @@ jobs:
           NODE_OPTIONS: --experimental-vm-modules
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           CI: true
+      - name: Minify JS
+        run: |
+          npm install uglify-js -g
+          find ./source/scripts -name "*.js" -exec uglifyjs {} -o {} --compress --mangle --module \;
       - name: Google Lighthouse
         run: |
           npm install -g @lhci/cli@0.13.x
@@ -53,10 +57,6 @@ jobs:
           recurse: true
           output_dir: ./jsdocs
           front_page: README.md
-      - name: Minify JS
-        run: |
-          npm install uglify-js -g
-          find ./source/scripts -name "*.js" -exec uglifyjs {} -o {} --compress --mangle --module \;
 
       # Push generated files onto a external repository to deploy on GitHub pages
       - name: Deploy jsDocs

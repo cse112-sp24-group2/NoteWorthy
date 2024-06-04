@@ -18,7 +18,7 @@ const beforebefore = async () => {
   // Change headless to false when testing locally if you want the browser to
   // pop up, before commiting, change back to "new" otherwise github actions will
   // fail
-  browser = await puppeteer.launch({ headless: false });
+  browser = await puppeteer.launch({ headless: 'new' });
   page = await browser.newPage();
   page.setDefaultTimeout(0);
   await page.goto(URL);

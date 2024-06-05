@@ -155,7 +155,7 @@ export function saveTagToStorage(database, tagObj, newTag, increment) {
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
-      reject(new Error(`Error saving tag with tag_name ${tag.tag_name} to storage`));
+      reject(new Error('Error saving new tag to storage'));
     };
   });
 }

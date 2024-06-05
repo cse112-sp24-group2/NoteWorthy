@@ -8,7 +8,9 @@
  *   - deleteNote()
  */
 import { pageData, updateURL } from './Routing.js';
-import { deleteNoteFromStorage, getNoteFromStorage } from './noteStorage.js';
+import { deleteNoteFromStorage, getNoteFromStorage, getNotesFromStorage } from './noteStorage.js';
+import { addNotesToDocument } from './notesDashboard.js';
+import { confirmDialog } from './settings.js';
 
 /**
  * @description Exports the note as a txt file
@@ -20,15 +22,10 @@ export async function exportNote(uuid) {
   const id = uuid || pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
-  const blob = new Blob([note.content], { type: 'text/plain' });
-  const href = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = href;
-  link.download = `${note.title}.txt`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(href);
+  // eslint-disable-next-line
+  const doc = new jsPDF();
+  doc.text(note.content.ops[0].insert, 10, 20);
+  doc.save(`${note.title}.pdf`);
 }
 
 /**
@@ -39,16 +36,25 @@ export async function exportNote(uuid) {
  *                  when deleting note from dashboard
  * @returns {void} This function does not return a value.
  */
-export function deleteNote(toDelete) {
+export async function deleteNote(toDelete) {
   const id = toDelete || pageData.noteID;
   const db = pageData.database;
 
+  console.log(id);
+
   if (!id) return;
-  if (!window.confirm('Are you sure you want to delete')) return;
+
+  const confirm = await confirmDialog('Are you sure you want to delete this note?');
+  if (!confirm) return;
 
   deleteNoteFromStorage(db, { uuid: id });
 
-  // This means we are deleting from the editor page, so we should return
-  // to the dashboard
-  if (!toDelete) updateURL('');
+  // different actions depending on deleting from dashboard or
+  // editor
+  if (toDelete) {
+    const notes = await getNotesFromStorage(db);
+    addNotesToDocument(notes);
+  } else {
+    updateURL('');
+  }
 }

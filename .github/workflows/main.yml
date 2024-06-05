@@ -1,5 +1,11 @@
 name: CI
 on: push
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     # Installs Yarn (npm alternative) to run jest tests
@@ -18,6 +24,14 @@ jobs:
           npm install --save-dev node-fetch
           npm install -D jest-environment-jsdom
           npm ci -l verbose
+      - name: Check linting and formatting
+        run: npm run lint:check
+      - name: HTML5 Validator
+        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
+        with:
+          root: source/
+          css: true
+          skip_git_check: true
       - name: Start server
         run: |
           npm start &
@@ -29,27 +43,41 @@ jobs:
         env:
           NODE_OPTIONS: --experimental-vm-modules
           CI: true
+      - name: Minify JS
+        run: |
+          npm install uglify-js -g
+          find ./source/scripts -name "*.js" -exec uglifyjs {} -o {} --compress --mangle --module \;
+      - name: Google Lighthouse
+        run: |
+          npm install -g @lhci/cli@0.13.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      # Autogenerate jsDocs and output files to ./jsdocs
-      - name: Generate jsDocs
-        uses: andstor/jsdoc-action@v1.2.1
+  JSDocs:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Install JSDocs
+        run: npm i -g jsdoc && npm install -g jsdoc-tsimport-plugin
+      - name: Build JSDocs
+        run: jsdoc -c jsdoc.json
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          source_dir: ./source/scripts
-          recurse: true
-          output_dir: ./jsdocs
-          front_page: README.md
+          path: './'
+          name: github-pages
+  Deploy:
+    needs: Build
+    runs-on: [ubuntu-latest]
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:  
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
-      # Push generated files onto a external repository to deploy on GitHub pages
-      - name: Deploy jsDocs
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-
-      - name: HTML5 Validator
-        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
-        with:
-          root: source/
-          css: true
-          skip_git_check: true

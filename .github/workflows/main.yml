@@ -37,12 +37,12 @@ jobs:
           npm start &
         env:
           CI: true
-      # - name: Run TESTS
-      #   run: |
-      #     npm run test
-      #   env:
-      #     NODE_OPTIONS: --experimental-vm-modules
-      #     CI: true
+      - name: Run TESTS
+        run: |
+          npm run test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          CI: true
       - name: Minify JS
         run: |
           npm install uglify-js -g
@@ -54,7 +54,7 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-  build-yo:
+  JSDocs:
     runs-on: [ubuntu-latest]
     steps:
       - name: Check out code

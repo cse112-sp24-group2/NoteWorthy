@@ -1,6 +1,7 @@
 **/node_modules/**
 **/.DS_STORE
 **/.DS_Store
+out/
 node_modules/
 package-lock.json
 jsdocs/**

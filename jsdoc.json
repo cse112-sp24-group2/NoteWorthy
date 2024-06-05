@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    "jsdoc-tsimport-plugin"
+  ],
+  "recurseDepth": 10,
+  "source": {
+    "include": ["./source/scripts/"]
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./jsdocs"
+  }
+}

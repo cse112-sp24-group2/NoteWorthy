@@ -1,5 +1,11 @@
 name: CI
 on: push
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     # Installs Yarn (npm alternative) to run jest tests

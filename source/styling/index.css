@@ -58,7 +58,7 @@ body {
   padding-left: 1rem;
 }
 
-h1 {
+.title {
   font-size: 2rem;
   color: var(--white);
   font-weight: 700;

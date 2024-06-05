@@ -87,7 +87,7 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(1);
@@ -107,7 +107,7 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     const title = await page.$eval('>>> .note-title', (el) => el.innerHTML);
     expect(title).toBe('title text');
@@ -129,7 +129,7 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     let front = await getClassList('>>> .note-front');
     expect(front).not.toContain('flipped');
@@ -152,12 +152,12 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-copy-button').then((el) => el.click());
 
-    await delay(100);
+    await delay(200);
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(2);
   }, 5000);
@@ -174,7 +174,7 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
@@ -225,7 +225,7 @@ describe('Dashboard tests', () => {
     await page.type('.ql-editor', 'editor text');
 
     await page.waitForSelector('#back-button').then((el) => el.click());
-    await delay(100);
+    await delay(200);
 
     await page.waitForSelector('>>> .note-more').then((el) => el.click());
     await page.waitForSelector('>>> .note-delete-button').then((el) => el.click());
@@ -444,7 +444,7 @@ describe('User flow tests', () => {
       // eslint-disable-next-line
       await page.waitForSelector('#back-button').then((el) => el.click());
       // eslint-disable-next-line
-      await delay(100);
+      await delay(200);
     }
     const numNotes = await page.$$eval('dashboard-row', (noteItems) => noteItems.length);
     expect(numNotes).toBe(NUM);

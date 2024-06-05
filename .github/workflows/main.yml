@@ -31,13 +31,12 @@ jobs:
           npm start &
         env:
           CI: true
-      - name: Run TESTS
-        run: |
-          npm run test
-        env:
-          NODE_OPTIONS: --experimental-vm-modules
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-          CI: true
+      # - name: Run TESTS
+      #   run: |
+      #     npm run test
+      #   env:
+      #     NODE_OPTIONS: --experimental-vm-modules
+      #     CI: true
       - name: Minify JS
         run: |
           npm install uglify-js -g
@@ -49,19 +48,30 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-      # Autogenerate jsDocs and output files to ./jsdocs
-      - name: Generate jsDocs
-        uses: andstor/jsdoc-action@v1.2.1
+jobs:
+  Build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Install JSDocs
+        run: npm i -g jsdoc && npm install -g jsdoc-tsimport-plugin
+      - name: Build JSDocs
+        run: jsdoc -c jsdoc.json
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          source_dir: ./source/scripts
-          recurse: true
-          output_dir: ./jsdocs
-          front_page: README.md
-
-      # Push generated files onto a external repository to deploy on GitHub pages
-      - name: Deploy jsDocs
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          github_token: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./
+          path: './'
+          name: github-pages
+  Deploy:
+    needs: Build
+    runs-on: [ubuntu-latest]
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:  
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

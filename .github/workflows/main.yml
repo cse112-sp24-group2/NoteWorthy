@@ -48,8 +48,7 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-jobs:
-  Build:
+  build:
     runs-on: [ubuntu-latest]
     steps:
       - name: Check out code

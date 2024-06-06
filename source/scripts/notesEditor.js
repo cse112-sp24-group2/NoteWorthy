@@ -35,26 +35,27 @@ export async function addNoteToDocument(note) {
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
-  quill.setContents(note.content);
+  quill.setText(note.content);
+  console.log(note.content);
 
   const tagInput = document.querySelector('#tag-input');
   tagInput.setAttribute('placeholder', 'Add tag...');
 
   // append the tags
   const tags = note.tags;
-  for (let i = 0; i < tags.length; i += 1) {
-    const tagCheckbox = document.createElement('input');
-    console.log(tags[i]);
-    tagCheckbox.type = 'checkbox';
-    tagCheckbox.className = 'tag';
-    tagCheckbox.name = tags[i];
-    tagCheckbox.checked = true;
-    intPutArea.appendChild(tagCheckbox);
-    const label = document.createElement('label');
-    label.htmlFor = tags[i]; // replace with unique tag identifier
-    label.appendChild(document.createTextNode(tags[i]));
-    intPutArea.appendChild(label);
-  }
+  // for (let i = 0; i < tags.length; i += 1) {
+  //   const tagCheckbox = document.createElement('input');
+  //   console.log(tags[i]);
+  //   tagCheckbox.type = 'checkbox';
+  //   tagCheckbox.className = 'tag';
+  //   tagCheckbox.name = tags[i];
+  //   tagCheckbox.checked = true;
+  //   intPutArea.appendChild(tagCheckbox);
+  //   const label = document.createElement('label');
+  //   label.htmlFor = tags[i]; // replace with unique tag identifier
+  //   label.appendChild(document.createTextNode(tags[i]));
+  //   intPutArea.appendChild(label);
+  // }
 }
 
 /**

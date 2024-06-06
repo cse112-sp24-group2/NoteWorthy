@@ -58,7 +58,7 @@ body {
   padding-left: 1rem;
 }
 
-h1 {
+.title {
   font-size: 2rem;
   color: var(--white);
   font-weight: 700;
@@ -98,6 +98,43 @@ h1 {
 #newNote:hover {
   background: var(--light-purple);
   color: var(--dark-purple);
+}
+
+
+/* -------------------------------DIALOG-------------------------------- */
+dialog {
+  padding: 1.8rem;
+  margin: auto;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 10%;
+  margin-top: 1rem;
+}
+
+.dialog-buttons > button {
+  border-radius: 3px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dialog-buttons > button:hover {
+  transform: scale(1.01);
+}
+
+.dialog-cancel {
+  width: 45%;
+  background: #ffcdc7;
+}
+
+.dialog-confirm {
+  flex-grow: 1;
+  background: #c7ffcd;
 }
 
 /* ------------------------------MAIN BODY------------------------------ */
@@ -441,6 +478,27 @@ main {
 }
 
 /* BACK OF NOTE BUTTONS */
+
+.note-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0rem;
+}
+
+.note-tags > span {
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.4rem;
+  background: var(--dark-purple);
+  color: var(--white);
+  font-size: 0.8rem;
+}
+
+
+
+
+
+
 
 .note-back > footer {
   display: flex;

@@ -22,22 +22,25 @@ export function toggleClassToArr(arr, className) {
 
 /**
  * @description Parse the note date string into a Date object
- * @param {String} dateString - The date string in the format 'MM/DD/YYYYat HH:MM AM/PM'
+ * @param {String} dateString - The date string in the format 'MM/DD/YYYY at HH:MM AM/PM'
  * @returns {Date} The parsed Date object
  */
 export function parseNoteDate(dateString) {
-  const [month, day, dateTimeString] = dateString.split('/');
-  const [date, timeString] = dateTimeString.split('at ');
-  const [hour, minute, ampm] = timeString.trim().split(/[: ]/);
+  // Split the date string into its components
+  const [monthDayYear, timeString] = dateString.split(' at ');
+  const [month, day, year] = monthDayYear.split('/');
+  const [hour, minute, ampm] = timeString.split(/[: ]/);
 
+  // Convert hour to 24-hour format
   let parsedHour = parseInt(hour, 10);
-  if (parsedHour === 12) {
-    parsedHour = ampm === 'PM' ? 12 : 0;
-  } else {
-    parsedHour = ampm === 'PM' ? parsedHour + 12 : parsedHour;
+  if (ampm.toLowerCase() === 'pm' && parsedHour !== 12) {
+    parsedHour += 12;
+  } else if (ampm.toLowerCase() === 'am' && parsedHour === 12) {
+    parsedHour = 0;
   }
 
-  return new Date(date, parseInt(month, 10) - 1, parseInt(day, 10), parsedHour, parseInt(minute, 10));
+  // Create and return the Date object
+  return new Date(year, month - 1, day, parsedHour, minute);
 }
 
 /**

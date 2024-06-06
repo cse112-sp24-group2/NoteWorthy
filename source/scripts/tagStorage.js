@@ -18,10 +18,75 @@ const TAG_OBJECT = {
 };
 
 /**
+ * Adds tags to the DOM.
+ *
+ * @returns {Promise<Array>} A promise that resolves with an array of all the tags.
+ */
+export async function addTagsToDOM(tagDBObjectStore) {
+  const allTagsRequest = tagDBObjectStore.getAllKeys();
+  const allTags = [];
+
+  const allTagsPromise = new Promise((resolve, reject) => {
+    allTagsRequest.onsuccess = () => {
+      for (let i = 0; i < allTagsRequest.result.length; i += 1) {
+        allTags.push(allTagsRequest.result[i]);
+      }
+      console.log(`the size of allTagsRequest.result is: ${allTagsRequest.result.length}`);
+      resolve(allTags);
+    };
+    allTagsRequest.onerror = () => {
+      reject(allTagsRequest.error);
+    };
+  });
+
+  await allTagsPromise;
+  const parentElement = document.getElementById('notes-tags');
+  parentElement.innerHTML = '';
+  console.log(`the size of allTags is: ${allTags.length}`);
+  for (let i = 0; i < allTags.length; i += 1) {
+    const defaultTagObject = TAG_OBJECT;
+    defaultTagObject.tag_name = allTags[i];
+    const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+    tagPutRequest.put(defaultTagObject);
+    // adding the checkboxes and labels for the default tags
+    // const parentElement = document.getElementById('notes-tags');
+    const newCheckBox = document.createElement('input');
+    newCheckBox.type = 'checkbox';
+    newCheckBox.checked = false;
+    newCheckBox.className = 'tag';
+    newCheckBox.name = defaultTagObject.tag_name;
+    newCheckBox.addEventListener('change', () => {
+      const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+      const tagGetRequest = tagsObjectStore.get(defaultTagObject.tag_name);
+      tagGetRequest.onsuccess = () => {
+        const currentTag = tagGetRequest.result;
+        if (newCheckBox.checked === true) {
+          currentTag.num_notes += 1;
+        } else {
+          currentTag.num_notes -= 1;
+        }
+        const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+        tagPutRequest.put(currentTag);
+      };
+    });
+
+    parentElement.appendChild(newCheckBox);
+    const label = document.createElement('label');
+    label.htmlFor = defaultTagObject.tag_name;
+    label.appendChild(document.createTextNode(defaultTagObject.tag_name));
+    parentElement.appendChild(label);
+    console.log(`i am displaying this particular tag: ${defaultTagObject.tag_name}`);
+  }
+}
+
+export function addTagsToSidebar(tagDBObjectStore, tagsList) {}
+
+/**
  * Sets up and returns a reference to our IndexedDB tags storage.
  * @returns A reference to our IndexedDB tags storage.
  */
 export function initializeTagDB() {
+  console.log('i am initializing the tag database');
   return new Promise((resolve, reject) => {
     if (tagDB) {
       resolve(tagDB);
@@ -40,8 +105,44 @@ export function initializeTagDB() {
       for (let i = 0; i < defaultTags.length; i += 1) {
         const defaultTagObject = TAG_OBJECT;
         defaultTagObject.tag_name = defaultTags[i];
-        objectStore.put(defaultTagObject);
+        objectStore.add(defaultTagObject);
       }
+      // objectStore.add()
+      // addTagsToDOM(objectStore, defaultTags);
+
+      // for (let i = 0; i < defaultTags.length; i += 1) {
+      //   const defaultTagObject = TAG_OBJECT;
+      //   defaultTagObject.tag_name = defaultTags[i];
+      //   objectStore.put(defaultTagObject);
+      //   // adding the checkboxes and labels for the default tags
+      //   const parentElement = document.getElementById('notes-tags');
+      //   const newCheckBox = document.createElement('input');
+      //   newCheckBox.type = 'checkbox';
+      //   newCheckBox.checked = false;
+      //   newCheckBox.className = 'tag';
+      //   newCheckBox.name = defaultTagObject.tag_name;
+      //   newCheckBox.addEventListener('change', () => {
+      //     const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+      //     const tagGetRequest = tagsObjectStore.get(defaultTagObject.tag_name);
+      //     tagGetRequest.onsuccess = () => {
+      //       const currentTag = tagGetRequest.result;
+      //       if (newCheckBox.checked === true) {
+      //         currentTag.num_notes += 1;
+      //       } else {
+      //         currentTag.num_notes -= 1;
+      //       }
+      //       const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+      //       tagPutRequest.put(currentTag);
+      //     };
+      //   });
+
+      //   parentElement.appendChild(newCheckBox);
+      //   const label = document.createElement('label');
+      //   label.htmlFor = defaultTagObject.tag_name;
+      //   label.appendChild(document.createTextNode(defaultTagObject.tag_name));
+      //   parentElement.appendChild(label);
+      //   console.log(`i am displaying this particular tag: ${defaultTagObject.tag_name}`);
+      // }
     };
 
     tagsDBopenReq.onsuccess = (event) => {
@@ -155,7 +256,7 @@ export function saveTagToStorage(database, tagObj, newTag, increment) {
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
-      reject(new Error(`Error saving tag with tag_name ${tag.tag_name} to storage`));
+      reject(new Error('Error saving new tag to storage'));
     };
   });
 }

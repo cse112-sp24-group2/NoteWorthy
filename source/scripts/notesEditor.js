@@ -326,9 +326,21 @@ export async function initEditor() {
   const importButton = document.querySelector('#import-button');
   const editContent = document.querySelector('#notes-content');
 
+
+  var toolbarOptions = [['font', 'size'],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      ['color', 'background'],
+                      [{'script': 'sub'}, {'script': 'super'}],
+                      [{'header': 1}, {'header': 2}, 'blockquote', 'code-block'],
+                      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+                      [{'direction': 'rtl'}, 'align'],
+                      ['link', 'image', 'video'],
+                      ['clean']];
+
   // eslint-disable-next-line
   quill = new Quill('#editor', {
     theme: 'snow',
+    modules: toolbarOptions,
   });
 
   editContent.addEventListener('click', () => editNote(true));

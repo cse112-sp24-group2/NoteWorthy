@@ -542,6 +542,12 @@ main {
   align-items: center;
 }
 
+.ql-snow .ql-editor h1 {
+  color: black;
+  width: 100%;
+  text-align: left;
+}
+
 /* Title Input */
 #title-input {
   color: var(--dark-purple);

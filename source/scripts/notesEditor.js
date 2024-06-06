@@ -13,7 +13,7 @@ import { updateURL, pageData } from './Routing.js';
 import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { getTagFromStorage, getTagsFromStorage, saveTagToStorage } from './tagStorage.js';
+import { getTagFromStorage, getTagsFromStorage, saveTagToStorage, addTagsToDOM } from './tagStorage.js';
 import { alertDialog } from './settings.js';
 
 let quill;

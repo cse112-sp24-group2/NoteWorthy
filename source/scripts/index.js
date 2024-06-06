@@ -11,7 +11,7 @@
 import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
-import { initializeTagDB, getTagsFromStorage } from './tagStorage.js';
+import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
 import { getDate, toggleClassToArr } from './utility.js';
 import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
@@ -26,6 +26,8 @@ import { initSettings } from './settings.js';
 async function switchToDashboard(dom) {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
+  const noteTagsElement = document.getElementById('notes-tags');
+  noteTagsElement.innerHTML = '';
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
@@ -39,6 +41,8 @@ async function switchToDashboard(dom) {
  * @returns {void} This function does not return a value.
  */
 async function switchToEditor(id, dom) {
+  const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
+  await addTagsToDOM(tagsObjectStore);
   if (id !== 9999) {
     const db = pageData.database;
     const note = await getNoteFromStorage(db, id);
@@ -54,7 +58,6 @@ async function switchToEditor(id, dom) {
     await addNoteToDocument(noteObject);
     editNote(true);
   }
-
   dom.editor.classList.remove('hidden');
   dom.dashboard.classList.add('hidden');
 }

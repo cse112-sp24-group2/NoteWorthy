@@ -123,16 +123,27 @@ export function initTimeColumnSorting(notes) {
  * @param {Object[]} notes - An array of note objects.
  */
 export function initTitleColumnSorting(notes) {
-  const titleColSortArrow = document.querySelector('.titleColSortOrder');
-  const titleCol = document.querySelector('.titleCol');
-  let titleSortCount = 0;
+  const sortByButton = document.querySelector('.dropdown-button');
+  const dropdownContent = document.querySelector('.dropdown-content');
+  const titleAscOrder = document.querySelector('#sortTitleAsc-button');
+  const titleDescOrder = document.querySelector('#sortTitleDesc-button');
 
-  titleCol.addEventListener('click', async () => {
-    const direction = titleSortCount % 2 === 0 ? 'asc' : 'desc';
-    titleColSortArrow.setAttribute('direction', '');
-    titleColSortArrow.setAttribute('direction', direction);
-    titleSortCount += 1;
-    addNotesToDocument(sortNotesByTitle(notes, direction));
+  // Toggle dropdown menu visibility when "Sort By" button is clicked
+  sortByButton.addEventListener('click', () => {
+    dropdownContent.classList.toggle('hidden');
+  });
+
+  // Prevent dropdown menu from closing when interacting with its contents
+  dropdownContent.addEventListener('click', (event) => {
+    event.stopPropagation(); // Prevent click event from propagating to parent elements
+  });
+
+  titleAscOrder.addEventListener('click', () => {
+  addNotesToDocument(sortNotesByTitle(notes, 'asc'));
+  });
+
+  titleDescOrder.addEventListener('click', () => {
+    addNotesToDocument(sortNotesByTitle(notes, 'desc'));
   });
 }
 

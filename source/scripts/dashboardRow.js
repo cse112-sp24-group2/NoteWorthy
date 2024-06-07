@@ -37,6 +37,7 @@ async function copyNote(note) {
   //  Add new Note row without reloading
   const notes = await getNotesFromStorage(db);
   addNotesToDocument(notes);
+  updateURL(`?id=${newNote.uuid}`);
 }
 
 class dashboardRow extends HTMLElement {

@@ -1,71 +1,48 @@
 # Workplan
 
-May 31 2024
+June 7 2024
 
 ## Sprint Structure
 
-- (UPDATED) Sprint length: 1 week
-- Retrospective day: Every week on Friday
-- Sprint-planning day: After class Monday/Wedneday + Meeting on Friday
-- Standups: After class Monday/Wednesday
+- (UPDATED) Sprint length: 2 days
+- Retrospective day: None
+- Sprint-planning day: today
+- Standups: None
 - Scoring system: estimated hours to complete
 
 ## Retrospective
 
 - Kavi and Andy
 
-  - Made new bug issues
-  - worked on bug testing
-
+  - Worked on tags counter
+  - wrote tests for tags
+  - fixed tags bugs (a lot)
+ 
 - Marc and Yash
 
-  - Worked on SPA testing - pain in the ass
+  - Dark mode
+  - Responsive
+  - CI/CD
+  - Added vite bundler
+  - Added lighthouse
+  - added minified
 
 - Andy + Ryan + Vrishank
 
-  - Implemented Quill rich text editor
+  - Finished import pdf
+  - finishing export
+  - fixed quill editor format
 
 - Robin + Grey
 
-  - testing duplicate notes
+  - Added tags to note on dashboard
+  - Copying goes to edit page instead of staying on dashboard
 
 ## Current Sprint
 
-- fix export/import
-- remove save button
-- remove previous
-- save on back button
-- testing
-- dark mode
-- custom dialog
-- subscriptions
-- tag bugs
-- responsive UI
-
-Backlog
-
-- Fix bugs (2 hours)
-- Display searched tags (4 hours)
-- Display markdown on dashboard cards (3 hours)
-- Search by content (3 hours)
-- Importing .txt files (2 hours)
-- Responsive UI (10 hours)
-- Dark theme (5 hours)
-- Subscriptions? (idea)
-
-Imports Required:
-
-- Export as PDF
-  - Need to create ADR
-- Markdown Editor
-  - Maybe convert to rich text editor
-  - Need to create ADR
-
-## Newer features
-
-Goals for next sprint
-
-- Keep the same teams
-- Finish current issues
-- Write tests
-- Create ADR's and request imports
+  - Display tags on sidebar (marc)
+  - Searching notes using sidebar (marc)
+  - Clean up code (comments + removing console logs, commented out code) (EVERYONE HAS TO DO THIS)
+  - E2E Tags test (marc)
+  - Fix import not working on second click bug (ryan, andy)
+  - More responsive (yash)

@@ -34,13 +34,20 @@ body {
   }
 }
 
-/* GLOBAL COLORS */
-:root {
-  --dark-purple: #211c34;
-  --light-purple: #ede9f2;
-  --text-purple: #48375c;
+html {
+  --primary-color: #211c34;
+  --secondary-color: #ede9f2;
+  --text-color: #48375c;
   --white: #ffffff;
-  --accent-purple: #d4c1ec;
+  --accent-color: #d4c1ec;
+}
+
+html[data-theme='dark'] {
+  --primary-color: #ffffff;
+  --secondary-color: #ffffff;
+  --text-color: #ffffff;
+  --white: #ffffff;
+  --accent-color: #ffffff;
 }
 
 /* ------------------------------HEADER------------------------------ */
@@ -51,7 +58,7 @@ body {
   align-items: center;
   width: 100%;
   height: 4rem;
-  background: var(--dark-purple);
+  background: var(--primary-color);
   height: 4rem;
   min-height: 4rem;
   padding-right: 3rem;
@@ -76,7 +83,7 @@ body {
   font-size: 1.5em;
   padding: 0.3rem 2rem 0.3rem 2rem;
   background: var(--white);
-  color: var(--text-purple);
+  color: var(--text-color);
   border-radius: 6px;
   border: none;
   font-weight: 700;
@@ -88,7 +95,7 @@ body {
   font-size: 1.5em;
   padding: 0.3rem 3rem 0.3rem 3rem;
   background: var(--white);
-  color: var(--text-purple);
+  color: var(--text-color);
   border-radius: 6px;
   border: none;
   font-weight: 700;
@@ -96,8 +103,8 @@ body {
 }
 
 #newNote:hover {
-  background: var(--light-purple);
-  color: var(--dark-purple);
+  background: var(--secondary-color);
+  color: var(--primary-color);
 }
 
 
@@ -148,14 +155,14 @@ main {
 /* ------------------------------SIDEBAR------------------------------ */
 
 .sidebar {
-  background: var(--accent-purple);
+  background: var(--accent-color);
   width: 24%;
   padding: 1.5rem;
   position: relative;
 }
 
 .sidebar.dark {
-  background-color: var(--text-purple);
+  background-color: var(--text-color);
 }
 
 #tags.dark {
@@ -166,7 +173,7 @@ main {
 .sidebar > h3 {
   font-size: 1.6rem;
   margin-bottom: 1rem;
-  color: var(--dark-purple);
+  color: var(--primary-color);
   text-transform: uppercase;
   text-align: center;
 }
@@ -206,25 +213,7 @@ main {
 }
 
 .tags-list .tags-label input:checked + .tags-span {
-  background: var(--dark-purple);
-  color: var(--white);
-}
-
-/* "View all" */
-#view-more {
-  color: var(--dark-purple);
-  font-size: 1rem;
-  text-decoration: underline;
-  cursor: pointer;
-  text-align: end;
-  width: 100%;
-  padding: 0.4rem 0.4rem;
-  margin-bottom: 1rem;
-  background: none;
-  border: none;
-}
-
-#view-more.dark {
+  background: var(--primary-color);
   color: var(--white);
 }
 
@@ -256,7 +245,7 @@ main {
 }
 
 .view.dark {
-  background-color: var(--dark-purple);
+  background-color: var(--primary-color);
 }
 
 .dashboard {
@@ -289,7 +278,7 @@ main {
 
 .empty-dashboard > p {
   font-size: 1.3rem;
-  color: var(--dark-purple);
+  color: var(--primary-color);
 }
 
 .empty-dashboard.dark > p {
@@ -305,7 +294,7 @@ main {
 /* ----------DASHBOARD HEADER---------- */
 
 .dashboard-header {
-  color: var(--dark-purple);
+  color: var(--primary-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -319,14 +308,14 @@ main {
 .dashboard-header > h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--dark-purple);
+  color: var(--primary-color);
 }
 
 #sort {
   font-size: 1rem;
   background: none;
   border: none;
-  color: var(--dark-purple);
+  color: var(--primary-color);
   cursor: pointer;
 }
 
@@ -351,7 +340,7 @@ main {
 /* Actual Search Bar */
 .searchbar-wrapper > input {
   border: none;
-  border-bottom: 2px solid var(--dark-purple);
+  border-bottom: 2px solid var(--primary-color);
   padding: 0.3rem 1rem;
   font-size: 1rem;
   width: 13rem;
@@ -360,7 +349,7 @@ main {
 }
 
 .searchbar-wrapper.dark > input::placeholder {
-  color: var(--light-purple);
+  color: var(--secondary-color);
 }
 
 .searchbar-wrapper.dark > input {
@@ -372,17 +361,17 @@ main {
 .searchbar-wrapper > input:focus {
   outline: none;
   width: 20rem;
-  border-bottom: 2px solid var(--accent-purple);
+  border-bottom: 2px solid var(--accent-color);
 }
 
 .notes-header > input::placeholder {
-  color: var(--dark-purple);
+  color: var(--primary-color);
 }
 
 /* "Sort by" */
 .dashboard-header > span {
   font-size: 1rem;
-  color: var(--dark-purple);
+  color: var(--primary-color);
 }
 
 /* --------NOTES CONTAINER-------- */
@@ -403,13 +392,14 @@ main {
 }
 
 .note-wrapper > section:hover {
-  border: 1px solid var(--dark-purple);
+  border: 1px solid var(--primary-color);
 }
 
 .note-wrapper > section {
   border-radius: 0.4rem;
   border: 1px solid rgba(0, 0, 0, 0);
-  background: var(--light-purple);
+  background: var(--secondary-color);
+  color: var(--text-color);
   /* box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15); */
   padding: 1.5rem 1rem;
   width: 100%;
@@ -489,7 +479,7 @@ main {
 .note-tags > span {
   padding: 0.2rem 0.4rem;
   border-radius: 0.4rem;
-  background: var(--dark-purple);
+  background: var(--primary-color);
   color: var(--white);
   font-size: 0.8rem;
 }
@@ -542,14 +532,20 @@ main {
   align-items: center;
 }
 
+.ql-snow .ql-editor h1 {
+  color: black;
+  width: 100%;
+  text-align: left;
+}
+
 /* Title Input */
 #title-input {
-  color: var(--dark-purple);
+  color: var(--primary-color);
   font-size: 2.5rem;
   background: none;
   font-weight: bold;
   border: none;
-  border-bottom: 2px solid var(--accent-purple);
+  border-bottom: 2px solid var(--accent-color);
   width: 100%;
 }
 
@@ -558,7 +554,7 @@ main {
 }
 
 #title-input[disabled='true'] {
-  border-color: var(--dark-purple);
+  border-color: var(--primary-color);
 }
 
 #title-input:focus {
@@ -577,19 +573,19 @@ main {
   outline: none;
   overflow-y: hidden;
   font-size: 1.2em;
-  color: var(--dark-purple);
+  color: var(--primary-color);
   border-radius: 0.4rem;
-  background-color: var(--light-purple);
-  border: 0.15rem solid var(--text-purple);
+  background-color: var(--secondary-color);
+  border: 0.15rem solid var(--text-color);
 }
 
 #edit-content {
-  border-color: var(--accent-purple);
+  border-color: var(--accent-color);
   resize: none;
 }
 
 .flipped {
-  border: 1px solid var(--dark-purple);
+  border: 1px solid var(--primary-color);
   transform: rotate3d(0, 1, 0, 180deg);
   pointer-events: none;
   opacity: 0;

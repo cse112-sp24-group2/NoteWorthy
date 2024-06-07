@@ -3,7 +3,7 @@
  */
 import puppeteer from 'puppeteer';
 
-const URL = 'http://localhost:5500/source/';
+const URL = 'http://localhost:5173/';
 
 let browser;
 let page;

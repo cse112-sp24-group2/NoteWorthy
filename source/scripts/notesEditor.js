@@ -26,7 +26,6 @@ export async function addNoteToDocument(note) {
   // select html items
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
-  const intPutArea = document.getElementById('notes-tags');
 
   // empty the html items
   // populate html with notes data
@@ -131,13 +130,15 @@ function importNote() {
     reader.onload = async () => {
       const content = reader.result;
       const title = file.name.replace('.txt', '');
-      const lastModified = getDate();
-      const noteObject = {
-        title,
-        lastModified,
-        content,
-      };
-      await addNoteToDocument(noteObject);
+      const lastModifiedVal = getDate();
+
+      const titleInput = document.querySelector('#title-input');
+      titleInput.value = title;
+      const lastModified = document.querySelector('#notes-last-modified');
+      lastModified.innerHTML = `Last Modified: ${lastModifiedVal}`;
+
+      // set quill contents
+      quill.setText(content);
     };
   };
 }

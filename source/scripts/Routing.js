@@ -14,6 +14,7 @@ export let pageData = {
   editEnabled: false,
   tagDB: null,
   tags: [], // use this to keep track of which new tags are being pushed to addtags.
+  theme: 'light',
 };
 
 /**

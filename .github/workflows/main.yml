@@ -34,7 +34,7 @@ jobs:
           skip_git_check: true
       - name: Start server
         run: |
-          npm start &
+          npm run dev &
         env:
           CI: true
       - name: Run TESTS
@@ -43,13 +43,11 @@ jobs:
         env:
           NODE_OPTIONS: --experimental-vm-modules
           CI: true
-      - name: Minify JS
-        run: |
-          npm install uglify-js -g
-          find ./source/scripts -name "*.js" -exec uglifyjs {} -o {} --compress --mangle --module \;
       - name: Google Lighthouse
         run: |
           npm install -g @lhci/cli@0.13.x
+          npm run build
+          npm run preview
           lhci autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

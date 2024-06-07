@@ -7,6 +7,8 @@
  *   - exportNote()
  *   - deleteNote()
  */
+import { saveAs } from 'file-saver';
+import { pdfExporter } from 'quill-to-pdf';
 import { pageData, updateURL } from './Routing.js';
 import { deleteNoteFromStorage, getNoteFromStorage, getNotesFromStorage } from './noteStorage.js';
 import { addNotesToDocument } from './notesDashboard.js';
@@ -15,17 +17,15 @@ import { confirmDialog } from './settings.js';
 /**
  * @description Exports the note as a txt file
  *
- * @param {string} OPTIONAL uuid (called from individual note cards)
  * @returns {void} This function does not return a value.
  */
-export async function exportNote(uuid) {
-  const id = uuid || pageData.noteID;
+export async function exportNote() {
+  const id = pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
-  // eslint-disable-next-line
-  const doc = new jsPDF();
-  doc.text(note.content.ops[0].insert, 10, 20);
-  doc.save(`${note.title}.pdf`);
+
+  const pdfBlob = await pdfExporter.generatePdf(note.content);
+  saveAs(pdfBlob, `${note.title}.pdf`);
 }
 
 /**

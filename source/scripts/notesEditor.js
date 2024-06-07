@@ -13,7 +13,7 @@ import { updateURL, pageData } from './Routing.js';
 import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { getTagFromStorage, getTagsFromStorage, saveTagToStorage, addTagsToDOM } from './tagStorage.js';
+import { getTagFromStorage, saveTagToStorage } from './tagStorage.js';
 import { alertDialog } from './settings.js';
 
 let quill;
@@ -38,39 +38,6 @@ export async function addNoteToDocument(note) {
 
   const tagInput = document.querySelector('#tag-input');
   tagInput.setAttribute('placeholder', 'Add tag...');
-
-  // append the tags
-  // TODO: add all tags from the database, only checking it off it its in "tags"
-  const tags = note.tags;
-  // const allTags = await getTagsFromStorage(pageData.tagDB); 
-  // console.log('all the tags associated with this note is: ' + allTags);
-
-  // const tagOnPage = document.getElementById('notes-tags').innerHTML;
-  // console.log('the tags associated in the html is ' + tagOnPage);
-  // for(let i = 0; i < tagOnPage.length; i+=1) {
-  //   if(tagOnPage) {
-  //     console.log(tagOnPage[i].)
-  //   }
-  // }
-  // for (let i = 0; i < allTags.length; i += 1) {
-  //   const tagCheckbox = document.createElement('input');
-  //   // console.log(allTags[i]);
-  //   tagCheckbox.type = 'checkbox';
-  //   tagCheckbox.className = 'tag';
-  //   tagCheckbox.name = allTags[i];
-  //   if (tags.includes(allTags[i])) {
-  //     tagCheckbox.checked = true;
-
-  //     // ADD EVENT LISTENER FOR CHECKBOX (INSIDE addTags)
-  //   } else {
-  //     tagCheckbox.checked = false;
-  //   }
-  //   intPutArea.appendChild(tagCheckbox);
-  //   const label = document.createElement('label');
-  //   label.htmlFor = allTags[i]; // replace with unique tag identifier
-  //   label.appendChild(document.createTextNode(allTags[i]));
-  //   intPutArea.appendChild(label);
-  // }
 }
 
 /**
@@ -208,7 +175,6 @@ function createNoteObject(tags, id) {
 export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
-  const tagDB = pageData.tagDB;
 
   const tags = getSelectedTags();
   const noteObject = createNoteObject(tags, id);

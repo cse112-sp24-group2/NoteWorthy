@@ -28,7 +28,7 @@ async function switchToDashboard(dom) {
   const notes = await getNotesFromStorage(db);
   const noteTagsElement = document.getElementById('notes-tags');
   noteTagsElement.innerHTML = '';
-  document.getElementById('tag-input').value = document.getElementById("tag-input").defaultValue;
+  document.getElementById('tag-input').value = document.getElementById('tag-input').defaultValue;
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
@@ -90,7 +90,7 @@ function URLRoutingHandler() {
 
   if (id == null) {
     switchToDashboard(dom);
-    document.getElementById('tag-input').value = document.getElementById("tag-input").defaultValue;
+    document.getElementById('tag-input').value = document.getElementById('tag-input').defaultValue;
     // const tags = document.getElementById('notes-tags');
     // tags.remove();
     // document.getElementById('notes-tags').innerHTML = '';

@@ -12,8 +12,8 @@ async function copyNote(note) {
   newNote.title = `${note.title} (copy)`;
   newNote.uuid = Date.now();
   newNote.lastModified = new Date().toLocaleString();
-  
-  const database = pageData.database
+
+  const database = pageData.database;
   const objectStore = database.transaction('NotesOS', 'readwrite').objectStore('NotesOS');
   const getNoteRequest = objectStore.get(note.uuid);
   getNoteRequest.onsuccess = () => {
@@ -23,11 +23,11 @@ async function copyNote(note) {
     console.log(tags);
     const tagDB = pageData.tagDB;
     const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-    for(let i = 0; i < tags.length; i++) {
+    for(let i = 0; i < tags.length; i += 1) {
       const tagGetRequest = tagsObjectStore.get(tags[i]);
       tagGetRequest.onsuccess = () => {
         const tag = tagGetRequest.result;
-        tag.num_notes +=1; 
+        tag.num_notes += 1;
         const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
         tagPutRequest.put(tag);
       };

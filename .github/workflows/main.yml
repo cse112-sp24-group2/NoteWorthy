@@ -34,7 +34,7 @@ jobs:
           skip_git_check: true
       - name: Start server
         run: |
-          npm run dev
+          npm run dev &
         env:
           CI: true
       - name: Run TESTS

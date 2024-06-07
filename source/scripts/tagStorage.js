@@ -57,11 +57,13 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
     }
     newCheckBox.className = 'tag';
     newCheckBox.name = defaultTagObject.tag_name;
-    console.log("defaultTagObject outside of listener is " + defaultTagObject.tag_name);
+    console.log("defaultTagObject outside of listener is " + newCheckBox.name);
+
+    parentElement.appendChild(newCheckBox);
     newCheckBox.addEventListener('change', () => {
       const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-      console.log("defaultTagObject inside listener is " + defaultTagObject.tag_name);
-      const tagGetRequest = tagsObjectStore.get(defaultTagObject.tag_name);
+      console.log("defaultTagObject inside listener is " + newCheckBox.name);
+      const tagGetRequest = tagsObjectStore.get(newCheckBox.name);
       tagGetRequest.onsuccess = () => {
         const currentTag = tagGetRequest.result;
         if (newCheckBox.checked === true) {
@@ -80,7 +82,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
       };
     });
 
-    parentElement.appendChild(newCheckBox);
     const label = document.createElement('label');
     label.htmlFor = defaultTagObject.tag_name;
     label.appendChild(document.createTextNode(defaultTagObject.tag_name));

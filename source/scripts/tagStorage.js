@@ -18,10 +18,86 @@ const TAG_OBJECT = {
 };
 
 /**
+ * Adds tags to the DOM.
+ *
+ * @returns {Promise<Array>} A promise that resolves with an array of all the tags.
+ */
+export async function addTagsToDOM(tagDBObjectStore, noteObject) {
+  const allTagsRequest = tagDBObjectStore.getAllKeys();
+  const allTags = [];
+  const noteTags = noteObject.tags;
+  const allTagsPromise = new Promise((resolve, reject) => {
+    allTagsRequest.onsuccess = () => {
+      for (let i = 0; i < allTagsRequest.result.length; i += 1) {
+        allTags.push(allTagsRequest.result[i]);
+      }
+      console.log(`the size of allTagsRequest.result is: ${allTagsRequest.result.length}`);
+      resolve(allTags);
+    };
+    allTagsRequest.onerror = () => {
+      reject(allTagsRequest.error);
+    };
+  });
+  await allTagsPromise;
+  const parentElement = document.getElementById('notes-tags');
+  parentElement.innerHTML = '';
+  console.log(`the size of allTags is: ${allTags.length}`);
+  for (let i = 0; i < allTags.length; i += 1) {
+    const defaultTagObject = TAG_OBJECT;
+    defaultTagObject.tag_name = allTags[i];
+    // adding the checkboxes and labels for the default tags
+    // const parentElement = document.getElementById('notes-tags');
+    const newCheckBox = document.createElement('input');
+    newCheckBox.type = 'checkbox';
+    if(noteTags.includes(allTags[i]))   {
+      newCheckBox.checked = true;
+    }
+    else {
+      newCheckBox.checked = false;
+    }
+    newCheckBox.className = 'tag';
+    newCheckBox.name = defaultTagObject.tag_name;
+    console.log("defaultTagObject outside of listener is " + newCheckBox.name);
+
+    parentElement.appendChild(newCheckBox);
+    newCheckBox.addEventListener('change', () => {
+      const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+      console.log("defaultTagObject inside listener is " + newCheckBox.name);
+      const tagGetRequest = tagsObjectStore.get(newCheckBox.name);
+      tagGetRequest.onsuccess = () => {
+        const currentTag = tagGetRequest.result;
+        if (newCheckBox.checked === true) {
+          // console.log("Does the checkbox work") 
+          // console.log('the current Tag is ' + currentTag);
+          // console.log('the number of notes associated with '+ currentTag.tag_name + 'is ' + currentTag.num_notes);
+          currentTag.num_notes += 1;
+          // console.log('the number of notes associated with '+ currentTag.tag_name + 'is now   ' + currentTag.num_notes);
+        } else {
+          currentTag.num_notes -= 1;
+        }
+        // console.log('the number of notes associated with '+ currentTag.tag_name + 'after if-statement is  ' + currentTag.num_notes);
+        const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+        tagPutRequest.put(currentTag);
+        // console.log(tagPutRequest.get(currentTag.tag_name));
+      };
+    });
+
+    const label = document.createElement('label');
+    label.htmlFor = defaultTagObject.tag_name;
+    label.appendChild(document.createTextNode(defaultTagObject.tag_name));
+    parentElement.appendChild(label);
+    console.log(`i am displaying this particular tag: ${defaultTagObject.tag_name}`);
+  }
+}
+
+export function addTagsToSidebar(tagDBObjectStore, tagsList) {}
+
+/**
  * Sets up and returns a reference to our IndexedDB tags storage.
  * @returns A reference to our IndexedDB tags storage.
  */
 export function initializeTagDB() {
+  console.log('i am initializing the tag database');
   return new Promise((resolve, reject) => {
     if (tagDB) {
       resolve(tagDB);
@@ -40,8 +116,44 @@ export function initializeTagDB() {
       for (let i = 0; i < defaultTags.length; i += 1) {
         const defaultTagObject = TAG_OBJECT;
         defaultTagObject.tag_name = defaultTags[i];
-        objectStore.put(defaultTagObject);
+        objectStore.add(defaultTagObject);
       }
+      // objectStore.add()
+      // addTagsToDOM(objectStore, defaultTags);
+
+      // for (let i = 0; i < defaultTags.length; i += 1) {
+      //   const defaultTagObject = TAG_OBJECT;
+      //   defaultTagObject.tag_name = defaultTags[i];
+      //   objectStore.put(defaultTagObject);
+      //   // adding the checkboxes and labels for the default tags
+      //   const parentElement = document.getElementById('notes-tags');
+      //   const newCheckBox = document.createElement('input');
+      //   newCheckBox.type = 'checkbox';
+      //   newCheckBox.checked = false;
+      //   newCheckBox.className = 'tag';
+      //   newCheckBox.name = defaultTagObject.tag_name;
+      //   newCheckBox.addEventListener('change', () => {
+      //     const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+      //     const tagGetRequest = tagsObjectStore.get(defaultTagObject.tag_name);
+      //     tagGetRequest.onsuccess = () => {
+      //       const currentTag = tagGetRequest.result;
+      //       if (newCheckBox.checked === true) {
+      //         currentTag.num_notes += 1;
+      //       } else {
+      //         currentTag.num_notes -= 1;
+      //       }
+      //       const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+      //       tagPutRequest.put(currentTag);
+      //     };
+      //   });
+
+      //   parentElement.appendChild(newCheckBox);
+      //   const label = document.createElement('label');
+      //   label.htmlFor = defaultTagObject.tag_name;
+      //   label.appendChild(document.createTextNode(defaultTagObject.tag_name));
+      //   parentElement.appendChild(label);
+      //   console.log(`i am displaying this particular tag: ${defaultTagObject.tag_name}`);
+      // }
     };
 
     tagsDBopenReq.onsuccess = (event) => {
@@ -87,12 +199,27 @@ export function getTagsFromStorage(database) {
  * @param {*} tagName tagName of the tag.
  * @returns The note object stored with the given UUID.
  */
-export function getTagFromStorage(database, tagName) {
+export async function getTagFromStorage(database, tagName) {
+  // const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
+  // const getTagRequest = objectStore.get(tagName);
+  // getTagRequest.onsuccess = function() {
+  //   if(getTagRequest.result === 0) {
+  //     console.log("should get in here first before checking tagExists value");
+  //     return false;
+  //   } else {
+  //     console.log("should get in here or maybe here first before checking tagExists value");
+  //     return true;
+  //   }
+  // }
+
   return new Promise((resolve, reject) => {
-    const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
+    const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
     const getTagRequest = objectStore.get(tagName);
+    // console.log("before on success")
     getTagRequest.onsuccess = () => {
-      resolve(getTagRequest.result);
+      // console.log("on success")
+      // console.log(getTagRequest.result);
+      resolve(getTagRequest.result === 'undefined');
     };
     getTagRequest.onerror = () => {
       reject(new Error(`Error fetching tag with tagName ${tagName} from storage.`));
@@ -107,23 +234,36 @@ export function getTagFromStorage(database, tagName) {
  * @param {*} tagObj The tag object to save.
  * @returns Promise<int> The name of the newly saved tag.
  */
-export function saveTagToStorage(database, tagObj) {
-  const tag = tagObj;
 
+export function saveTagToStorage(database, tagObj, newTag, increment) {
+  const tag = tagObj;
+  if (newTag) {
+    return new Promise((resolve, reject) => {
+      const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
+      const saveTagRequest = objectStore.add(tag);
+      saveTagRequest.onsuccess = () => {
+        // console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
+        // console.log(saveTagRequest.result);
+        resolve(saveTagRequest.result);
+      };
+      saveTagRequest.onerror = () => {
+        reject(new Error('Error saving new tag to storage'));
+      };
+    });
+  }
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    let saveTagRequest;
-
-    if (!tag.tag_name) {
-      saveTagRequest = objectStore.add(tag);
-    } else {
-      const oldTag = objectStore.get(tag.tag_name);
-      tag.num_notes = oldTag.num_notes + 1;
-      saveTagRequest = objectStore.put(tag);
-    }
-
+    const oldTag = objectStore.get(tag.tag_name);
+    // console.log(oldTag);
+    // console.log(tag.tag_name + " num_notes is " + oldTag.num_notes);
+    // if(increment) {
+    //   tag.num_notes = oldTag.num_notes + 1;
+    // } else  {
+    //   tag.num_notes = oldTag.num_notes - 1;
+    // }
+    const saveTagRequest = objectStore.put(tag);
     saveTagRequest.onsuccess = () => {
-      console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
+      // console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
@@ -143,7 +283,7 @@ export function deleteTagFromStorage(database, tag) {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
     const deleteTagRequest = objectStore.delete(tag.tag_name);
     deleteTagRequest.onsuccess = () => {
-      console.log(`Successfully deleted tag with tag_name ${deleteTagRequest.result}`);
+      // console.log(`Successfully deleted tag with tag_name ${deleteTagRequest.result}`);
       resolve();
     };
     deleteTagRequest.onerror = () => {
@@ -161,5 +301,5 @@ export function deleteTagFromStorage(database, tag) {
 export function tagQuery(className) {
   const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
   const tagsIndex = notesDB.index('note_tags');
-  console.log(tagsIndex.getAll(className));
+  // console.log(tagsIndex.getAll(className));
 }

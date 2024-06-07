@@ -1,6 +1,6 @@
 import { initializeDB, getNotesFromStorage, saveNoteToStorage } from './noteStorage.js';
 import { deleteNote } from './noteFunctions.js';
-import { updateURL } from './Routing.js';
+import { pageData, updateURL } from './Routing.js';
 import { addNotesToDocument } from './notesDashboard.js';
 import { toggleClassToArr } from './utility.js';
 
@@ -12,6 +12,27 @@ async function copyNote(note) {
   newNote.title = `${note.title} (copy)`;
   newNote.uuid = Date.now();
   newNote.lastModified = new Date().toLocaleString();
+  
+  const database = pageData.database
+  const objectStore = database.transaction('NotesOS', 'readwrite').objectStore('NotesOS');
+  const getNoteRequest = objectStore.get(note.uuid);
+  getNoteRequest.onsuccess = () => {
+    const noteObject = getNoteRequest.result;
+    console.log(noteObject);
+    const tags = noteObject.tags;
+    console.log(tags);
+    const tagDB = pageData.tagDB;
+    const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+    for(let i = 0; i < tags.length; i++) {
+      const tagGetRequest = tagsObjectStore.get(tags[i]);
+      tagGetRequest.onsuccess = () => {
+        const tag = tagGetRequest.result;
+        tag.num_notes +=1; 
+        const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+        tagPutRequest.put(tag);
+      };
+    }
+  };
   saveNoteToStorage(db, newNote);
   //  Add new Note row without reloading
   const notes = await getNotesFromStorage(db);

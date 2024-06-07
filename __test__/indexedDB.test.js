@@ -25,9 +25,10 @@ describe('Backend: Read/Add notes', () => {
       title: 'My First Note',
       lastModified: '1/1/2001 at 1:00 PM',
       content: 'Hello World!',
+      tag: "default"
     };
     const id = await saveNoteToStorage(db, note);
-    console.log(id);
+    // console.log(id);
     expect(id).toEqual(1);
   });
 
@@ -38,6 +39,7 @@ describe('Backend: Read/Add notes', () => {
       title: 'My First Note',
       lastModified: '1/1/2001 at 1:00 PM',
       content: 'Hello World!',
+      tag: "default"
     });
   });
 
@@ -47,6 +49,7 @@ describe('Backend: Read/Add notes', () => {
       title: 'My First Note',
       lastModified: '1/1/2001 at 1:00 PM',
       content: 'Hello World!',
+      tag: "default"
     };
     await Promise.all([0, 1, 2, 3, 4, 5].map(() => saveNoteToStorage(db, note)));
     const notes = await getNotesFromStorage(db);
@@ -59,6 +62,7 @@ describe('Backend: Read/Add notes', () => {
       title: 'Updated Note',
       lastModified: '2/1/2001 at 2:00 PM',
       content: 'Updated note contents!',
+      tag: "default"
     };
     await saveNoteToStorage(db, note);
     const response = await getNoteFromStorage(db, 5);

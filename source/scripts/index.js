@@ -11,7 +11,7 @@
 import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
-import { initializeTagDB, getTagsFromStorage } from './tagStorage.js';
+import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
 import { getDate } from './utility.js';
 import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
@@ -26,6 +26,9 @@ import { initSettings } from './settings.js';
 async function switchToDashboard(dom) {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
+  const noteTagsElement = document.getElementById('notes-tags');
+  noteTagsElement.innerHTML = '';
+  document.getElementById('tag-input').value = document.getElementById("tag-input").defaultValue;
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
@@ -43,6 +46,8 @@ async function switchToEditor(id, dom) {
     const db = pageData.database;
     const note = await getNoteFromStorage(db, id);
     pageData.editEnabled = false;
+    const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
+    await addTagsToDOM(tagsObjectStore, note);
     addNoteToDocument(note);
   } else {
     const noteObject = {
@@ -51,10 +56,11 @@ async function switchToEditor(id, dom) {
       tags: [],
       content: '',
     };
+    const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
+    await addTagsToDOM(tagsObjectStore, noteObject);
     await addNoteToDocument(noteObject);
     editNote(true);
   }
-
   dom.editor.classList.remove('hidden');
   dom.dashboard.classList.add('hidden');
 }
@@ -84,9 +90,10 @@ function URLRoutingHandler() {
 
   if (id == null) {
     switchToDashboard(dom);
+    document.getElementById('tag-input').value = document.getElementById("tag-input").defaultValue;
     // const tags = document.getElementById('notes-tags');
     // tags.remove();
-    document.getElementById('notes-tags').innerHTML = '';
+    // document.getElementById('notes-tags').innerHTML = '';
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }
@@ -110,7 +117,7 @@ function initThemeToggle() {
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
-  console.log('the pageData.tags is', pageData.tags);
+  // 'the pageData.tags is', pageData.tags);
   addTagsToDocument(pageData.tags);
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
@@ -149,8 +156,8 @@ async function init() {
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
   initEventHandler();
   initSettings();
-  URLRoutingHandler();
   initEditor();
+  URLRoutingHandler();
 }
 
 window.addEventListener('DOMContentLoaded', init);

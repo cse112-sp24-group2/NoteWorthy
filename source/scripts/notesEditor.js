@@ -13,7 +13,7 @@ import { updateURL, pageData } from './Routing.js';
 import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { saveTagToStorage } from './tagStorage.js';
+import { getTagFromStorage, getTagsFromStorage, saveTagToStorage, addTagsToDOM } from './tagStorage.js';
 import { alertDialog } from './settings.js';
 
 let quill;
@@ -30,7 +30,7 @@ export async function addNoteToDocument(note) {
   // empty the html items
   // populate html with notes data
   title.innerHTML = `<input type="text"
-    ${title.classList.contains('dark') ? 'class="dark"' : 'class=""'} id="title-input" placeholder="Untitled Note">`;
+  ${title.classList.contains('dark') ? 'class="dark"' : 'class=""'} id="title-input" placeholder="Untitled Note">`;
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
@@ -40,17 +40,35 @@ export async function addNoteToDocument(note) {
   tagInput.setAttribute('placeholder', 'Add tag...');
 
   // append the tags
-  // for (let i = 0; i < tags.length; i += 1) {
+  // TODO: add all tags from the database, only checking it off it its in "tags"
+  const tags = note.tags;
+  // const allTags = await getTagsFromStorage(pageData.tagDB); 
+  // console.log('all the tags associated with this note is: ' + allTags);
+
+  // const tagOnPage = document.getElementById('notes-tags').innerHTML;
+  // console.log('the tags associated in the html is ' + tagOnPage);
+  // for(let i = 0; i < tagOnPage.length; i+=1) {
+  //   if(tagOnPage) {
+  //     console.log(tagOnPage[i].)
+  //   }
+  // }
+  // for (let i = 0; i < allTags.length; i += 1) {
   //   const tagCheckbox = document.createElement('input');
-  //   console.log(tags[i]);
+  //   // console.log(allTags[i]);
   //   tagCheckbox.type = 'checkbox';
   //   tagCheckbox.className = 'tag';
-  //   tagCheckbox.name = tags[i];
-  //   tagCheckbox.checked = true;
+  //   tagCheckbox.name = allTags[i];
+  //   if (tags.includes(allTags[i])) {
+  //     tagCheckbox.checked = true;
+
+  //     // ADD EVENT LISTENER FOR CHECKBOX (INSIDE addTags)
+  //   } else {
+  //     tagCheckbox.checked = false;
+  //   }
   //   intPutArea.appendChild(tagCheckbox);
   //   const label = document.createElement('label');
-  //   label.htmlFor = tags[i]; // replace with unique tag identifier
-  //   label.appendChild(document.createTextNode(tags[i]));
+  //   label.htmlFor = allTags[i]; // replace with unique tag identifier
+  //   label.appendChild(document.createTextNode(allTags[i]));
   //   intPutArea.appendChild(label);
   // }
 }
@@ -191,9 +209,11 @@ export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
   const tagDB = pageData.tagDB;
+
   const tags = getSelectedTags();
   const noteObject = createNoteObject(tags, id);
   if (!noteObject || noteObject == null) return false;
+
   saveNoteToStorage(db, noteObject);
   if (!id) {
     getNotesFromStorage(db).then((res) => {
@@ -206,13 +226,18 @@ export function saveNote() {
     tagList[i].classList.add('disabled-button');
     tagList[i].disabled = false;
   }
-  for (let i = 0; i < tags.length; i += 1) {
-    const TAG_OBJECT = {
-      tag_name: tags[i],
-      num_notes: 1,
-    };
-    saveTagToStorage(tagDB, TAG_OBJECT);
-  }
+
+  // for (let i = 0; i < tags.length; i += 1) {
+  //   const TAG_OBJECT = {
+  //     tag_name: tags[i],
+  //     num_notes: 1,
+  //   };
+  //   saveTagToStorage(tagDB, TAG_OBJECT);
+  // }
+  //  // adding tags to the databases
+  // // instead of using pageData.tagDB, could just grab this list from actual index
+  // so like objectStore.get(tagname)
+  //  }
   return true;
 }
 
@@ -224,15 +249,37 @@ export function saveNote() {
 async function addTags() {
   // const id = pageData.noteID;
   // const db = pageData.database;
+
+  function getAllTagsFromStorage(tagDBObjectStore) {
+    return new Promise((resolve, reject) => {
+      const allTagsRequest = tagDBObjectStore.getAllKeys();
+      const allTags = [];
+
+      allTagsRequest.onsuccess = () => {
+        console.log(`the size of allTagsRequest.result is: ${allTagsRequest.result.length}`);
+        for (let i = 0; i < allTagsRequest.result.length; i += 1) {
+          console.log(`we are inserting: ${allTagsRequest.result[i]} into allTags at index ${i}`);
+          allTags.push(allTagsRequest.result[i]);
+          console.log(`allTags has the following in it: ${allTags}`);
+        }
+        resolve(allTags);
+      };
+
+      allTagsRequest.onerror = () => {
+        reject(allTagsRequest.error);
+      };
+    });
+  }
+
+  const tagDB = pageData.tagDB;
   const tagname = document.querySelector('#tag-input').value.replace(/\s+/g, ' ').trim();
   if (tagname === '') {
     alertDialog('Please enter a valid tag name', 'alert');
   } else {
-    const allTags = [];
-    document.querySelectorAll('.tag').forEach((tag) => {
-      allTags.push(tag.name);
-    });
-    console.log(allTags);
+    const tagDBObjectStore = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+    const allTags = await getAllTagsFromStorage(tagDBObjectStore);
+
+    console.log(`the length of allTags is: ${allTags.length}`);
     if (allTags.includes(tagname)) {
       alert('Tag already exists');
     } else {
@@ -242,74 +289,39 @@ async function addTags() {
       newCheckBox.checked = true;
       newCheckBox.className = 'tag';
       newCheckBox.name = tagname;
+      newCheckBox.addEventListener('change', () => {
+        const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+        const tagGetRequest = tagsObjectStore.get(tagname);
+        tagGetRequest.onsuccess = () => {
+          const currentTag = tagGetRequest.result;
+          if (newCheckBox.checked === true) {
+            currentTag.num_notes += 1;
+          } else {
+            currentTag.num_notes -= 1;
+          }
+          const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+          tagPutRequest.put(currentTag);
+        };
+      });
       // newCheckBox.setAttribute('disabled', true);
       parentElement.appendChild(newCheckBox);
       const label = document.createElement('label');
       label.htmlFor = tagname;
       label.appendChild(document.createTextNode(tagname));
       parentElement.appendChild(label);
+
+      // add to the storage.
+      const TAG_OBJECT = {
+        tag_name: tagname,
+        num_notes: 1,
+      };
+      // get Tag from storage. see if its new or not.
+      const tagExists = await getTagFromStorage(tagDB, tagname); // fill in, make this function work pre
+
+      // maybe wrong value from tagExists
+      // console.log("tagExists is returning the value " + tagExists);
+      saveTagToStorage(tagDB, TAG_OBJECT, tagExists, true);
     }
-    // if existing note
-    /** 
-    if (id) {
-      // console.log()
-      // access note
-      const note = getNoteFromStorage(id);
-      console.log(note);
-      const tags = note.tags;
-      // check to see if note is already tagged
-      console.log(tags);
-      const contains = tags.includes(tagname);
-      if (!contains) {
-        note.tags.push(tagname);
-        // push HTML element
-        const parentElement = document.getElementById('notes-tags');
-        const newCheckBox = document.createElement('input');
-        const uniqueID = generateRandomString(8); // Unique tag identifier
-        newCheckBox.type = 'checkbox';
-        newCheckBox.id = uniqueID;
-        // newCheckBox.value = 'something <br/>';
-        newCheckBox.checked = true;
-        newCheckBox.name = tagname;
-        parentElement.appendChild(newCheckBox);
-
-        const label = document.createElement('label');
-        label.htmlFor = uniqueID;
-        label.appendChild(document.createTextNode(tagname));
-        parentElement.appendChild(label);
-
-        // storing tag info to be used in saveNote()
-        pageData.tags.push(tagname);
-        // adding to database
-        // db.transaction('NotesOS', 'readwrite').objectStore('note_tags');
-        // objectStore.add({tagname, note});
-      }
-    }
-    if (!id) {
-      // notes.tags.push(tagname);
-      // push HTML element
-
-      // check html elements to see if tag is already there.
-
-      const parentElement = document.getElementById('notes-tags');
-      const newCheckBox = document.createElement('input');
-      const uniqueID = generateRandomString(8); // Unique tag identifier
-      newCheckBox.type = 'checkbox';
-      newCheckBox.id = 'tag';
-      newCheckBox.value = 'something <br/>';
-      newCheckBox.checked = true;
-      newCheckBox.name = tagname; // replace with unique tag identifier
-      parentElement.appendChild(newCheckBox);
-
-      const label = document.createElement('label');
-      label.htmlFor = uniqueID; // replace with unique tag identifier
-      label.appendChild(document.createTextNode(tagname));
-      parentElement.appendChild(label);
-
-      pageData.tags.push(tagname);
-    }
-*/
-    // if not contained in tag database, then push to that as well.
   }
 }
 

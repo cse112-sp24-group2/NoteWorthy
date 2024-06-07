@@ -11,6 +11,8 @@ import { pageData, updateURL } from './Routing.js';
 import { deleteNoteFromStorage, getNoteFromStorage, getNotesFromStorage } from './noteStorage.js';
 import { addNotesToDocument } from './notesDashboard.js';
 import { confirmDialog } from './settings.js';
+import { saveAs } from 'file-saver';
+import { pdfExporter } from 'quill-to-pdf';
 
 /**
  * @description Exports the note as a txt file
@@ -22,9 +24,13 @@ export async function exportNote() {
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
   // eslint-disable-next-line
-  const doc = new jsPDF();
-  doc.text(note.content.ops[0].insert, 10, 20);
-  doc.save(`${note.title}.pdf`);
+  // const doc = new jsPDF();
+  // doc.text(note.content.ops[0].insert, 10, 20);
+  // doc.save(`${note.title}.pdf`);
+
+  const pdfBlob = await pdfExporter.generatePdf(note.content);
+  console.log("hi");
+  saveAs(pdfBlob, `${note.title}.pdf`);
 }
 
 /**

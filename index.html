@@ -8,9 +8,9 @@
     <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> -->
     <title>Notes</title>
     <!-- Main Stylesheets & Scripts -->
-    <link rel="stylesheet" href="./styling/index.css" />
-    <script src="./scripts/index.js" type="module"></script>
-    <script src="./scripts/dashboardRow.js" type="module"></script>
+    <link rel="stylesheet" href="source/styling/index.css" />
+    <script src="source/scripts/index.js" type="module"></script>
+    <script src="source/scripts/dashboardRow.js" type="module"></script>
     <!-- jsPDF HTML to PDF -->
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
     <!-- Quill Rich Text Editor -->
@@ -18,7 +18,7 @@
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
     <template id="dashboard-note-template">
       <style>
-      @import url('./styling/index.css');
+      @import url('./source/styling/index.css');
       </style>
       <div class="note-wrapper">
         <section class="note-front">
@@ -43,16 +43,16 @@
           </div>
           <footer>
             <button class="note-download-button">
-              <img alt="download image" src="images/download.svg" />
+              <img alt="download image" src="./source/public/download.svg" />
             </button>
             <button class="note-copy-button">
-              <img alt="copy image" src="images/copy-file.svg" />
+              <img alt="copy image" src="./source/public/copy-file.svg" />
             </button>
             <button class="note-delete-button">
-              <img alt="delete image" src="images/delete.svg" />
+              <img alt="delete image" src="./source/public/delete.svg" />
             </button>
             <button class="note-back-button">
-              <img alt="back button" src="images/back-arrow.svg" />
+              <img alt="back button" src="./source/public/back-arrow.svg" />
             </button>
           </footer>
         </section>
@@ -127,7 +127,7 @@
             <h2>Dashboard</h2>
             <div class="searchbar-wrapper">
               <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
-              <img alt="search note" src="images/search-icon.svg" />
+              <img alt="search note" src="source/public/search-icon.svg" />
             </div>
             <span id="sort">Sort By: Recently Edited</span>
           </header>
@@ -136,7 +136,7 @@
             <p>It looks empty here...</p>
             <br />
             <p>Try adding a note</p>
-            <img alt="image of wojak" class="wojak" src="images/empty-wojak.png" />
+            <img alt="image of wojak" class="wojak" src="source/public/empty-wojak.png" />
           </div>
         </div>
 
@@ -151,16 +151,16 @@
             </div>
             <div class="note-control-bar">
               <button id="back-button" title="Back">
-                <img alt="back arrow icon" src="./images/back-arrow.svg" />
+                <img alt="back arrow icon" src="source/public/back-arrow.svg" />
               </button>
               <button id="export-button" title="Export">
-                <img alt="export icon" src="./images/download.svg" />
+                <img alt="export icon" src="source/public/download.svg" />
               </button>
               <button id="import-button" title="Import">
-                <img style="transform: rotate(180deg)" alt="import icon" src="./images/download.svg" />
+                <img style="transform: rotate(180deg)" alt="import icon" src="source/public/download.svg" />
               </button>
               <button id="delete-button" title="Delete">
-                <img alt="delete icon" src="./images/delete.svg" />
+                <img alt="delete icon" src="source/public/delete.svg" />
               </button>
               <button id="tag-button" style="color:red" > Add Tag</button>
               <input id="tag-input" type="text" placeholder="Add tag..." />

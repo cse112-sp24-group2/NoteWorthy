@@ -26,7 +26,6 @@ export async function addNoteToDocument(note) {
   // select html items
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
-  const intPutArea = document.getElementById('notes-tags');
 
   // empty the html items
   // populate html with notes data
@@ -42,7 +41,6 @@ export async function addNoteToDocument(note) {
   tagInput.setAttribute('placeholder', 'Add tag...');
 
   // append the tags
-  const tags = note.tags;
   // for (let i = 0; i < tags.length; i += 1) {
   //   const tagCheckbox = document.createElement('input');
   //   console.log(tags[i]);
@@ -103,10 +101,12 @@ export function editNote(bool) {
  * @returns {void} This function does not return a value.
  */
 function importNote() {
+  console.log("uwu");
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.txt';
   input.click();
+  console.log("UWU");
 
   input.onchange = async () => {
     const file = input.files[0];

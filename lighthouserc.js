@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: './',
+      url: ['http://localhost:4173/'],
       psiStrategy: 'desktop',
     },
     assert: {

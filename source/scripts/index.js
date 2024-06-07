@@ -94,28 +94,10 @@ function URLRoutingHandler() {
 
 function initThemeToggle() {
   const darkModeButton = document.querySelector('#darkMode');
-  function updateButtonText() {
-    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
-  }
   darkModeButton.addEventListener('click', () => {
-    updateButtonText();
-    const elements = [
-      document.body,
-      document.querySelector('.sidebar'),
-      document.querySelector('#tags'),
-      document.querySelector('#view-more'),
-      document.querySelector('.dashboard-header'),
-      document.querySelector('#sort'),
-      document.querySelector('.searchbar-wrapper'),
-      document.querySelector('.empty-dashboard'),
-      document.querySelector('.view'),
-      document.querySelector('.editor'),
-      document.querySelector('#notes-title'),
-      document.querySelector('#title-input'),
-      document.querySelector('.note-control-bar'),
-      document.querySelectorAll('.note-more'),
-    ];
-    toggleClassToArr(elements, 'dark');
+    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+    pageData.theme = pageData.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', pageData.theme);
   });
 }
 

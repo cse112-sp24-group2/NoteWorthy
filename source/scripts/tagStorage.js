@@ -45,9 +45,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   for (let i = 0; i < allTags.length; i += 1) {
     const defaultTagObject = TAG_OBJECT;
     defaultTagObject.tag_name = allTags[i];
-    console.log("the tagnames are " + defaultTagObject.tag_name);
-    const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
-    tagPutRequest.put(defaultTagObject);
     // adding the checkboxes and labels for the default tags
     // const parentElement = document.getElementById('notes-tags');
     const newCheckBox = document.createElement('input');
@@ -70,7 +67,7 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
         if (newCheckBox.checked === true) {
           // console.log("Does the checkbox work") 
           // console.log('the current Tag is ' + currentTag);
-          console.log('the number of notes associated with '+ currentTag.tag_name + 'is ' + currentTag.num_notes);
+          // console.log('the number of notes associated with '+ currentTag.tag_name + 'is ' + currentTag.num_notes);
           currentTag.num_notes += 1;
           // console.log('the number of notes associated with '+ currentTag.tag_name + 'is now   ' + currentTag.num_notes);
         } else {

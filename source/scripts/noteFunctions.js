@@ -7,12 +7,12 @@
  *   - exportNote()
  *   - deleteNote()
  */
+import { saveAs } from 'file-saver';
+import { pdfExporter } from 'quill-to-pdf';
 import { pageData, updateURL } from './Routing.js';
 import { deleteNoteFromStorage, getNoteFromStorage, getNotesFromStorage } from './noteStorage.js';
 import { addNotesToDocument } from './notesDashboard.js';
 import { confirmDialog } from './settings.js';
-import { saveAs } from 'file-saver';
-import { pdfExporter } from 'quill-to-pdf';
 
 /**
  * @description Exports the note as a txt file

@@ -146,7 +146,7 @@ export function deleteNoteFromStorage(database, note) {
         const tagGetRequest = tagsObjectStore.get(tags[i]);
         tagGetRequest.onsuccess = () => {
           const tag = tagGetRequest.result;
-          tag.num_notes -= 1; 
+          tag.num_notes -= 1;
           const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
           tagPutRequest.put(tag);
         };

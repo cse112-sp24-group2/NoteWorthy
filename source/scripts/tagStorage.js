@@ -286,7 +286,7 @@ export function deleteTagFromStorage(database, tag) {
  * @param {string} className - The tag name to query for.
  * @returns {Array<Object>} - An array of note objects with the specified tag.
  */
-export function tagQuery(className) {
+export function tagQuery() {
   console.log(1);
   // eslint-disable-next-line
   const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');

@@ -23,7 +23,7 @@ async function copyNote(note) {
     console.log(tags);
     const tagDB = pageData.tagDB;
     const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-    for(let i = 0; i < tags.length; i += 1) {
+    for (let i = 0; i < tags.length; i += 1) {
       const tagGetRequest = tagsObjectStore.get(tags[i]);
       tagGetRequest.onsuccess = () => {
         const tag = tagGetRequest.result;

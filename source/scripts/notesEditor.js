@@ -34,15 +34,12 @@ export async function addNoteToDocument(note) {
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
-  quill.setText(note.content);
-  console.log(note.content);
+  quill.setContents(note.content);
 
   const tagInput = document.querySelector('#tag-input');
   tagInput.setAttribute('placeholder', 'Add tag...');
 
   // append the tags
-  /* eslint-disable-next-line */
-  const tags = note.tags;
   // for (let i = 0; i < tags.length; i += 1) {
   //   const tagCheckbox = document.createElement('input');
   //   console.log(tags[i]);
@@ -115,13 +112,15 @@ function importNote() {
     reader.onload = async () => {
       const content = reader.result;
       const title = file.name.replace('.txt', '');
-      const lastModified = getDate();
-      const noteObject = {
-        title,
-        lastModified,
-        content,
-      };
-      await addNoteToDocument(noteObject);
+      const lastModifiedVal = getDate();
+
+      const titleInput = document.querySelector('#title-input');
+      titleInput.value = title;
+      const lastModified = document.querySelector('#notes-last-modified');
+      lastModified.innerHTML = `Last Modified: ${lastModifiedVal}`;
+
+      // set quill contents
+      quill.setText(content);
     };
   };
 }

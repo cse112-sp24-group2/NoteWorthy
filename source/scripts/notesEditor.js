@@ -43,26 +43,35 @@ export async function addNoteToDocument(note) {
   // append the tags
   // TODO: add all tags from the database, only checking it off it its in "tags"
   const tags = note.tags;
-  const allTags = getTagsFromStorage(pageData.tagDB);
-  for (let i = 0; i < allTags.length; i += 1) {
-    const tagCheckbox = document.createElement('input');
-    // console.log(allTags[i]);
-    tagCheckbox.type = 'checkbox';
-    tagCheckbox.className = 'tag';
-    tagCheckbox.name = allTags[i];
-    if (tags.includes(allTags[i])) {
-      tagCheckbox.checked = true;
+  // const allTags = await getTagsFromStorage(pageData.tagDB); 
+  // console.log('all the tags associated with this note is: ' + allTags);
 
-      // ADD EVENT LISTENER FOR CHECKBOX (INSIDE addTags)
-    } else {
-      tagCheckbox.checked = false;
-    }
-    intPutArea.appendChild(tagCheckbox);
-    const label = document.createElement('label');
-    label.htmlFor = allTags[i]; // replace with unique tag identifier
-    label.appendChild(document.createTextNode(allTags[i]));
-    intPutArea.appendChild(label);
-  }
+  // const tagOnPage = document.getElementById('notes-tags').innerHTML;
+  // console.log('the tags associated in the html is ' + tagOnPage);
+  // for(let i = 0; i < tagOnPage.length; i+=1) {
+  //   if(tagOnPage) {
+  //     console.log(tagOnPage[i].)
+  //   }
+  // }
+  // for (let i = 0; i < allTags.length; i += 1) {
+  //   const tagCheckbox = document.createElement('input');
+  //   // console.log(allTags[i]);
+  //   tagCheckbox.type = 'checkbox';
+  //   tagCheckbox.className = 'tag';
+  //   tagCheckbox.name = allTags[i];
+  //   if (tags.includes(allTags[i])) {
+  //     tagCheckbox.checked = true;
+
+  //     // ADD EVENT LISTENER FOR CHECKBOX (INSIDE addTags)
+  //   } else {
+  //     tagCheckbox.checked = false;
+  //   }
+  //   intPutArea.appendChild(tagCheckbox);
+  //   const label = document.createElement('label');
+  //   label.htmlFor = allTags[i]; // replace with unique tag identifier
+  //   label.appendChild(document.createTextNode(allTags[i]));
+  //   intPutArea.appendChild(label);
+  // }
 }
 
 /**

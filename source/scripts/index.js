@@ -41,12 +41,12 @@ async function switchToDashboard(dom) {
  * @returns {void} This function does not return a value.
  */
 async function switchToEditor(id, dom) {
-  const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
-  await addTagsToDOM(tagsObjectStore);
   if (id !== 9999) {
     const db = pageData.database;
     const note = await getNoteFromStorage(db, id);
     pageData.editEnabled = false;
+    const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
+    await addTagsToDOM(tagsObjectStore, note);
     addNoteToDocument(note);
   } else {
     const noteObject = {
@@ -55,6 +55,8 @@ async function switchToEditor(id, dom) {
       tags: [],
       content: '',
     };
+    const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
+    await addTagsToDOM(tagsObjectStore, noteObject);
     await addNoteToDocument(noteObject);
     editNote(true);
   }

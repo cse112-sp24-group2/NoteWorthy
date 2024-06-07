@@ -22,10 +22,10 @@ const TAG_OBJECT = {
  *
  * @returns {Promise<Array>} A promise that resolves with an array of all the tags.
  */
-export async function addTagsToDOM(tagDBObjectStore) {
+export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   const allTagsRequest = tagDBObjectStore.getAllKeys();
   const allTags = [];
-
+  const noteTags = noteObject.tags;
   const allTagsPromise = new Promise((resolve, reject) => {
     allTagsRequest.onsuccess = () => {
       for (let i = 0; i < allTagsRequest.result.length; i += 1) {
@@ -38,7 +38,6 @@ export async function addTagsToDOM(tagDBObjectStore) {
       reject(allTagsRequest.error);
     };
   });
-
   await allTagsPromise;
   const parentElement = document.getElementById('notes-tags');
   parentElement.innerHTML = '';
@@ -46,27 +45,41 @@ export async function addTagsToDOM(tagDBObjectStore) {
   for (let i = 0; i < allTags.length; i += 1) {
     const defaultTagObject = TAG_OBJECT;
     defaultTagObject.tag_name = allTags[i];
+    console.log("the tagnames are " + defaultTagObject.tag_name);
     const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
     tagPutRequest.put(defaultTagObject);
     // adding the checkboxes and labels for the default tags
     // const parentElement = document.getElementById('notes-tags');
     const newCheckBox = document.createElement('input');
     newCheckBox.type = 'checkbox';
-    newCheckBox.checked = false;
+    if(noteTags.includes(allTags[i]))   {
+      newCheckBox.checked = true;
+    }
+    else {
+      newCheckBox.checked = false;
+    }
     newCheckBox.className = 'tag';
     newCheckBox.name = defaultTagObject.tag_name;
+    console.log("defaultTagObject outside of listener is " + defaultTagObject.tag_name);
     newCheckBox.addEventListener('change', () => {
       const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+      console.log("defaultTagObject inside listener is " + defaultTagObject.tag_name);
       const tagGetRequest = tagsObjectStore.get(defaultTagObject.tag_name);
       tagGetRequest.onsuccess = () => {
         const currentTag = tagGetRequest.result;
         if (newCheckBox.checked === true) {
+          // console.log("Does the checkbox work") 
+          // console.log('the current Tag is ' + currentTag);
+          console.log('the number of notes associated with '+ currentTag.tag_name + 'is ' + currentTag.num_notes);
           currentTag.num_notes += 1;
+          // console.log('the number of notes associated with '+ currentTag.tag_name + 'is now   ' + currentTag.num_notes);
         } else {
           currentTag.num_notes -= 1;
         }
+        // console.log('the number of notes associated with '+ currentTag.tag_name + 'after if-statement is  ' + currentTag.num_notes);
         const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
         tagPutRequest.put(currentTag);
+        // console.log(tagPutRequest.get(currentTag.tag_name));
       };
     });
 

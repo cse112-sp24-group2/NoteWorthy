@@ -34,7 +34,7 @@ export async function addNoteToDocument(note) {
   const titleInput = document.querySelector('#title-input');
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
-  quill.setContents(note.content);
+  quill.setText(note.content);
 
   const tagInput = document.querySelector('#tag-input');
   tagInput.setAttribute('placeholder', 'Add tag...');

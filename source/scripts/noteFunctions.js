@@ -15,11 +15,10 @@ import { confirmDialog } from './settings.js';
 /**
  * @description Exports the note as a txt file
  *
- * @param {string} OPTIONAL uuid (called from individual note cards)
  * @returns {void} This function does not return a value.
  */
-export async function exportNote(uuid) {
-  const id = uuid || pageData.noteID;
+export async function exportNote() {
+  const id = pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
   // eslint-disable-next-line

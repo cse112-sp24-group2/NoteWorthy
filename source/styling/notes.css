@@ -104,26 +104,6 @@ label{
   font-weight: 400;
 }
 
-/*Save Button*/
-button {
-  font-family: 'Poppins', sans-serif;
-  font-size: 2em;
-  font-weight: bolder;
-  padding: 0.5rem 1rem 0.5rem 1rem;
-  border: none;
-  border-radius: 1rem;
-  background-color: rgba(136, 86, 174, 0.388);
-  color: #ffffff;
-  filter: drop-shadow(0px 0px 5px black);
-}
-
-button:hover,
-#back-button:hover {
-  background-color: #9867c5;
-  transition: background-color 0.25s ease-in-out;
-  cursor: pointer;
-}
-
 /*Text Area*/
 main {
   width: 90%;
@@ -149,19 +129,6 @@ main {
 #edit-content {
   border-color: rgba(136, 86, 174, 0.388);
   resize: none;
-}
-
-/*Disabled Button*/
-.disabled-button {
-  background-color: gray;
-  color: black;
-  opacity: 20%;
-}
-
-.disabled-button:hover {
-  background-color: gray;
-  color: black;
-  opacity: 20%;
 }
 
 @media only screen and (max-width: 800px) {

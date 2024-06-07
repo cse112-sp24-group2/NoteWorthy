@@ -13,7 +13,7 @@ import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteSto
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage } from './tagStorage.js';
 import { initTagSearch, addTagsToDocument } from './sidebar.js';
-import { getDate, toggleClassToArr } from './utility.js';
+import { getDate } from './utility.js';
 import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
 import { initSettings } from './settings.js';
 

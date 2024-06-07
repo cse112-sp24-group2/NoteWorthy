@@ -26,7 +26,6 @@ export async function addNoteToDocument(note) {
   // select html items
   const title = document.querySelector('#notes-title');
   const lastModified = document.querySelector('#notes-last-modified');
-  const intPutArea = document.getElementById('notes-tags');
 
   // empty the html items
   // populate html with notes data
@@ -42,6 +41,7 @@ export async function addNoteToDocument(note) {
   tagInput.setAttribute('placeholder', 'Add tag...');
 
   // append the tags
+  /* eslint-disable-next-line */
   const tags = note.tags;
   // for (let i = 0; i < tags.length; i += 1) {
   //   const tagCheckbox = document.createElement('input');

@@ -101,12 +101,10 @@ export function editNote(bool) {
  * @returns {void} This function does not return a value.
  */
 function importNote() {
-  console.log("uwu");
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.txt';
   input.click();
-  console.log("UWU");
 
   input.onchange = async () => {
     const file = input.files[0];

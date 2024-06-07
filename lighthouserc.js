@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: './source/',
+      staticDistDir: './',
       psiStrategy: 'desktop',
     },
     assert: {

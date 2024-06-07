@@ -23,13 +23,8 @@ export async function exportNote() {
   const id = pageData.noteID;
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
-  // eslint-disable-next-line
-  // const doc = new jsPDF();
-  // doc.text(note.content.ops[0].insert, 10, 20);
-  // doc.save(`${note.title}.pdf`);
 
   const pdfBlob = await pdfExporter.generatePdf(note.content);
-  console.log("hi");
   saveAs(pdfBlob, `${note.title}.pdf`);
 }
 

@@ -40,10 +40,8 @@ export function addTagsToDocument(tags) {
  */
 export function initTagSearch() {
   const searchButtons = document.getElementsByName('tag-search');
-  // console.log(searchButtons);
   searchButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      // console.log(button.className);
       tagQuery(button.className);
     });
   });

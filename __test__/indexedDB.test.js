@@ -28,7 +28,6 @@ describe('Backend: Read/Add notes', () => {
       tag: "default"
     };
     const id = await saveNoteToStorage(db, note);
-    // console.log(id);
     expect(id).toEqual(1);
   });
 

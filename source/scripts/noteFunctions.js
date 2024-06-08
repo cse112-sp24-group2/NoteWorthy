@@ -24,9 +24,9 @@ export async function exportNote() {
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
 
-  //Content to pdf
+  // Content to pdf
   const pdfBlob = await pdfExporter.generatePdf(note.content);
-  //Download pdf to local
+  // Download pdf to local
   saveAs(pdfBlob, `${note.title}.pdf`);
 }
 

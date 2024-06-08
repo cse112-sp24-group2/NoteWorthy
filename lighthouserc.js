@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run build & npm run preview',
+      startServerCommand: 'cd source && npm install && npm run build && npm run preview',
       url: ['http://localhost:4173/'],
       settings: {
         preset: 'desktop'

@@ -34,6 +34,8 @@ jobs:
           skip_git_check: true
       - name: Start server
         run: |
+          cd source
+          npm install
           npm run dev &
         env:
           CI: true
@@ -46,6 +48,8 @@ jobs:
       - name: Google Lighthouse
         run: |
           npm install -g @lhci/cli@0.13.x
+          cd source
+          npm install
           npm run build
           npm run preview
           lhci autorun

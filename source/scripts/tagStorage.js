@@ -64,18 +64,12 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
       tagGetRequest.onsuccess = () => {
         const currentTag = tagGetRequest.result;
         if (newCheckBox.checked === true) {
-          // console.log("Does the checkbox work");
-          // console.log('the current Tag is ' + currentTag);
-          // console.log('the number of notes associated with '+ currentTag.tag_name + 'is ' + currentTag.num_notes);
           currentTag.num_notes += 1;
-          // console.log('the number of notes associated with '+ currentTag.tag_name + 'is now   ' + currentTag.num_notes);
         } else {
           currentTag.num_notes -= 1;
         }
-        // console.log('the number of notes associated with '+ currentTag.tag_name + 'after if-statement is  ' + currentTag.num_notes);
         const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
         tagPutRequest.put(currentTag);
-        // console.log(tagPutRequest.get(currentTag.tag_name));
       };
     });
 
@@ -83,7 +77,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
     label.htmlFor = defaultTagObject.tag_name;
     label.appendChild(document.createTextNode(defaultTagObject.tag_name));
     parentElement.appendChild(label);
-    console.log(`i am displaying this particular tag: ${defaultTagObject.tag_name}`);
   }
 }
 

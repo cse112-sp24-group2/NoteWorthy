@@ -175,11 +175,28 @@ function createNoteObject(tags, id) {
 export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
-
+  const tagDB = pageData.tagDB;
   const tags = getSelectedTags();
   const noteObject = createNoteObject(tags, id);
-  if (!noteObject || noteObject == null) return false;
-
+  if (!noteObject || noteObject == null) {
+    // GET ALL TAG CHECKBOXES, IF CHECKED, DECREMENT COUNT
+    const parentElement = document.getElementById('notes-tags');
+    const tagList = parentElement.querySelectorAll('input[type=checkbox]');
+    for (let i = 0; i < tagList.length; i += 1) {
+      if (tagList[i].checked) {
+        const tagname = tagList[i].name;
+        const tagsObjectStore = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+        const tagGetRequest = tagsObjectStore.get(tagname);
+        tagGetRequest.onsuccess = () => {
+          const currentTag = tagGetRequest.result;
+          currentTag.num_notes -= 1;
+          const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+          tagPutRequest.put(currentTag);
+        };
+      }
+    }
+    return false;
+  }
   saveNoteToStorage(db, noteObject);
   if (!id) {
     getNotesFromStorage(db).then((res) => {

@@ -16,6 +16,35 @@ const TAG_OBJECT = {
   num_notes: 0,
 };
 
+export function getTagNumNotes(tagDB, tagName) {
+  const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+  const tagGetRequest = tagsObjectStore.get(tagName);
+
+  return new Promise((resolve, reject) => {
+    tagGetRequest.onsuccess = () => {
+      resolve(tagGetRequest.result.num_notes);
+    };
+    tagGetRequest.onerror = () => {
+      reject(tagGetRequest.error);
+    };
+  });
+}
+
+function updateTagNumNotes(tagDB, tagName, isChecked) {
+  const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+  const tagGetRequest = tagsObjectStore.get(tagName);
+  tagGetRequest.onsuccess = () => {
+    const currentTag = tagGetRequest.result;
+    if (isChecked) {
+      currentTag.num_notes += 1;
+    } else {
+      currentTag.num_notes -= 1;
+    }
+    const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
+    tagPutRequest.put(currentTag);
+  };
+}
+
 /**
  * Adds tags to the DOM.
  *
@@ -59,18 +88,7 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
     parentElement.appendChild(newCheckBox);
     // eslint-disable-next-line
     newCheckBox.addEventListener('change', () => {
-      const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-      const tagGetRequest = tagsObjectStore.get(newCheckBox.name);
-      tagGetRequest.onsuccess = () => {
-        const currentTag = tagGetRequest.result;
-        if (newCheckBox.checked === true) {
-          currentTag.num_notes += 1;
-        } else {
-          currentTag.num_notes -= 1;
-        }
-        const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
-        tagPutRequest.put(currentTag);
-      };
+      updateTagNumNotes(tagDB, newCheckBox.name, newCheckBox.checked);
     });
 
     const label = document.createElement('label');
@@ -80,8 +98,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   }
 }
 
-// TODO: WILL NEED THIS DONT DELETE!!!!
-// export function addTagsToSidebar(tagDBObjectStore, tagsList) {}
 
 /**
  * Sets up and returns a reference to our IndexedDB tags storage.

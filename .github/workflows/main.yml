@@ -7,31 +7,65 @@ permissions:
   id-token: write
 
 jobs:
-  build:
-    # Installs Yarn (npm alternative) to run jest tests
+  setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Installs
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
         run: |
+          npm ci -l verbose
           npm install jest
           npm install --save-dev node-fetch
           npm install -D jest-environment-jsdom
-          npm ci -l verbose
+
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
       - name: Check linting and formatting
         run: npm run lint:check
+
+  validate-html:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
       - name: HTML5 Validator
         uses: Cyb3r-Jak3/html5validator-action@v7.2.0
         with:
           root: source/
           css: true
           skip_git_check: true
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: Start server
         run: |
           cd source
@@ -39,13 +73,26 @@ jobs:
           npm run dev &
         env:
           CI: true
-      - name: Run TESTS
-        run: |
-          npm run test
+      - name: Run tests
+        run: npm run test
         env:
           NODE_OPTIONS: --experimental-vm-modules
           CI: true
-      - name: Google Lighthouse
+
+  lighthouse:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Restore dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: Run Google Lighthouse
         run: |
           npm install -g @lhci/cli@0.13.x
           cd source
@@ -56,10 +103,10 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-  JSDocs:
-    runs-on: [ubuntu-latest]
+  build-docs:
+    runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Checkout
         uses: actions/checkout@v4
       - name: Install JSDocs
         run: npm i -g jsdoc && npm install -g jsdoc-tsimport-plugin
@@ -70,16 +117,16 @@ jobs:
         with:
           path: './'
           name: github-pages
-  Deploy:
-    needs: Build
-    runs-on: [ubuntu-latest]
-    environment: 
+
+  deploy:
+    needs: [lint, validate-html, test, lighthouse, build-docs]
+    runs-on: ubuntu-latest
+    environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    steps:  
+    steps:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

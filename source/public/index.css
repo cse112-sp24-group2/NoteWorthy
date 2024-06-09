@@ -334,6 +334,54 @@ main {
   mix-blend-mode: lighten;
 }
 
+/* Sort Dropdown */
+.sort {
+  position: relative;
+  display: inline-block;
+  margin-left: 1rem; 
+}
+
+.dropdown-button {
+  background-color: var(--primary-color);
+  color: var(--white); 
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: var(--secondary-color); /* Background color of dropdown */
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Dropdown shadow */
+  z-index: 1;
+  border-radius: 4px;
+  margin-top: 0.5rem; /* Space between button and dropdown */
+  transform: translateX(-50%)
+}
+
+.dropdown-content button {
+  color: var(--text-color); /* Button text color */
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.dropdown-content button:hover {
+  background-color: var(--accent-color); /* Button hover color */
+}
+
+.sort:hover .dropdown-content {
+  display: block; /* Display dropdown content on hover */
+}
+
 /* Actual Search Bar */
 .searchbar-wrapper > input {
   border: none;

@@ -14,7 +14,7 @@ import { addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
 import { addTagsToSidebar } from './sidebar.js';
 import { getDate } from './utility.js';
-import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
+import { addNotesToDocument, initSearchBar, initSortBy } from './notesDashboard.js';
 import { initSettings } from './settings.js';
 
 /**
@@ -129,10 +129,9 @@ function initThemeToggle() {
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
-  initTimeColumnSorting(notes);
-  initTitleColumnSorting(notes);
   initSearchBar(notes);
   initThemeToggle();
+  initSortBy();
 
   // Clicking on logo redirects to dashboard
   document.querySelector('.header > h1').addEventListener('click', async () => updateURL(''));

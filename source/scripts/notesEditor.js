@@ -262,7 +262,7 @@ export async function initEditor() {
   importButton.addEventListener('click', () => importNote());
   tagInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-      event.preventDefault(); 
+      event.preventDefault();
       addTags();
       tagInput.value = '';
     }

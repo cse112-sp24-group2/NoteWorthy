@@ -139,13 +139,13 @@ dialog {
 }
 
 .dialog-cancel {
-  width: 45%;
-  background: var(--light-red);
+  flex-grow: 1;
+  background: var(--light-green);
 }
 
 .dialog-confirm {
-  flex-grow: 1;
-  background: var(--light-green);
+  width: 45%;
+  background: var(--light-red);
 }
 
 /* ------------------------------MAIN BODY------------------------------ */

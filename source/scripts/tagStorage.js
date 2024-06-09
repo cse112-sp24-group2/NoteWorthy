@@ -70,25 +70,26 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   parentElement.innerHTML = '';
 
   for (let i = 0; i < allTags.length; i += 1) {
-    const defaultTagObject = { ...TAG_OBJECT };  // Create a new object to avoid mutating the original
+    const defaultTagObject = { ...TAG_OBJECT }; // Create a new object to avoid mutating the original
     defaultTagObject.tag_name = allTags[i];
 
     // Create the checkbox input
     const newCheckBox = document.createElement('input');
     newCheckBox.type = 'checkbox';
     newCheckBox.className = 'editor-tag-checkbox';
-    newCheckBox.id = `tag-${defaultTagObject.tag_name}`;  // Unique ID for each checkbox
+    newCheckBox.id = `tag-${defaultTagObject.tag_name}`; // Unique ID for each checkbox
     newCheckBox.name = defaultTagObject.tag_name;
     newCheckBox.checked = noteTags.includes(allTags[i]);
 
     // Add event listener to the checkbox
+    // eslint-disable-next-line
     newCheckBox.addEventListener('change', () => {
       updateTagNumNotes(tagDB, newCheckBox.name, newCheckBox.checked);
     });
 
     // Create the label (acting as container)
     const label = document.createElement('label');
-    label.htmlFor = newCheckBox.id;  // Associate label with checkbox using 'for' attribute
+    label.htmlFor = newCheckBox.id; // Associate label with checkbox using 'for' attribute
     label.className = 'editor-tag-label';
 
     // Create a span for the tag name

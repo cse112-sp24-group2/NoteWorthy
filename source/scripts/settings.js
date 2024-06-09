@@ -2,8 +2,8 @@ const dom = {};
 
 function initDialog(message, confirmText, showCancel) {
   dom.prompt.innerText = message;
-  dom.cancelBtn.style.display = showCancel ? 'inline' : 'none';
-  dom.confirmBtn.innerText = confirmText;
+  dom.confirmBtn.style.display = showCancel ? 'inline' : 'none';
+  dom.cancelBtn.innerText = confirmText;
   dom.dialog.showModal();
 }
 
@@ -11,9 +11,9 @@ export function alertDialog(message) {
   initDialog(message, 'Ok', false);
   const handleConfirm = () => {
     dom.dialog.close();
-    dom.confirmBtn.removeEventListener('click', handleConfirm);
+    dom.cancelBtn.removeEventListener('click', handleConfirm);
   };
-  dom.confirmBtn.addEventListener('click', handleConfirm);
+  dom.cancelBtn.addEventListener('click', handleConfirm);
 }
 
 export function confirmDialog(message) {

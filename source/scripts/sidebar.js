@@ -65,7 +65,6 @@ async function searchByTag() {
 
 export async function addTagsToSidebar() {
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
-  console.log(pageData.tags);
 
   // Sort tags by num_notes in descending order
   pageData.tags.sort((a, b) => b.num_notes - a.num_notes);

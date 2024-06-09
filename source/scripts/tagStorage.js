@@ -124,7 +124,7 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
  * Sets up and returns a reference to our IndexedDB tags storage.
  * @returns A reference to our IndexedDB tags storage.
  */
-export function initializeTagDB(indexedDB) {  
+export function initializeTagDB(indexedDB) {
   return new Promise((resolve, reject) => {
     if (tagDB) {
       resolve(tagDB);

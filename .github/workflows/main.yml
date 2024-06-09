@@ -145,6 +145,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './source/dist'  # assuming your build output is in 'source/dist'
+          name: github-pages
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages

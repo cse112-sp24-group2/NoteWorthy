@@ -3,9 +3,8 @@
  *
  * Functions inside this file:
  *   - addTagsToDocument()
- *   - initTagSearch()
  */
-import { tagQuery, getTagsFromStorage } from './tagStorage.js';
+import { getTagsFromStorage } from './tagStorage.js';
 import { getNotesFromStorage } from './noteStorage.js';
 import { addNotesToDocument } from './notesDashboard.js';
 import { pageData } from './Routing.js';
@@ -25,6 +24,13 @@ function filterNotesByTags(notes, tags) {
   return notes.filter((note) => note.tags.some((tag) => tags.includes(tag)));
 }
 
+/**
+ * @description Creates HTML markup for a tag element with the specified name and count.
+ *
+ * @param {string} name - The name of the tag.
+ * @param {number} [count=0] - The count associated with the tag (defaults to 0 if not provided).
+ * @returns {DocumentFragment} A document fragment containing the HTML markup for the tag element.
+ */
 function createTagHTML(name, count) {
   const template = document.getElementById('sidebar-tag-template');
   const tagEl = template.content.cloneNode(true);
@@ -44,6 +50,11 @@ function createTagHTML(name, count) {
   return tagEl;
 }
 
+/**
+ * @description Searches notes by selected tags and updates the document with filtered notes.
+ *
+ * @returns {Promise<void>} A promise that resolves once notes are filtered and added to the document.
+ */
 async function searchByTag() {
   const tagListEl = document.querySelector('.tags-list');
   const checkedTags = [];
@@ -54,15 +65,18 @@ async function searchByTag() {
   // Extract tag names from the checked checkboxes
   checkedCheckboxes.forEach((checkbox) => {
     const tagName = checkbox.name;
-    if (tagName) {
-      checkedTags.push(tagName);
-    }
+    if (tagName) checkedTags.push(tagName);
   });
 
   const notes = await getNotesFromStorage(pageData.database);
   addNotesToDocument(filterNotesByTags(notes, checkedTags));
 }
 
+/**
+ * @description Retrieves tags from storage, sorts them by the number of associated notes, and adds them to the sidebar.
+ *
+ * @returns {Promise<void>} A promise that resolves once tags are retrieved, sorted, and added to the sidebar.
+ */
 export async function addTagsToSidebar() {
   pageData.tags = await getTagsFromStorage(pageData.tagDB);
 
@@ -108,17 +122,5 @@ export function addTagsToDocument(tags) {
     tagLabel.appendChild(tagButton);
     tagLabel.appendChild(tagSpan);
     tagList.appendChild(tagLabel);
-  });
-}
-
-/**
- * Initializes the tag search functionality.
- */
-export function initTagSearch() {
-  const searchButtons = document.getElementsByName('tag-search');
-  searchButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      tagQuery(button.className);
-    });
   });
 }

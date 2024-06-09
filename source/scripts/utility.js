@@ -18,7 +18,7 @@ export function toggleClassToArr(arr, className) {
   arr.forEach((el) => {
     el.classList.toggle(className);
   });
-} /* toggleClassToArr */
+}
 
 /**
  * @description Parse the note date string into a Date object

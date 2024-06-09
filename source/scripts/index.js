@@ -12,7 +12,7 @@ import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
-import { initTagSearch, addTagsToSidebar } from './sidebar.js';
+import { addTagsToSidebar } from './sidebar.js';
 import { getDate } from './utility.js';
 import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
 import { initSettings } from './settings.js';
@@ -20,18 +20,23 @@ import { initSettings } from './settings.js';
 /**
  * @description Switches current view to dashboard
  *
- * @param {HTMLElement} dom to hide/unhide dashboard and editor
+ * @param {HTMLElement} dom - Object containing DOM elements to hide/unhide dashboard and editor
  * @returns {void} this function does not return a value.
  */
 async function switchToDashboard(dom) {
   const db = pageData.database;
-  pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  pageData.tags = await getTagsFromStorage(pageData.tagDB); // Fetch tags from storage and update pageData tags
   addTagsToSidebar();
+  // Fetch notes from storage using the database object
   const notes = await getNotesFromStorage(db);
   const noteTagsElement = document.getElementById('notes-tags');
-  noteTagsElement.innerHTML = '';
+  noteTagsElement.innerHTML = ''; // Clear existing tags
+
+  // Reset the tag-input value to its default
   document.getElementById('tag-input').value = document.getElementById('tag-input').defaultValue;
   addNotesToDocument(notes);
+
+  // Toggle visibility of editor and dashboard
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
   pageData.page = 'dashboard';
@@ -46,13 +51,15 @@ async function switchToDashboard(dom) {
  */
 async function switchToEditor(id, dom) {
   if (id !== 9999) {
+    // Not a new note
     const db = pageData.database;
     const note = await getNoteFromStorage(db, id);
     pageData.editEnabled = false;
     const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
     await addTagsToDOM(tagsObjectStore, note);
-    addNoteToDocument(note);
+    addNoteToDocument(note); // Populated Note editor page
   } else {
+    // New note
     const noteObject = {
       title: '',
       lastModified: `${getDate()}`,
@@ -63,6 +70,8 @@ async function switchToEditor(id, dom) {
     await addTagsToDOM(tagsObjectStore, noteObject);
     await addNoteToDocument(noteObject);
   }
+
+  // Toggle visibility of editor and dashboard
   dom.editor.classList.remove('hidden');
   dom.dashboard.classList.add('hidden');
   pageData.page = 'editor';
@@ -92,15 +101,16 @@ function URLRoutingHandler() {
 
   if (id == null) {
     switchToDashboard(dom);
-    document.getElementById('tag-input').value = document.getElementById('tag-input').defaultValue;
-    // const tags = document.getElementById('notes-tags');
-    // tags.remove();
-    // document.getElementById('notes-tags').innerHTML = '';
   } else {
     switchToEditor(parseInt(id, 10), dom);
   }
 }
 
+/**
+ * @description Initializes the theme toggle functionality, allowing users to switch between light and dark modes.
+ *
+ * @returns {void} This function does not return a value.
+ */
 function initThemeToggle() {
   const darkModeButton = document.querySelector('#darkMode');
   darkModeButton.addEventListener('click', () => {
@@ -122,11 +132,12 @@ async function initEventHandler() {
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
   initSearchBar(notes);
-  initTagSearch();
   initThemeToggle();
 
+  // Clicking on logo redirects to dashboard
   document.querySelector('.header > h1').addEventListener('click', async () => updateURL(''));
 
+  // works with URLRoutingHandler to give SPA functionality
   let currURL = window.location.search;
   window.addEventListener('popstate', () => {
     const newURL = window.location.search;
@@ -148,7 +159,6 @@ async function initEventHandler() {
  * @returns {void} This function does not return a value.
  */
 async function init() {
-  // HACK: need to change and handle proper URL
   document.querySelector('#newNote').addEventListener('click', () => updateURL('?id=9999'));
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);

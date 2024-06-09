@@ -118,37 +118,36 @@ jobs:
   #         path: './'
   #         name: jsdocs-artifact
 
-  deploy:
-    # needs: [lint, validate-html, test, lighthouse, build-docs]
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Restore dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      - name: Build project
-        run: |
-          cd source
-          npm install
-          npm run build
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './source/dist'  # assuming your build output is in 'source/dist'
-          name: github-pages
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
+    deploy:
+      # needs: [lint, validate-html, test, lighthouse, build-docs]
+      runs-on: ubuntu-latest
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: '18'
+        - name: Restore dependencies
+          uses: actions/cache@v3
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        - name: Build project
+          run: |
+            cd source
+            npm install
+            npm run build
+        - name: Upload GitHub Pages artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: './source/dist'  # assuming your build output is in 'source/dist'
+            name: github-pages
+        - name: Setup GitHub Pages
+          uses: actions/configure-pages@v5
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4

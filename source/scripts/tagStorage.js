@@ -8,7 +8,6 @@
  *   - deleteNoteFromStorage()
  */
 import { pageData } from './Routing.js';
-import { OBJECT_STORE_NAME } from './noteStorage.js';
 
 let tagDB;
 const TAG_STORE_NAME = 'tags';
@@ -49,25 +48,23 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
     // const parentElement = document.getElementById('notes-tags');
     const newCheckBox = document.createElement('input');
     newCheckBox.type = 'checkbox';
-    if(noteTags.includes(allTags[i]))   {
+    if (noteTags.includes(allTags[i])) {
       newCheckBox.checked = true;
-    }
-    else {
+    } else {
       newCheckBox.checked = false;
     }
     newCheckBox.className = 'tag';
     newCheckBox.name = defaultTagObject.tag_name;
-    console.log("defaultTagObject outside of listener is " + newCheckBox.name);
 
     parentElement.appendChild(newCheckBox);
+    // eslint-disable-next-line
     newCheckBox.addEventListener('change', () => {
       const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-      console.log("defaultTagObject inside listener is " + newCheckBox.name);
       const tagGetRequest = tagsObjectStore.get(newCheckBox.name);
       tagGetRequest.onsuccess = () => {
         const currentTag = tagGetRequest.result;
         if (newCheckBox.checked === true) {
-          // console.log("Does the checkbox work") 
+          // console.log("Does the checkbox work");
           // console.log('the current Tag is ' + currentTag);
           // console.log('the number of notes associated with '+ currentTag.tag_name + 'is ' + currentTag.num_notes);
           currentTag.num_notes += 1;
@@ -90,7 +87,8 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   }
 }
 
-export function addTagsToSidebar(tagDBObjectStore, tagsList) {}
+// TODO: WILL NEED THIS DONT DELETE!!!!
+// export function addTagsToSidebar(tagDBObjectStore, tagsList) {}
 
 /**
  * Sets up and returns a reference to our IndexedDB tags storage.
@@ -235,7 +233,7 @@ export async function getTagFromStorage(database, tagName) {
  * @returns Promise<int> The name of the newly saved tag.
  */
 
-export function saveTagToStorage(database, tagObj, newTag, increment) {
+export function saveTagToStorage(database, tagObj, newTag) {
   const tag = tagObj;
   if (newTag) {
     return new Promise((resolve, reject) => {
@@ -253,17 +251,8 @@ export function saveTagToStorage(database, tagObj, newTag, increment) {
   }
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
-    const oldTag = objectStore.get(tag.tag_name);
-    // console.log(oldTag);
-    // console.log(tag.tag_name + " num_notes is " + oldTag.num_notes);
-    // if(increment) {
-    //   tag.num_notes = oldTag.num_notes + 1;
-    // } else  {
-    //   tag.num_notes = oldTag.num_notes - 1;
-    // }
     const saveTagRequest = objectStore.put(tag);
     saveTagRequest.onsuccess = () => {
-      // console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
       resolve(saveTagRequest.result);
     };
     saveTagRequest.onerror = () => {
@@ -283,7 +272,6 @@ export function deleteTagFromStorage(database, tag) {
     const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
     const deleteTagRequest = objectStore.delete(tag.tag_name);
     deleteTagRequest.onsuccess = () => {
-      // console.log(`Successfully deleted tag with tag_name ${deleteTagRequest.result}`);
       resolve();
     };
     deleteTagRequest.onerror = () => {
@@ -298,8 +286,11 @@ export function deleteTagFromStorage(database, tag) {
  * @param {string} className - The tag name to query for.
  * @returns {Array<Object>} - An array of note objects with the specified tag.
  */
-export function tagQuery(className) {
+export function tagQuery() {
+  console.log(1);
+  // eslint-disable-next-line
   const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
+  // eslint-disable-next-line
   const tagsIndex = notesDB.index('note_tags');
   // console.log(tagsIndex.getAll(className));
 }

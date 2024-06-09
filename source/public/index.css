@@ -44,11 +44,13 @@ html {
   --light-green: #c7ffcd;
   --light-red: #ffcdc7;
   --background-color: #ffffff;
+  --dropdown-text-color: #211c34;
+  --image-invert: 100%;
 }
 
 html[data-theme='dark'] {
   --primary-color: #211c34;
-  --secondary-color: #ffffff;
+  --secondary-color: #ede9f2;
   --text-color: #ffffff;
   --card-text-color: black;
   --white: #ffffff;
@@ -56,6 +58,8 @@ html[data-theme='dark'] {
   --light-green: #c7ffcd;
   --light-red: #ffcdc7;
   --background-color: #211c34;
+  --dropdown-text-color: #211c34;
+  --image-invert: 0%;
 }
 
 /* ------------------------------HEADER------------------------------ */
@@ -312,12 +316,8 @@ main {
   font-size: 1rem;
   background: none;
   border: none;
-  color: var(--primary-color);
+  color: var(--text-color);
   cursor: pointer;
-}
-
-#sort.dark {
-  color: var(--white);
 }
 
 .searchbar-wrapper {
@@ -327,10 +327,7 @@ main {
 .searchbar-wrapper > img {
   position: relative;
   right: 2.5rem;
-}
-
-.searchbar-wrapper > img {
-  filter: invert(50%);
+  filter: invert(var(--image-invert));
   mix-blend-mode: lighten;
 }
 
@@ -342,8 +339,8 @@ main {
 }
 
 .dropdown-button {
-  background-color: var(--primary-color);
-  color: var(--white); 
+  color: var(--text-color); 
+  background: none;
   padding: 10px;
   font-size: 1rem;
   border: none;
@@ -363,7 +360,7 @@ main {
 }
 
 .dropdown-content button {
-  color: var(--text-color); /* Button text color */
+  color: var(--dropdown-text-color); /* Button text color */
   padding: 12px 16px;
   text-decoration: none;
   display: block;
@@ -391,14 +388,15 @@ main {
   width: 13rem;
   transition: 0.3s;
   background: none;
+  color: var(--text-color);
 }
 
-.searchbar-wrapper.dark > input::placeholder {
-  color: var(--secondary-color);
+.searchbar-wrapper > input::placeholder {
+  color: var(--text-color);
 }
 
 .searchbar-wrapper.dark > input {
-  color: var(--white);
+  color: var(--text-color);
   border-bottom: 2px solid var(--white);
 }
 
@@ -579,7 +577,7 @@ main {
 
 /* Title Input */
 #title-input {
-  color: var(--primary-color);
+  color: var(--text-color);
   font-size: 2.5rem;
   background: none;
   font-weight: bold;
@@ -589,11 +587,7 @@ main {
 }
 
 #title-input.dark {
-  color: var(--white);
-}
-
-#title-input[disabled='true'] {
-  border-color: var(--primary-color);
+  color: var(--text-color);
 }
 
 #title-input:focus {
@@ -601,7 +595,9 @@ main {
 }
 
 #notes-content {
-  height: 100%;
+  margin-bottom: 5rem;
+  height: 90%;
+  background: white;
 }
 
 #edit-content,
@@ -612,14 +608,14 @@ main {
   outline: none;
   overflow-y: hidden;
   font-size: 1.2em;
-  color: var(--primary-color);
+  color: var(--text-color);
   border-radius: 0.4rem;
   background-color: var(--secondary-color);
   border: 0.15rem solid var(--text-color);
 }
 
 #edit-content {
-  border-color: var(--accent-color);
+  /* border-color: var(--accent-color); */
   resize: none;
 }
 
@@ -639,6 +635,7 @@ main {
 }
 
 #notes-last-modified {
+  color: var(--text-color);
   font-weight: 400;
   margin-top: 0.6rem;
 }
@@ -691,7 +688,8 @@ main {
   min-width: 5rem;
   text-align: center;
   display: inline-block;
-  transition: 0.3s
+  transition: 0.3s;
+  color: var(--text-color);
 }
 
 .editor-tag-checkbox {
@@ -700,4 +698,5 @@ main {
 
 .editor-tag-checkbox:checked + .editor-tag-name {
   background: var(--light-green);
+  color: black;
 }

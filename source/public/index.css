@@ -39,19 +39,23 @@ html {
   --secondary-color: #ede9f2;
   --text-color: #48375c;
   --white: #ffffff;
+  --card-text-color: black;
   --accent-color: #d4c1ec;
   --light-green: #c7ffcd;
   --light-red: #ffcdc7;
+  --background-color: #ffffff;
 }
 
 html[data-theme='dark'] {
-  --primary-color: #ffffff;
+  --primary-color: #211c34;
   --secondary-color: #ffffff;
   --text-color: #ffffff;
+  --card-text-color: black;
   --white: #ffffff;
-  --accent-color: #ffffff;
+  --accent-color: #48375C;
   --light-green: #c7ffcd;
   --light-red: #ffcdc7;
+  --background-color: #211c34;
 }
 
 /* ------------------------------HEADER------------------------------ */
@@ -87,7 +91,7 @@ html[data-theme='dark'] {
   font-size: 1.5em;
   padding: 0.3rem 2rem 0.3rem 2rem;
   background: var(--white);
-  color: var(--text-color);
+  color: var(--primary-color);
   border-radius: 6px;
   border: none;
   font-weight: 700;
@@ -95,11 +99,15 @@ html[data-theme='dark'] {
   margin-right: 1rem;
 }
 
+#darkMode:hover {
+  background: var(--secondary-color);
+}
+
 #newNote {
   font-size: 1.5em;
   padding: 0.3rem 3rem 0.3rem 3rem;
   background: var(--white);
-  color: var(--text-color);
+  color: var(--primary-color);
   border-radius: 6px;
   border: none;
   font-weight: 700;
@@ -108,7 +116,6 @@ html[data-theme='dark'] {
 
 #newNote:hover {
   background: var(--secondary-color);
-  color: var(--primary-color);
 }
 
 
@@ -165,12 +172,8 @@ main {
   position: relative;
 }
 
-.sidebar.dark {
-  background-color: var(--text-color);
-}
-
-#tags.dark {
-  color: var(--white);
+#tags {
+  color: var(--text-color);
 }
 
 /* "Tags" and "Pinned" */
@@ -246,10 +249,7 @@ main {
   flex-direction: column;
   gap: 3rem;
   flex: 1;
-}
-
-.view.dark {
-  background-color: var(--primary-color);
+  background-color: var(--background-color);
 }
 
 .dashboard {
@@ -259,9 +259,6 @@ main {
   flex: 1;
   position: relative;
 }
-
-
-
 
 .wojak {
   z-index: -1;
@@ -304,15 +301,11 @@ main {
   align-items: center;
 }
 
-.dashboard-header.dark > h2 {
-  color: var(--white);
-}
-
 /* "Dashboard" */
 .dashboard-header > h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-color);
+  color: var(--text-color);
 }
 
 #sort {
@@ -344,7 +337,7 @@ main {
 /* Actual Search Bar */
 .searchbar-wrapper > input {
   border: none;
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--text-color);
   padding: 0.3rem 1rem;
   font-size: 1rem;
   width: 13rem;
@@ -375,7 +368,7 @@ main {
 /* "Sort by" */
 .dashboard-header > span {
   font-size: 1rem;
-  color: var(--primary-color);
+  color: var(--text-color);
 }
 
 /* --------NOTES CONTAINER-------- */
@@ -403,7 +396,7 @@ main {
   border-radius: 0.4rem;
   border: 1px solid rgba(0, 0, 0, 0);
   background: var(--secondary-color);
-  color: var(--text-color);
+  color: var(--card-text-color);
   /* box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15); */
   padding: 1.5rem 1rem;
   width: 100%;
@@ -453,7 +446,7 @@ main {
   position: absolute;
   bottom: 0;
   right: 0;
-  background-image: -webkit-linear-gradient(-45deg, #c5c1c9 50%, white 50%);
+  background-image: -webkit-linear-gradient(-45deg, #c5c1c9 50%, var(--background-color) 50%);
   transition: 0.3s ease-out;
   border: none;
 }

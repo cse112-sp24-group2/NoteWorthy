@@ -2,7 +2,7 @@ name: CI
 on: push
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -145,7 +145,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3

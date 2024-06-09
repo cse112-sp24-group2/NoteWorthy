@@ -131,6 +131,7 @@ jobs:
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
+        run: npm install
 
       - name: Build project
         run: cd source && npm run build

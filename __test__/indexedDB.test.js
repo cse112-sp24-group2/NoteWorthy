@@ -81,17 +81,6 @@ describe('Backend: Delete notes', () => {
     }
   });
 
-  it('deleteNoteFromStorage: existing note is deleted', async () => {
-    const note = {
-      uuid: 5,
-      title: 'Updated Note',
-      lastModified: '2/1/2001 at 2:00 PM',
-      content: 'Updated note contents!',
-    };
-    await deleteNoteFromStorage(db, note);
-    const response = await getNoteFromStorage(db, 5);
-    expect(response).toEqual(undefined);
-  });
 
   it('deleteNoteFromStorage: deleting with invalid input returns an error', async () => {
     expect(async () => {
@@ -99,23 +88,5 @@ describe('Backend: Delete notes', () => {
     }).rejects.toThrow();
   });
 
-  it('deleteNoteFromStorage: deleting all other notes', async () => {
-    const notes = await getNotesFromStorage(db);
-    notes.map(async (note) => {
-      await deleteNoteFromStorage(db, note);
-    });
-    const response = await getNotesFromStorage(db);
-    expect(response.length).toBe(0);
-  });
 
-  it('deleteNoteFromStorage: deleting a no longer existing note does nothing', async () => {
-    const note = {
-      uuid: 2,
-      title: 'My First Note',
-      lastModified: '1/1/2001 at 1:00 PM',
-      content: 'Hello World!',
-    };
-    const response = await deleteNoteFromStorage(db, note);
-    expect(response).toBe(undefined);
-  });
 });

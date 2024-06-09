@@ -116,7 +116,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './'
-          name: github-pages
+          name: jsdocs-artifact
 
   deploy:
     needs: [lint, validate-html, test, lighthouse, build-docs]
@@ -144,7 +144,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'source/dist'  # assuming your build output is in 'source/dist'
+          path: './source/dist'  # assuming your build output is in 'source/dist'
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages

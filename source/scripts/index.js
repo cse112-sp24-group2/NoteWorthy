@@ -10,7 +10,7 @@
  */
 import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
-import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
+import { addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
 import { initTagSearch, addTagsToSidebar } from './sidebar.js';
 import { getDate } from './utility.js';
@@ -62,7 +62,6 @@ async function switchToEditor(id, dom) {
     const tagsObjectStore = await pageData.tagDB.transaction('tags').objectStore('tags');
     await addTagsToDOM(tagsObjectStore, noteObject);
     await addNoteToDocument(noteObject);
-    editNote(true);
   }
   dom.editor.classList.remove('hidden');
   dom.dashboard.classList.add('hidden');

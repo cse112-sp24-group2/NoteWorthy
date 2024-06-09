@@ -30,7 +30,7 @@ function createTagHTML(name, count) {
   const tagEl = template.content.cloneNode(true);
 
   const tagInput = tagEl.querySelector('.tags-input');
-  tagInput.id = `tag-${name}`;
+  tagInput.id = `sidebar-tag-${name}`;
   tagInput.name = name;
 
   const tagName = tagEl.querySelector('.tags-name');
@@ -40,7 +40,7 @@ function createTagHTML(name, count) {
   tagCount.textContent = count || 0;
 
   const tagLabel = tagEl.querySelector('.tags-label');
-  tagLabel.htmlFor = `tag-${name}`;
+  tagLabel.htmlFor = `sidebar-tag-${name}`;
   return tagEl;
 }
 

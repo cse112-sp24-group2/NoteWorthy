@@ -68,30 +68,37 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   await allTagsPromise;
   const parentElement = document.getElementById('notes-tags');
   parentElement.innerHTML = '';
+
   for (let i = 0; i < allTags.length; i += 1) {
-    const defaultTagObject = TAG_OBJECT;
+    const defaultTagObject = { ...TAG_OBJECT };  // Create a new object to avoid mutating the original
     defaultTagObject.tag_name = allTags[i];
-    // adding the checkboxes and labels for the default tags
-    // const parentElement = document.getElementById('notes-tags');
+
+    // Create the checkbox input
     const newCheckBox = document.createElement('input');
     newCheckBox.type = 'checkbox';
-    if (noteTags.includes(allTags[i])) {
-      newCheckBox.checked = true;
-    } else {
-      newCheckBox.checked = false;
-    }
-    newCheckBox.className = 'tag';
+    newCheckBox.className = 'editor-tag-checkbox';
+    newCheckBox.id = `tag-${defaultTagObject.tag_name}`;  // Unique ID for each checkbox
     newCheckBox.name = defaultTagObject.tag_name;
+    newCheckBox.checked = noteTags.includes(allTags[i]);
 
-    parentElement.appendChild(newCheckBox);
-    // eslint-disable-next-line
+    // Add event listener to the checkbox
     newCheckBox.addEventListener('change', () => {
       updateTagNumNotes(tagDB, newCheckBox.name, newCheckBox.checked);
     });
 
+    // Create the label (acting as container)
     const label = document.createElement('label');
-    label.htmlFor = defaultTagObject.tag_name;
-    label.appendChild(document.createTextNode(defaultTagObject.tag_name));
+    label.htmlFor = newCheckBox.id;  // Associate label with checkbox using 'for' attribute
+    label.className = 'editor-tag-label';
+
+    // Create a span for the tag name
+    const tagNameSpan = document.createElement('span');
+    tagNameSpan.className = 'editor-tag-name';
+    tagNameSpan.textContent = defaultTagObject.tag_name;
+
+    // Assemble the elements
+    label.appendChild(newCheckBox);
+    label.appendChild(tagNameSpan);
     parentElement.appendChild(label);
   }
 }

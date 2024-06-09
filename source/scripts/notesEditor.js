@@ -4,7 +4,6 @@
  *
  * Functions inside this file:
  *   - addNoteToDocument()
- *   - editNote()
  *   - saveNote()
  *   - addTags()
  *   - initEditor()
@@ -35,47 +34,6 @@ export async function addNoteToDocument(note) {
   titleInput.value = note.title;
   lastModified.innerHTML = `Last Modified: ${note.lastModified}`;
   quill.setContents(note.content);
-
-  const tagInput = document.querySelector('#tag-input');
-  tagInput.setAttribute('placeholder', 'Add tag...');
-}
-
-/**
- * @description toggles note editing when called.
- *
- * @param {Boolean} bool OPTIONAL. toggles if empty, or can directly set it
- * @returns {void} this function does not return a value.
- */
-export function editNote(bool) {
-  const exportButton = document.querySelector('#export-button');
-  const importButton = document.querySelector('#import-button');
-  const tagButton = document.querySelector('#tag-button');
-  const tagInput = document.querySelector('#tag-input');
-  const tagCheckBoxes = document.querySelectorAll('input[type=checkbox]');
-
-  const enableEditMode = bool || !pageData.editEnabled;
-  pageData.editEnabled = enableEditMode;
-
-  const setButtonState = (button, isEnabled) => {
-    /* eslint-disable-next-line */
-    button.disabled = !isEnabled;
-    button.classList.toggle('disabled-button', !isEnabled);
-  };
-
-  const setInputState = (input, isEnabled) => {
-    /* eslint-disable-next-line */
-    input.disabled = !isEnabled;
-    input.classList.toggle('disabled-button', !isEnabled);
-  };
-
-  setButtonState(exportButton, !enableEditMode);
-  setButtonState(importButton, !enableEditMode);
-  setButtonState(tagButton, enableEditMode);
-  setInputState(tagInput, enableEditMode);
-
-  tagCheckBoxes.forEach((tag) => {
-    setInputState(tag, enableEditMode);
-  });
 }
 
 /**
@@ -247,16 +205,22 @@ async function addTags() {
       const newCheckBox = document.createElement('input');
       newCheckBox.type = 'checkbox';
       newCheckBox.checked = true;
-      newCheckBox.className = 'tag';
+      newCheckBox.className = 'editor-tag-checkbox';
       newCheckBox.name = tagname;
       newCheckBox.addEventListener('change', () => {
         updateTagNumNotes(tagDB, tagname, newCheckBox.checked);
       });
       // newCheckBox.setAttribute('disabled', true);
-      parentElement.appendChild(newCheckBox);
       const label = document.createElement('label');
-      label.htmlFor = tagname;
-      label.appendChild(document.createTextNode(tagname));
+      label.htmlFor = `tag-${tagname}`;
+      label.className = 'editor-tag-label';
+
+      const tagNameSpan = document.createElement('span');
+      tagNameSpan.className = 'editor-tag-name';
+      tagNameSpan.textContent = tagname;
+
+      label.appendChild(newCheckBox);
+      label.appendChild(tagNameSpan);
       parentElement.appendChild(label);
 
       // add to the storage.
@@ -281,22 +245,26 @@ async function addTags() {
 export async function initEditor() {
   const deleteButton = document.querySelector('#delete-button');
   const backButton = document.querySelector('#back-button');
-  const tagButton = document.querySelector('#tag-button');
   const exportButton = document.querySelector('#export-button');
   const importButton = document.querySelector('#import-button');
-  const editContent = document.querySelector('#notes-content');
+  const tagInput = document.querySelector('#tag-input');
 
   // eslint-disable-next-line
   quill = new Quill('#editor', {
     theme: 'snow',
   });
 
-  editContent.addEventListener('click', () => editNote(true));
   deleteButton.addEventListener('click', () => deleteNote());
   backButton.addEventListener('click', () => {
     if (saveNote()) updateURL('');
   });
-  tagButton.addEventListener('click', () => addTags());
   exportButton.addEventListener('click', () => exportNote());
   importButton.addEventListener('click', () => importNote());
+  tagInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); 
+      addTags();
+      tagInput.value = '';
+    }
+  });
 }

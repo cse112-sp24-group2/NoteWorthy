@@ -40,6 +40,8 @@ html {
   --text-color: #48375c;
   --white: #ffffff;
   --accent-color: #d4c1ec;
+  --light-green: #c7ffcd;
+  --light-red: #ffcdc7;
 }
 
 html[data-theme='dark'] {
@@ -48,6 +50,8 @@ html[data-theme='dark'] {
   --text-color: #ffffff;
   --white: #ffffff;
   --accent-color: #ffffff;
+  --light-green: #c7ffcd;
+  --light-red: #ffcdc7;
 }
 
 /* ------------------------------HEADER------------------------------ */
@@ -136,12 +140,12 @@ dialog {
 
 .dialog-cancel {
   width: 45%;
-  background: #ffcdc7;
+  background: var(--light-red);
 }
 
 .dialog-confirm {
   flex-grow: 1;
-  background: #c7ffcd;
+  background: var(--light-green);
 }
 
 /* ------------------------------MAIN BODY------------------------------ */
@@ -212,7 +216,7 @@ main {
   background: lightgray;
 }
 
-.tags-list .tags-label input:checked + .tags-content {
+.tags-list > .tags-label > .tags-input:checked + .tags-content {
   background: var(--primary-color);
   color: var(--white);
 }
@@ -513,7 +517,7 @@ main {
 .editor {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
   flex: 1;
 }
 
@@ -620,4 +624,39 @@ main {
 
 .note-control-bar > button:hover {
   transform: scale(1.1);
+}
+
+#notes-tags {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#tag-input {
+  border: none;
+  border-bottom: 2px solid var(--primary-color);
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  width: 13rem;
+  transition: 0.3s;
+  background: none;
+}
+
+.editor-tag-name {
+  padding: 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.9em;
+  border: 2px solid darkgray;
+  cursor: pointer;
+  min-width: 5rem;
+  text-align: center;
+  display: inline-block;
+  transition: 0.3s
+}
+
+.editor-tag-checkbox {
+  appearance: none;
+}
+
+.editor-tag-checkbox:checked + .editor-tag-name {
+  background: var(--light-green);
 }

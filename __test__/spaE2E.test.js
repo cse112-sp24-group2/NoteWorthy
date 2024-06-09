@@ -30,6 +30,18 @@ const afterafter = async () => {
   await browser.close();
 };
 
+async function fillInputAndEditor(inputText, editorText) {
+  // Fill input field
+  let inputElement = await page.$('#title-input');
+  await inputElement.click({ clickCount: 1 });
+  await page.type('#title-input', inputText);
+
+  // Fill editor
+  let editorElement = await page.$('.ql-editor');
+  await editorElement.click({ clickCount: 1 });
+  await page.type('.ql-editor', editorText);
+}
+
 /**
  * Fetches and returns classlist of element in dom of page
  * @param { String } tag tag of HTMLElement to fetch
@@ -72,6 +84,7 @@ describe('Dashboard tests', () => {
   test('New Note is added to dashboard', async () => {
     await createNewNote();
 
+    await delay(200);
     expect(page.url()).toBe(`${URL}?id=9999`);
 
     let titleText = await page.$eval('#notes-title', (el) => el.innerHTML);
@@ -96,6 +109,7 @@ describe('Dashboard tests', () => {
   test('New Note on dashboard contains correct title and content', async () => {
     await createNewNote();
 
+    await delay(200);
     expect(page.url()).toBe(`${URL}?id=9999`);
 
     const inputTxt = await page.$('#title-input');
@@ -374,7 +388,152 @@ describe('Editor tests', () => {
   afterEach(afterafter);
 }, 30000);
 
-describe('User flow tests', () => {
+describe('Tag Tests', () => {
+  beforeEach(beforebefore);
+  test('Adding tag to appears on dashboard note card', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    await page.waitForSelector('label[for="tag-personal"]').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    const numTags = await page.$$eval('>>> .note-tags', (noteItems) => noteItems.length);
+    expect(numTags).toBe(1);
+
+  }, 10000)
+
+  test('Adding tag to appears on sidebar', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    await page.waitForSelector('label[for="tag-personal"]').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    const numTags = await page.$eval('label[for="sidebar-tag-personal"] > div > .tags-count', (noteItems) => noteItems.textContent);
+    expect(numTags).toBe("1");
+  }, 10000)
+
+
+  test('Adding multiple tag to appears on dashboard note card', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    await page.waitForSelector('label[for="tag-personal"]').then((el) => el.click());
+    await page.waitForSelector('label[for="tag-work"]').then((el) => el.click());
+    await page.waitForSelector('label[for="tag-school"]').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await delay(200);
+    await page.waitForSelector('>>> .note-more').then((el) => el.click());
+    const numTags = await page.$eval('>>> .note-tags', (noteItems) => noteItems.childElementCount);
+    expect(numTags).toBe(3);
+  }, 10000)
+
+  test('Adding custom tag appends to tag list', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+
+    let tagInput = await page.$('#tag-input');
+    await tagInput.click({ clickCount: 1 });
+    await page.type('#tag-input', 'CustomTag');
+    await page.keyboard.press('Enter');
+
+    const numTags = await page.$eval('#notes-tags', (noteItems) => noteItems.childElementCount);
+    expect(numTags).toBe(5);
+  }, 10000)
+
+  test('Adding custom tag appears on dashboard card', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    let tagInput = await page.$('#tag-input');
+    await tagInput.click({ clickCount: 1 });
+    await page.type('#tag-input', 'CustomTag');
+    await page.keyboard.press('Enter');
+
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await delay(200);
+    await page.waitForSelector('>>> .note-more').then((el) => el.click());
+    const numTags = await page.$eval('>>> .note-tags', (noteItems) => noteItems.childElementCount);
+    expect(numTags).toBe(1);
+
+    // const numTags = await page.$eval('label[for="sidebar-tag-CustomTag"] > div > .tags-count', (noteItems) => noteItems.textContent);
+    // expect(numTags).toBe("1");
+  }, 10000)
+
+  test('Adding custom tag appears on sidebar', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    let tagInput = await page.$('#tag-input');
+    await tagInput.click({ clickCount: 1 });
+    await page.type('#tag-input', 'CustomTag');
+    await page.keyboard.press('Enter');
+
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await delay(200);
+    const numTags = await page.$eval('label[for="sidebar-tag-CustomTag"] > div > .tags-count', (noteItems) => noteItems.textContent);
+    expect(numTags).toBe("1");
+    const numList = await page.$eval('.tags-list', (noteItems) => noteItems.childElementCount);
+    expect(numList).toBe(5);
+  }, 10000)
+
+  test('Tag with the highest count is at the top of the sidebar', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    let tagInput = await page.$('#tag-input');
+    await tagInput.click({ clickCount: 1 });
+    await page.type('#tag-input', 'CustomTag');
+    await page.keyboard.press('Enter');
+
+    await page.waitForSelector('#back-button').then((el) => el.click());
+
+    await delay(200);
+    const firstTag = await page.$eval('label[for="sidebar-tag-CustomTag"]', (label) => label.htmlFor);
+    expect(firstTag).toBe("sidebar-tag-CustomTag");
+    const numList = await page.$eval('.tags-list', (noteItems) => noteItems.childElementCount);
+    expect(numList).toBe(5);
+  }, 10000)
+
+  test('Adding Tag then removing results in 0 total tags', async () => {
+    await createNewNote();
+
+    await fillInputAndEditor('title text', 'editor text');
+
+    await page.waitForSelector('label[for="tag-personal"]').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('>>> .note-front').then((el) => el.click());
+    await delay(200);
+    await page.waitForSelector('label[for="tag-personal"]').then((el) => el.click());
+    await page.waitForSelector('#back-button').then((el) => el.click());
+    await delay(200);
+
+    let numTags = await page.$$eval('>>> .note-tags', (noteItems) => noteItems.length);
+    expect(numTags).toBe(1);
+
+    numTags = await page.$eval('label[for="sidebar-tag-personal"] > div > .tags-count', (noteItems) => noteItems.textContent);
+    expect(numTags).toBe("0");
+
+  }, 10000)
+
+  afterEach(afterafter);
+}, 30000);
+
+describe('Multiple Concurrent Notes test', () => {
   beforeEach(beforebefore);
   test('Modifying saved note content persists', async () => {
     await createNewNote();

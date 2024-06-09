@@ -16,8 +16,7 @@
     "jest-puppeteer": "^9.0.0",
     "prettier": "^2.8.0",
     "prettier-eslint-cli": "^8.0.1",
-    "puppeteer": "^20.5.0",
-    "vite": "^5.2.0"
+    "puppeteer": "^20.5.0"
   },
   "jest": {
     "preset": "jest-puppeteer",
@@ -31,12 +30,9 @@
     "test": "jest --passWithNoTests",
     "format:check": "prettier --check --cache .",
     "format:write": "prettier --write .",
-    "lint:check": "eslint ./source/",
-    "lint:fix": "eslint ./source/ --fix .",
-    "start": "serve -l 5500 .",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "lint:check": "eslint ./source/scripts/",
+    "lint:fix": "eslint ./source/scripts/ --fix .",
+    "start": "serve -l 5500 ."
   },
   "dependencies": {
     "file-saver": "^2.0.5",

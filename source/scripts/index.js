@@ -12,7 +12,7 @@ import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
-import { initTagSearch, addTagsToDocument } from './sidebar.js';
+import { initTagSearch, addTagsToSidebar } from './sidebar.js';
 import { getDate } from './utility.js';
 import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
 import { initSettings } from './settings.js';
@@ -25,6 +25,8 @@ import { initSettings } from './settings.js';
  */
 async function switchToDashboard(dom) {
   const db = pageData.database;
+  pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  addTagsToSidebar();
   const notes = await getNotesFromStorage(db);
   const noteTagsElement = document.getElementById('notes-tags');
   noteTagsElement.innerHTML = '';
@@ -32,6 +34,7 @@ async function switchToDashboard(dom) {
   addNotesToDocument(notes);
   dom.editor.classList.add('hidden');
   dom.dashboard.classList.remove('hidden');
+  pageData.page = 'dashboard';
 }
 
 /**
@@ -63,6 +66,7 @@ async function switchToEditor(id, dom) {
   }
   dom.editor.classList.remove('hidden');
   dom.dashboard.classList.add('hidden');
+  pageData.page = 'editor';
 }
 
 /**
@@ -77,7 +81,6 @@ function URLRoutingHandler() {
 
   if (id === '9999' || id == null) {
     pageData.noteID = null;
-    pageData.tags = [];
   } else {
     pageData.noteID = parseInt(id, 10);
   }
@@ -117,8 +120,6 @@ function initThemeToggle() {
 async function initEventHandler() {
   const db = pageData.database;
   const notes = await getNotesFromStorage(db);
-  // 'the pageData.tags is', pageData.tags);
-  addTagsToDocument(pageData.tags);
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
   initSearchBar(notes);
@@ -150,10 +151,8 @@ async function initEventHandler() {
 async function init() {
   // HACK: need to change and handle proper URL
   document.querySelector('#newNote').addEventListener('click', () => updateURL('?id=9999'));
-  console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
-  pageData.tags = await getTagsFromStorage(pageData.tagDB);
   initEventHandler();
   initSettings();
   initEditor();

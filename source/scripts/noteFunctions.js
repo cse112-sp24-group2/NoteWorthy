@@ -15,7 +15,7 @@ import { addNotesToDocument } from './notesDashboard.js';
 import { confirmDialog } from './settings.js';
 
 /**
- * @description Exports the note as a txt file
+ * @description Exports the note as a pdf file
  *
  * @returns {void} This function does not return a value.
  */
@@ -24,7 +24,9 @@ export async function exportNote() {
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
 
+  // Content to pdf
   const pdfBlob = await pdfExporter.generatePdf(note.content);
+  // Download pdf to local
   saveAs(pdfBlob, `${note.title}.pdf`);
 }
 
@@ -40,9 +42,10 @@ export async function deleteNote(toDelete) {
   const id = toDelete || pageData.noteID;
   const db = pageData.database;
 
-  console.log(id);
-
-  if (!id) return;
+  if (!id) {
+    updateURL('');
+    return;
+  }
 
   const confirm = await confirmDialog('Are you sure you want to delete this note?');
   if (!confirm) return;

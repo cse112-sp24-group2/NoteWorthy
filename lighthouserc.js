@@ -1,8 +1,11 @@
 module.exports = {
   ci: {
     collect: {
+      startServerCommand: 'cd source && npm install && npm run build && npm run preview',
       url: ['http://localhost:4173/'],
-      psiStrategy: 'desktop',
+      settings: {
+        preset: 'desktop'
+      }
     },
     assert: {
       assertions: {

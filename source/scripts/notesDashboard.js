@@ -154,7 +154,6 @@ export function initTitleColumnSorting(notes) {
 export function initSearchBar(notes) {
   const searchBar = document.querySelector('.searchBar');
   searchBar.addEventListener('input', (event) => {
-    // console.log(event.target.value);
     addNotesToDocument(filterNotesByQuery(notes, event.target.value));
   });
 }

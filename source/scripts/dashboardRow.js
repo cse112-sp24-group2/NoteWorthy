@@ -18,9 +18,7 @@ async function copyNote(note) {
   const getNoteRequest = objectStore.get(note.uuid);
   getNoteRequest.onsuccess = () => {
     const noteObject = getNoteRequest.result;
-    console.log(noteObject);
     const tags = noteObject.tags;
-    console.log(tags);
     const tagDB = pageData.tagDB;
     const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
     for (let i = 0; i < tags.length; i += 1) {

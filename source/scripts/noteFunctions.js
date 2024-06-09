@@ -15,7 +15,7 @@ import { addNotesToDocument } from './notesDashboard.js';
 import { confirmDialog } from './settings.js';
 
 /**
- * @description Exports the note as a txt file
+ * @description Exports the note as a pdf file
  *
  * @returns {void} This function does not return a value.
  */
@@ -24,7 +24,9 @@ export async function exportNote() {
   const db = pageData.database;
   const note = await getNoteFromStorage(db, id);
 
+  // Content to pdf
   const pdfBlob = await pdfExporter.generatePdf(note.content);
+  // Download pdf to local
   saveAs(pdfBlob, `${note.title}.pdf`);
 }
 

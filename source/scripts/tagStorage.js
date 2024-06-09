@@ -59,7 +59,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
       for (let i = 0; i < allTagsRequest.result.length; i += 1) {
         allTags.push(allTagsRequest.result[i]);
       }
-      console.log(`the size of allTagsRequest.result is: ${allTagsRequest.result.length}`);
       resolve(allTags);
     };
     allTagsRequest.onerror = () => {
@@ -69,7 +68,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   await allTagsPromise;
   const parentElement = document.getElementById('notes-tags');
   parentElement.innerHTML = '';
-  console.log(`the size of allTags is: ${allTags.length}`);
   for (let i = 0; i < allTags.length; i += 1) {
     const defaultTagObject = TAG_OBJECT;
     defaultTagObject.tag_name = allTags[i];
@@ -104,7 +102,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
  * @returns A reference to our IndexedDB tags storage.
  */
 export function initializeTagDB() {
-  console.log('i am initializing the tag database');
   return new Promise((resolve, reject) => {
     if (tagDB) {
       resolve(tagDB);
@@ -125,42 +122,6 @@ export function initializeTagDB() {
         defaultTagObject.tag_name = defaultTags[i];
         objectStore.add(defaultTagObject);
       }
-      // objectStore.add()
-      // addTagsToDOM(objectStore, defaultTags);
-
-      // for (let i = 0; i < defaultTags.length; i += 1) {
-      //   const defaultTagObject = TAG_OBJECT;
-      //   defaultTagObject.tag_name = defaultTags[i];
-      //   objectStore.put(defaultTagObject);
-      //   // adding the checkboxes and labels for the default tags
-      //   const parentElement = document.getElementById('notes-tags');
-      //   const newCheckBox = document.createElement('input');
-      //   newCheckBox.type = 'checkbox';
-      //   newCheckBox.checked = false;
-      //   newCheckBox.className = 'tag';
-      //   newCheckBox.name = defaultTagObject.tag_name;
-      //   newCheckBox.addEventListener('change', () => {
-      //     const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-      //     const tagGetRequest = tagsObjectStore.get(defaultTagObject.tag_name);
-      //     tagGetRequest.onsuccess = () => {
-      //       const currentTag = tagGetRequest.result;
-      //       if (newCheckBox.checked === true) {
-      //         currentTag.num_notes += 1;
-      //       } else {
-      //         currentTag.num_notes -= 1;
-      //       }
-      //       const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
-      //       tagPutRequest.put(currentTag);
-      //     };
-      //   });
-
-      //   parentElement.appendChild(newCheckBox);
-      //   const label = document.createElement('label');
-      //   label.htmlFor = defaultTagObject.tag_name;
-      //   label.appendChild(document.createTextNode(defaultTagObject.tag_name));
-      //   parentElement.appendChild(label);
-      //   console.log(`i am displaying this particular tag: ${defaultTagObject.tag_name}`);
-      // }
     };
 
     tagsDBopenReq.onsuccess = (event) => {
@@ -207,25 +168,10 @@ export function getTagsFromStorage(database) {
  * @returns The note object stored with the given UUID.
  */
 export async function getTagFromStorage(database, tagName) {
-  // const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
-  // const getTagRequest = objectStore.get(tagName);
-  // getTagRequest.onsuccess = function() {
-  //   if(getTagRequest.result === 0) {
-  //     console.log("should get in here first before checking tagExists value");
-  //     return false;
-  //   } else {
-  //     console.log("should get in here or maybe here first before checking tagExists value");
-  //     return true;
-  //   }
-  // }
-
   return new Promise((resolve, reject) => {
     const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
     const getTagRequest = objectStore.get(tagName);
-    // console.log("before on success")
     getTagRequest.onsuccess = () => {
-      // console.log("on success")
-      // console.log(getTagRequest.result);
       resolve(getTagRequest.result === 'undefined');
     };
     getTagRequest.onerror = () => {
@@ -249,8 +195,6 @@ export function saveTagToStorage(database, tagObj, newTag) {
       const objectStore = database.transaction(TAG_STORE_NAME, 'readwrite').objectStore(TAG_STORE_NAME);
       const saveTagRequest = objectStore.add(tag);
       saveTagRequest.onsuccess = () => {
-        // console.log(`Successfully saved tag with tag_name ${saveTagRequest.result}`);
-        // console.log(saveTagRequest.result);
         resolve(saveTagRequest.result);
       };
       saveTagRequest.onerror = () => {
@@ -296,10 +240,8 @@ export function deleteTagFromStorage(database, tag) {
  * @returns {Array<Object>} - An array of note objects with the specified tag.
  */
 export function tagQuery() {
-  console.log(1);
   // eslint-disable-next-line
   const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
   // eslint-disable-next-line
   const tagsIndex = notesDB.index('note_tags');
-  // console.log(tagsIndex.getAll(className));
 }

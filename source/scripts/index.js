@@ -155,7 +155,6 @@ async function initEventHandler() {
 async function init() {
   // HACK: need to change and handle proper URL
   document.querySelector('#newNote').addEventListener('click', () => updateURL('?id=9999'));
-  console.log('%cWelcome to %cNoteWorthy. ', '', 'color: #D4C1EC; font-weight: bolder; font-size: 0.8rem', '');
   pageData.database = await initializeDB(indexedDB);
   pageData.tagDB = await initializeTagDB(indexedDB);
   initEventHandler();

@@ -220,11 +220,8 @@ async function addTags() {
       const allTags = [];
 
       allTagsRequest.onsuccess = () => {
-        console.log(`the size of allTagsRequest.result is: ${allTagsRequest.result.length}`);
         for (let i = 0; i < allTagsRequest.result.length; i += 1) {
-          console.log(`we are inserting: ${allTagsRequest.result[i]} into allTags at index ${i}`);
           allTags.push(allTagsRequest.result[i]);
-          console.log(`allTags has the following in it: ${allTags}`);
         }
         resolve(allTags);
       };
@@ -243,7 +240,6 @@ async function addTags() {
     const tagDBObjectStore = tagDB.transaction('tags', 'readwrite').objectStore('tags');
     const allTags = await getAllTagsFromStorage(tagDBObjectStore);
 
-    console.log(`the length of allTags is: ${allTags.length}`);
     if (allTags.includes(tagname)) {
       alert('Tag already exists');
     } else {
@@ -272,7 +268,6 @@ async function addTags() {
       const tagExists = await getTagFromStorage(tagDB, tagname); // fill in, make this function work pre
 
       // maybe wrong value from tagExists
-      // console.log("tagExists is returning the value " + tagExists);
       saveTagToStorage(tagDB, TAG_OBJECT, tagExists, true);
     }
   }

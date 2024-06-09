@@ -16,6 +16,15 @@
     <!-- Quill Rich Text Editor -->
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <template id="sidebar-tag-template">
+      <label class="tags-label">
+        <input class="tags-input" type="checkbox">
+        <div class="tags-content">
+          <span class="tags-name"></span>
+          <span class="tags-count"></span>
+        </div>
+      </label>
+    </template>
     <template id="dashboard-note-template">
       <style>
       @import url('/index.css');

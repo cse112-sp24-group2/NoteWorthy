@@ -13,7 +13,7 @@ import { updateURL, pageData } from './Routing.js';
 import { saveNoteToStorage, getNotesFromStorage } from './noteStorage.js';
 import { getDate } from './utility.js';
 import { exportNote, deleteNote } from './noteFunctions.js';
-import { getTagFromStorage, saveTagToStorage } from './tagStorage.js';
+import { getTagFromStorage, saveTagToStorage, updateTagNumNotes } from './tagStorage.js';
 import { alertDialog } from './settings.js';
 
 let quill;
@@ -140,7 +140,7 @@ function getSelectedTags() {
 function createNoteObject(tags, id) {
   const title = document.querySelector('#title-input').value.replace(/\s+/g, ' ').trim();
 
-  if (title === '' && quill.getLength() === 1) {
+  if (title === '' && quill.getLength() === 1 && tags.length === 0) {
     updateURL('');
     return null;
   }
@@ -175,11 +175,9 @@ function createNoteObject(tags, id) {
 export function saveNote() {
   const db = pageData.database;
   const id = pageData.noteID;
-
   const tags = getSelectedTags();
   const noteObject = createNoteObject(tags, id);
   if (!noteObject || noteObject == null) return false;
-
   saveNoteToStorage(db, noteObject);
   if (!id) {
     getNotesFromStorage(db).then((res) => {
@@ -252,18 +250,7 @@ async function addTags() {
       newCheckBox.className = 'tag';
       newCheckBox.name = tagname;
       newCheckBox.addEventListener('change', () => {
-        const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
-        const tagGetRequest = tagsObjectStore.get(tagname);
-        tagGetRequest.onsuccess = () => {
-          const currentTag = tagGetRequest.result;
-          if (newCheckBox.checked === true) {
-            currentTag.num_notes += 1;
-          } else {
-            currentTag.num_notes -= 1;
-          }
-          const tagPutRequest = tagDB.transaction('tags', 'readwrite').objectStore('tags');
-          tagPutRequest.put(currentTag);
-        };
+        updateTagNumNotes(tagDB, tagname, newCheckBox.checked);
       });
       // newCheckBox.setAttribute('disabled', true);
       parentElement.appendChild(newCheckBox);

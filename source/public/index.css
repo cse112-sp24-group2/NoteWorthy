@@ -195,7 +195,7 @@ main {
   appearance: none;
 }
 
-.tags-span {
+.tags-content {
   display: flex;
   justify-content: space-between;
   padding: 0.8rem 1.4rem;
@@ -208,11 +208,11 @@ main {
   transition: 0.3s
 }
 
-.tags-span:hover {
+.tags-content:hover {
   background: lightgray;
 }
 
-.tags-list .tags-label input:checked + .tags-span {
+.tags-list .tags-label input:checked + .tags-content {
   background: var(--primary-color);
   color: var(--white);
 }

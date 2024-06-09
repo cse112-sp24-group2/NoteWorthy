@@ -355,7 +355,6 @@ main {
 }
 
 .dropdown-content {
-  display: none;
   position: absolute;
   background-color: var(--secondary-color); /* Background color of dropdown */
   min-width: 160px;
@@ -363,6 +362,7 @@ main {
   z-index: 1;
   border-radius: 4px;
   margin-top: 0.5rem; /* Space between button and dropdown */
+  transform: translateX(-50%)
 }
 
 .dropdown-content button {

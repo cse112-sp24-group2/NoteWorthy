@@ -108,6 +108,9 @@ export function initTimeColumnSorting(notes) {
   const timeColSortArrow = document.querySelector('.timeColSortOrder');
   const timeCol = document.querySelector('.timeCol');
   let timeSortCount = 0;
+  const dropdownContent = document.querySelector('.dropdown-content');
+  const timeAscOrder = document.querySelector('#sortTimeAsc-button');
+  const timeDescOrder = document.querySelector('#sortTimeDesc-button');
 
   timeCol.addEventListener('click', async () => {
     const direction = timeSortCount % 2 === 0 ? 'asc' : 'desc';
@@ -116,6 +119,19 @@ export function initTimeColumnSorting(notes) {
     timeSortCount += 1;
     addNotesToDocument(sortNotesByTime(notes, direction));
   });
+
+  // Prevent dropdown menu from closing when interacting with its contents
+  dropdownContent.addEventListener('click', (event) => {
+    event.stopPropagation(); 
+  });
+
+  timeAscOrder.addEventListener('click', () => {
+    addNotesToDocument(sortNotesByTime(notes, 'asc'));
+  });
+
+  timeDescOrder.addEventListener('click', () => {
+    addNotesToDocument(sortNotesByTime(notes, 'desc'));
+  });
 }
 
 /**
@@ -123,19 +139,25 @@ export function initTimeColumnSorting(notes) {
  * @param {Object[]} notes - An array of note objects.
  */
 export function initTitleColumnSorting(notes) {
+  const titleColSortArrow = document.querySelector('.titleColSortOrder');
+  const titleCol = document.querySelector('.titleCol');
+  let titleSortCount = 0;
   const sortByButton = document.querySelector('.dropdown-button');
   const dropdownContent = document.querySelector('.dropdown-content');
   const titleAscOrder = document.querySelector('#sortTitleAsc-button');
   const titleDescOrder = document.querySelector('#sortTitleDesc-button');
 
-  // Toggle dropdown menu visibility when "Sort By" button is clicked
-  sortByButton.addEventListener('click', () => {
-    dropdownContent.classList.toggle('hidden');
+  titleCol.addEventListener('click', async () => {
+    const direction = titleSortCount % 2 === 0 ? 'asc' : 'desc';
+    titleColSortArrow.setAttribute('direction', '');
+    titleColSortArrow.setAttribute('direction', direction);
+    titleSortCount += 1;
+    addNotesToDocument(sortNotesByTitle(notes, direction));
   });
 
   // Prevent dropdown menu from closing when interacting with its contents
   dropdownContent.addEventListener('click', (event) => {
-    event.stopPropagation(); // Prevent click event from propagating to parent elements
+    event.stopPropagation(); 
   });
 
   titleAscOrder.addEventListener('click', () => {

@@ -105,7 +105,6 @@ export async function filterNotesByQuery(query) {
   );
 }
 
-
 /**
  * @description This function sets up event listeners on dropdown buttons for sorting notes
  * by title and time in ascending and descending order. It toggles the visibility
@@ -122,7 +121,7 @@ export function initSortBy() {
   const timeDescOrder = document.querySelector('#sortTimeDesc-button');
 
   const toggleDropdown = () => dropdownContent.classList.toggle('hidden');
-  const stopPropagation = event => event.stopPropagation();
+  const stopPropagation = (event) => event.stopPropagation();
   const addSortedNotes = (sortFn, order) => async () => addNotesToDocument(await sortFn(order));
 
   sortByButton.addEventListener('click', toggleDropdown);

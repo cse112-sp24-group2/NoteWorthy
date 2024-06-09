@@ -12,6 +12,8 @@
  *   - initSearchBar()
  */
 import { parseNoteDate } from './utility.js';
+import { pageData } from './Routing.js';
+import { getNotesFromStorage } from './noteStorage.js';
 
 /**
  * @description Show/Hide empty notes on dashboard
@@ -55,7 +57,9 @@ export function addNotesToDocument(notes) {
  * @param {String} sortType - The type of sort, either 'asc' for ascending or 'desc' for descending
  * @returns {Array<Object>} Sorted array of notes
  */
-export function sortNotesByTime(notes, sortType) {
+export async function sortNotesByTime(sortType) {
+  const notes = await getNotesFromStorage(pageData.database);
+  console.log(notes);
   const sortOrder = sortType === 'asc' ? 1 : -1;
 
   return notes.sort((note1, note2) => {
@@ -67,31 +71,14 @@ export function sortNotesByTime(notes, sortType) {
 }
 
 /**
- * @description Return the notes that match the query string. Case insensitive.
- *
- * @param {Array<Object>} notes Array containing all the notes in local storage
- * @param {String} query The search string to filter the notes on
- * @returns {Array<Object>} Filtered notes array
- */
-export function filterNotesByQuery(notes, query) {
-  const queryString = query.toLowerCase().replace(/\s+/g, ' ').trim();
-  return notes.filter(
-    (note) =>
-      note.title.toLowerCase().includes(queryString) ||
-      note.content.ops[0].insert.toLowerCase().includes(queryString) ||
-      note.lastModified.replace('at', '').toLowerCase().includes(queryString)
-  );
-  // TODO: add some feature to highlight the search query in the notes
-}
-
-/**
  * @description sort the notes by title
  *
  * @param {Array<Object>} notes containing all the notes in the local storage
  * @param {String} sortType the type of sort, either ascending or descending
  * @returns {Array<Object>} sortedNotes
  */
-export function sortNotesByTitle(notes, sortType) {
+export async function sortNotesByTitle(sortType) {
+  const notes = await getNotesFromStorage(pageData.database);
   return notes.sort((note1, note2) => {
     if (sortType === 'asc') {
       return note1.title.localeCompare(note2.title);
@@ -101,81 +88,60 @@ export function sortNotesByTitle(notes, sortType) {
 }
 
 /**
- * Initializes the event handler for sorting notes by time column.
- * @param {Object[]} notes - An array of note objects.
+ * @description Return the notes that match the query string. Case insensitive.
+ *
+ * @param {Array<Object>} notes Array containing all the notes in local storage
+ * @param {String} query The search string to filter the notes on
+ * @returns {Array<Object>} Filtered notes array
  */
-export function initTimeColumnSorting(notes) {
-  const timeColSortArrow = document.querySelector('.timeColSortOrder');
-  const timeCol = document.querySelector('.timeCol');
-  let timeSortCount = 0;
-  const dropdownContent = document.querySelector('.dropdown-content');
-  const timeAscOrder = document.querySelector('#sortTimeAsc-button');
-  const timeDescOrder = document.querySelector('#sortTimeDesc-button');
-
-  timeCol.addEventListener('click', async () => {
-    const direction = timeSortCount % 2 === 0 ? 'asc' : 'desc';
-    timeColSortArrow.setAttribute('direction', '');
-    timeColSortArrow.setAttribute('direction', direction);
-    timeSortCount += 1;
-    addNotesToDocument(sortNotesByTime(notes, direction));
-  });
-
-  // Prevent dropdown menu from closing when interacting with its contents
-  dropdownContent.addEventListener('click', (event) => {
-    event.stopPropagation(); 
-  });
-
-  timeAscOrder.addEventListener('click', () => {
-    addNotesToDocument(sortNotesByTime(notes, 'asc'));
-  });
-
-  timeDescOrder.addEventListener('click', () => {
-    addNotesToDocument(sortNotesByTime(notes, 'desc'));
-  });
+export async function filterNotesByQuery(query) {
+  const notes = await getNotesFromStorage(pageData.database);
+  const queryString = query.toLowerCase().replace(/\s+/g, ' ').trim();
+  return notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(queryString) ||
+      note.content.ops[0].insert.toLowerCase().includes(queryString) ||
+      note.lastModified.replace('at', '').toLowerCase().includes(queryString)
+  );
 }
 
+
 /**
- * Initializes the event handler for sorting notes by title column.
- * @param {Object[]} notes - An array of note objects.
+ * @description This function sets up event listeners on dropdown buttons for sorting notes
+ * by title and time in ascending and descending order. It toggles the visibility
+ * of the dropdown content and prevents event propagation to ensure proper behavior.
+ *
+ * @returns {void} this function does not return a value.
  */
-export function initTitleColumnSorting(notes) {
-  const titleColSortArrow = document.querySelector('.titleColSortOrder');
-  const titleCol = document.querySelector('.titleCol');
-  let titleSortCount = 0;
+export function initSortBy() {
   const sortByButton = document.querySelector('.dropdown-button');
   const dropdownContent = document.querySelector('.dropdown-content');
   const titleAscOrder = document.querySelector('#sortTitleAsc-button');
   const titleDescOrder = document.querySelector('#sortTitleDesc-button');
+  const timeAscOrder = document.querySelector('#sortTimeAsc-button');
+  const timeDescOrder = document.querySelector('#sortTimeDesc-button');
 
-  titleCol.addEventListener('click', async () => {
-    const direction = titleSortCount % 2 === 0 ? 'asc' : 'desc';
-    titleColSortArrow.setAttribute('direction', '');
-    titleColSortArrow.setAttribute('direction', direction);
-    titleSortCount += 1;
-    addNotesToDocument(sortNotesByTitle(notes, direction));
-  });
+  const toggleDropdown = () => dropdownContent.classList.toggle('hidden');
+  const stopPropagation = event => event.stopPropagation();
+  const addSortedNotes = (sortFn, order) => async () => addNotesToDocument(await sortFn(order));
 
-  // Prevent dropdown menu from closing when interacting with its contents
-  dropdownContent.addEventListener('click', (event) => {
-    event.stopPropagation(); 
-  });
+  sortByButton.addEventListener('click', toggleDropdown);
+  dropdownContent.addEventListener('click', stopPropagation);
 
-  titleAscOrder.addEventListener('click', () => {
-  addNotesToDocument(sortNotesByTitle(notes, 'asc'));
-  });
-
-  titleDescOrder.addEventListener('click', () => {
-    addNotesToDocument(sortNotesByTitle(notes, 'desc'));
-  });
+  titleAscOrder.addEventListener('click', addSortedNotes(sortNotesByTitle, 'asc'));
+  titleDescOrder.addEventListener('click', addSortedNotes(sortNotesByTitle, 'desc'));
+  timeAscOrder.addEventListener('click', addSortedNotes(sortNotesByTime, 'asc'));
+  timeDescOrder.addEventListener('click', addSortedNotes(sortNotesByTime, 'desc'));
 }
 
 /**
  * Initializes the event handler for filtering notes by search query.
  * @param {Object[]} notes - An array of note objects.
  */
-export function initSearchBar(notes) {
+export function initSearchBar() {
   const searchBar = document.querySelector('.searchBar');
-  searchBar.addEventListener('input', (event) => {
-    addNotesToDocument(filterNotesByQuery(notes, event.target.value));
+  searchBar.addEventListener('input', async (event) => {
+    const notes = await filterNotesByQuery(event.target.value);
+    addNotesToDocument(notes);
   });
 }

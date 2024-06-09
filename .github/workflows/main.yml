@@ -131,10 +131,9 @@ jobs:
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-        run: npm install
 
       - name: Build project
-        run: cd source && npm run build
+        run: cd source && npm install && npm run build
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v3
@@ -160,5 +159,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./source/dist
-
-## Bro just decided not to run on push to main.

@@ -16,8 +16,8 @@ const TAG_OBJECT = {
   num_notes: 0,
 };
 
-export function getTagNumNotes(tagDB, tagName) {
-  const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+export function getTagNumNotes(tagDb, tagName) {
+  const tagsObjectStore = tagDb.transaction('tags').objectStore('tags');
   const tagGetRequest = tagsObjectStore.get(tagName);
 
   return new Promise((resolve, reject) => {
@@ -30,8 +30,8 @@ export function getTagNumNotes(tagDB, tagName) {
   });
 }
 
-function updateTagNumNotes(tagDB, tagName, isChecked) {
-  const tagsObjectStore = tagDB.transaction('tags').objectStore('tags');
+export function updateTagNumNotes(tagDb, tagName, isChecked) {
+  const tagsObjectStore = tagDb.transaction('tags').objectStore('tags');
   const tagGetRequest = tagsObjectStore.get(tagName);
   tagGetRequest.onsuccess = () => {
     const currentTag = tagGetRequest.result;
@@ -95,7 +95,6 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
     parentElement.appendChild(label);
   }
 }
-
 
 /**
  * Sets up and returns a reference to our IndexedDB tags storage.

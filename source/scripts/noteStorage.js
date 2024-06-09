@@ -54,7 +54,7 @@ export function getNotesFromStorage(database) {
     const objectStore = database.transaction(OBJECT_STORE_NAME).objectStore(OBJECT_STORE_NAME);
     const notes = [];
     const getNotesRequest = objectStore.openCursor();
-    const temp = pageData.tags;  // For some reason pageData.tags gets deleted on next line
+    const temp = pageData.tags; // For some reason pageData.tags gets deleted on next line
     getNotesRequest.onsuccess = (event) => {
       // Iterate through all the notes received and add them to be returned.
       const cursor = event.target.result;

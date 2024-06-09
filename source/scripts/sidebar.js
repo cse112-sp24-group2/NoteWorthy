@@ -22,49 +22,7 @@ function filterNotesByTags(notes, tags) {
   if (!tags || tags.length === 0) return notes;
 
   // Filter notes that have at least one tag from the tags array
-  return notes.filter(note => 
-    note.tags.some(tag => tags.includes(tag))
-  );
-}
-
-async function searchByTag() {
-  const tagListEl = document.querySelector('.tags-list');
-  const checkedTags = [];
-
-  // Find all checked checkboxes within .tags-list
-  const checkedCheckboxes = tagListEl.querySelectorAll('.tags-input:checked');
-
-  // Extract tag names from the checked checkboxes
-  checkedCheckboxes.forEach(checkbox => {
-    const tagName = checkbox.name;
-    if (tagName) {
-      checkedTags.push(tagName);
-    }
-  });
-
-  const notes = await getNotesFromStorage(pageData.database);
-  addNotesToDocument(filterNotesByTags(notes, checkedTags));
-}
-
-export async function addTagsToSidebar() {
-  pageData.tags = await getTagsFromStorage(pageData.tagDB);
-  console.log(pageData.tags);
-
-  // Sort tags by num_notes in descending order
-  pageData.tags.sort((a, b) => b.num_notes - a.num_notes);
-
-  const tagListEl = document.querySelector('.tags-list');
-  tagListEl.innerHTML = '';
-  
-  pageData.tags.forEach((tag) => {
-    const tagElement = createTagHTML(tag.tag_name, tag.num_notes);
-    const checkbox = tagElement.querySelector('.tags-input');
-    checkbox.addEventListener('change', () => {
-      if (pageData.page === 'editor') return;
-      searchByTag();
-    });
-    tagListEl.appendChild(tagElement);
-  });
+  return notes.filter((note) => note.tags.some((tag) => tags.includes(tag)));
 }
 
 function createTagHTML(name, count) {
@@ -84,6 +42,46 @@ function createTagHTML(name, count) {
   const tagLabel = tagEl.querySelector('.tags-label');
   tagLabel.htmlFor = `tag-${name}`;
   return tagEl;
+}
+
+async function searchByTag() {
+  const tagListEl = document.querySelector('.tags-list');
+  const checkedTags = [];
+
+  // Find all checked checkboxes within .tags-list
+  const checkedCheckboxes = tagListEl.querySelectorAll('.tags-input:checked');
+
+  // Extract tag names from the checked checkboxes
+  checkedCheckboxes.forEach((checkbox) => {
+    const tagName = checkbox.name;
+    if (tagName) {
+      checkedTags.push(tagName);
+    }
+  });
+
+  const notes = await getNotesFromStorage(pageData.database);
+  addNotesToDocument(filterNotesByTags(notes, checkedTags));
+}
+
+export async function addTagsToSidebar() {
+  pageData.tags = await getTagsFromStorage(pageData.tagDB);
+  console.log(pageData.tags);
+
+  // Sort tags by num_notes in descending order
+  pageData.tags.sort((a, b) => b.num_notes - a.num_notes);
+
+  const tagListEl = document.querySelector('.tags-list');
+  tagListEl.innerHTML = '';
+
+  pageData.tags.forEach((tag) => {
+    const tagElement = createTagHTML(tag.tag_name, tag.num_notes);
+    const checkbox = tagElement.querySelector('.tags-input');
+    checkbox.addEventListener('change', () => {
+      if (pageData.page === 'editor') return;
+      searchByTag();
+    });
+    tagListEl.appendChild(tagElement);
+  });
 }
 
 /**

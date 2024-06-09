@@ -12,7 +12,7 @@ import { pageData, updateURL } from './Routing.js';
 import { initializeDB, getNotesFromStorage, getNoteFromStorage } from './noteStorage.js';
 import { editNote, addNoteToDocument, initEditor } from './notesEditor.js';
 import { initializeTagDB, getTagsFromStorage, addTagsToDOM } from './tagStorage.js';
-import { initTagSearch, addTagsToDocument, addTagsToSidebar } from './sidebar.js';
+import { initTagSearch, addTagsToSidebar } from './sidebar.js';
 import { getDate } from './utility.js';
 import { addNotesToDocument, initTimeColumnSorting, initTitleColumnSorting, initSearchBar } from './notesDashboard.js';
 import { initSettings } from './settings.js';
@@ -119,11 +119,7 @@ function initThemeToggle() {
  */
 async function initEventHandler() {
   const db = pageData.database;
-  const tagDB = pageData.tagDB
   const notes = await getNotesFromStorage(db);
-  // 'the pageData.tags is', pageData.tags);
-
-  // addTagsToDocument(pageData.tags);
   initTimeColumnSorting(notes);
   initTitleColumnSorting(notes);
   initSearchBar(notes);

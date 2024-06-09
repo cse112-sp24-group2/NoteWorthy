@@ -1,1 +1,0 @@
-var t={database:null,noteID:null,editEnabled:!1,tagDB:null,tags:[]};function n(t){var n=window.location.pathname;window.history.pushState({},null,n+t),window.dispatchEvent(new Event("popstate"))}export{t as pageData,n as updateURL};

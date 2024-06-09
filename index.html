@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Personal note-taking app that enables users to store, import, and export notes locally while keeping them in an organized manner." />
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com" /> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /> -->
+    <title>Notes</title>
+    <!-- Main Stylesheets & Scripts -->
+    <link rel="stylesheet" href="/index.css" />
+    <!-- jsPDF HTML to PDF -->
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+    <!-- Quill Rich Text Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <template id="sidebar-tag-template">
+      <label class="tags-label">
+        <input class="tags-input" type="checkbox">
+        <div class="tags-content">
+          <span class="tags-name"></span>
+          <span class="tags-count"></span>
+        </div>
+      </label>
+    </template>
+    <template id="dashboard-note-template">
+      <style>
+      @import url('/index.css');
+      </style>
+      <div class="note-wrapper">
+        <section class="note-front">
+          <div class="note-front-top">
+            <h4 class="note-title"></h4>
+            <div class="note-text">
+              It is a long established fact that a reader will be distracted by the readable content of a page when
+              looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of
+              letters, as opposed to using 'Content here, content here', making it look like readable
+            </div>
+          </div>
+          <div class="note-front-bottom">
+            <div class="note-more"></div>
+          </div>
+        </section>
+        <section class="note-back flipped">
+          <div>
+            <h4>Note details</h4>
+            <h5>Tags</h5>
+            <div class="note-tags">
+            </div>
+            <h5>Last Modified</h5>
+            <p class="note-last-modified"></p>
+          </div>
+          <footer>
+            <button class="note-download-button">
+              <img alt="download image" src="/download.svg" />
+            </button>
+            <button class="note-copy-button">
+              <img alt="copy image" src="/copy-file.svg" />
+            </button>
+            <button class="note-delete-button">
+              <img alt="delete image" src="/delete.svg" />
+            </button>
+            <button class="note-back-button">
+              <img alt="back button" src="/back-arrow.svg" />
+            </button>
+          </footer>
+        </section>
+      </div>
+    </template>
+    <script type="module" crossorigin src="/assets/index-mE_V6suo.js"></script>
+  </head>
+
+  <body>
+    <dialog>
+      <p class="dialog-prompt"></p>
+      <div class="dialog-buttons">
+        <button class="dialog-cancel">No</button>
+        <button class="dialog-confirm" autofocus>Yes</button>
+      </div>
+    </dialog>
+    <div class="header">
+      <h1 class="title">NoteWorthy.</h1>
+      <div class="controlPanel">
+        <button id="darkMode">Dark</button>
+        <button id="newNote">+ New Note</button>
+      </div>
+    </div>
+    <main>
+      <!-- WILL CHANGE SOON -->
+      <div style="display: none" class="columnTitle">
+        <div class="titleCol">
+          <p class="titleColHeader">Title</p>
+          <div></div>
+          <svg
+            class="titleColSortOrder"
+            width="12"
+            height="6"
+            viewBox="0 0 12 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6 0L11.1962 6H0.803848L6 0Z" fill="#D9D9D9" />
+          </svg>
+        </div>
+        <div class="timeCol">
+          <svg
+            class="timeColSortOrder"
+            width="12"
+            height="6"
+            viewBox="0 0 12 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6 0L11.1962 6H0.803848L6 0Z" fill="#D9D9D9" />
+          </svg>
+          <p class="timeColHeader">Last Modified</p>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <section class="sidebar">
+        <h3 id="tags">Tags</h3>
+        <form class="tags-list"></form>
+
+        <footer>
+        </footer>
+      </section>
+
+      <!-- VIEWS SECTION -->
+      <section class="view">
+        <!-- NOTES DASHBOARD -->
+        <div class="dashboard">
+          <header class="dashboard-header">
+            <h2>Dashboard</h2>
+            <div class="searchbar-wrapper">
+              <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
+              <img alt="search note" src="/search-icon.svg" />
+            </div>
+            <div class="sort">
+              <button class="dropdown-button">Sort By:</button>
+              <div class="dropdown-content hidden">
+                <button id="sortTimeAsc-button" title="Time Ascending">Oldest Edited</button>
+                <button id="sortTimeDesc-button" title="Time Descending">Recently Edited</button>
+                <button id="sortTitleAsc-button" title="Title Ascending">Title (A-Z)</button>
+                <button id="sortTitleDesc-button" title="Title Descending">Title (Z-A)</button>
+              </div>
+            </div>
+          </header>
+          <div class="dashboardItems"></div>
+          <div class="empty-dashboard hidden">
+            <p>It looks empty here...</p>
+            <br />
+            <p>Try adding a note</p>
+            <img alt="image of wojak" class="wojak" src="/empty-wojak.png" />
+          </div>
+        </div>
+
+        <!-- EDITOR  -->
+        <div class="editor hidden">
+          <header>
+            <div id="subheader">
+              <div id="notes-info">
+                <span id="notes-title"></span>
+                <p id="notes-last-modified">Last Modified:</p>
+              </div>
+            </div>
+            <div class="note-control-bar">
+              <button id="back-button" title="Back">
+                <img alt="back arrow icon" src="/back-arrow.svg" />
+              </button>
+              <button id="export-button" title="Export">
+                <img alt="export icon" src="/download.svg" />
+              </button>
+              <button id="import-button" title="Import">
+                <img style="transform: rotate(180deg)" alt="import icon" src="/download.svg" />
+              </button>
+              <button id="delete-button" title="Delete">
+                <img alt="delete icon" src="/delete.svg" />
+              </button>
+              <div class="searchbar-wrapper">
+                <input class="searchBar" id="tag-input" type="text" placeholder="Add tags..." />
+                <img alt="tag icon" src="/tag-icon.svg" />
+              </div>
+            </div>
+          </header>
+          <form id="notes-tags">
+          </form>
+          <div id="notes-content">
+            <div id="editor"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -25,9 +25,10 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install dependencies
         run: |
-          npm install jest
-          npm install --save-dev node-fetch
-          npm install -D jest-environment-jsdom
+          # npm install jest
+          # npm install --save-dev node-fetch
+          # npm install -D jest-environment-jsdom
+          npm install
           npm ci -l verbose
 
   lint:

@@ -160,3 +160,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./source/dist
+
+## Bro just decided not to run on push to main.

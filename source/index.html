@@ -40,15 +40,17 @@
             </div>
           </div>
           <div class="note-front-bottom">
-            <p class="note-last-modified"></p>
             <div class="note-more"></div>
           </div>
         </section>
         <section class="note-back flipped">
           <div>
             <h4>Note details</h4>
+            <h5>Tags</h5>
             <div class="note-tags">
             </div>
+            <h5>Last Modified</h5>
+            <p class="note-last-modified"></p>
           </div>
           <footer>
             <button class="note-download-button">
@@ -122,9 +124,6 @@
         <form class="tags-list"></form>
 
         <footer>
-          <div id="profile-img"></div>
-          <p>Username</p>
-          <button>Settings</button>
         </footer>
       </section>
 
@@ -179,12 +178,14 @@
               <button id="delete-button" title="Delete">
                 <img alt="delete icon" src="/delete.svg" />
               </button>
-              <button id="tag-button" style="color:red" > Add Tag</button>
-              <input id="tag-input" type="text" placeholder="Add tag..." />
+              <div class="searchbar-wrapper">
+                <input class="searchBar" id="tag-input" type="text" placeholder="Add tags..." />
+                <img alt="tag icon" src="/tag-icon.svg" />
+              </div>
             </div>
-            <form id="notes-tags">
-            </form>
           </header>
+          <form id="notes-tags">
+          </form>
           <div id="notes-content">
             <div id="editor"></div>
           </div>

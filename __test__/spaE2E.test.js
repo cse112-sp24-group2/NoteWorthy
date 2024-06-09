@@ -366,7 +366,7 @@ describe('Editor tests', () => {
 
     expect(isDialogOpen).toBe(true);
 
-    await page.waitForSelector('.dialog-confirm').then((el) => el.click());
+    await page.waitForSelector('.dialog-cancel').then((el) => el.click());
     isDialogOpen = await dialogElement.isVisible();
     expect(isDialogOpen).toBe(false);
   });

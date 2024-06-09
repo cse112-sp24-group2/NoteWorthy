@@ -12,6 +12,34 @@ To install the CI/CD dependencies for this project, run
 npm install
 ```
 
+To install the dependencies for the site, run
+
+```
+cd source && npm install
+```
+
+## Running the site Locally
+This will host the site on `localhost:5173`
+
+```
+cd source && npm run dev
+```
+
+## Building the production version of the site
+We use vite to bundle all of our files to make them smaller and allow npm packages to be used, therefore 
+viewing the final product will include building/bundling everything together before deploying. This will
+display the same code as the deployed version of the site.
+
+This will host the site on `localhost:4173`
+
+```
+cd source && npm run build
+```
+To preview the deployed version.
+```
+cd source && npm run preview
+```
+
 ## Linting and Validation
 
 Validate our CSS, HTML, and Javascript files with linting and validation tools listed here.

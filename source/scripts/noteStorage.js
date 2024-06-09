@@ -7,7 +7,6 @@
  *   - getNotesFromStorage()
  *   - getNoteFromStorage()
  */
-
 import { pageData } from './Routing.js';
 
 export const DBNAME = 'NotesDB';

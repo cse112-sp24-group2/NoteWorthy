@@ -7,8 +7,6 @@
  *   - saveTagToStorage()
  *   - deleteNoteFromStorage()
  */
-import { pageData } from './Routing.js';
-
 let tagDB;
 const TAG_STORE_NAME = 'tags';
 const TAG_OBJECT = {
@@ -16,6 +14,13 @@ const TAG_OBJECT = {
   num_notes: 0,
 };
 
+/**
+ * @description Retrieves the number of notes associated with a specific tag from the IndexedDB.
+ *
+ * @param {IDBDatabase} tagDb - The IndexedDB database containing the tags object store.
+ * @param {string} tagName - The name of the tag to retrieve the number of notes for.
+ * @returns {Promise<number>} A promise that resolves with the number of notes associated with the tag.
+ */
 export function getTagNumNotes(tagDb, tagName) {
   const tagsObjectStore = tagDb.transaction('tags').objectStore('tags');
   const tagGetRequest = tagsObjectStore.get(tagName);
@@ -30,6 +35,14 @@ export function getTagNumNotes(tagDb, tagName) {
   });
 }
 
+/**
+ * @description Updates the number of notes associated with a specific tag in the IndexedDB.
+ *
+ * @param {IDBDatabase} tagDb - The IndexedDB database containing the tags object store.
+ * @param {string} tagName - The name of the tag to update the number of notes for.
+ * @param {boolean} isChecked - A boolean indicating whether to increment or decrement the number of notes.
+ * @returns {void} This function does not return a value.
+ */
 export function updateTagNumNotes(tagDb, tagName, isChecked) {
   const tagsObjectStore = tagDb.transaction('tags').objectStore('tags');
   const tagGetRequest = tagsObjectStore.get(tagName);
@@ -46,9 +59,12 @@ export function updateTagNumNotes(tagDb, tagName, isChecked) {
 }
 
 /**
- * Adds tags to the DOM.
+ * @description Adds tags to the Document Object Model (DOM) based on data retrieved from the IndexedDB.
  *
- * @returns {Promise<Array>} A promise that resolves with an array of all the tags.
+ * @param {IDBObjectStore} tagDBObjectStore - The IndexedDB object store containing tags.
+ * @param {Object} noteObject - The note object containing tags associated with the note.
+ * @param {Array<string>} noteObject.tags - An array of tags associated with the note.
+ * @returns {Promise<void>} A promise that resolves once tags are added to the DOM.
  */
 export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   const allTagsRequest = tagDBObjectStore.getAllKeys();
@@ -68,30 +84,38 @@ export async function addTagsToDOM(tagDBObjectStore, noteObject) {
   await allTagsPromise;
   const parentElement = document.getElementById('notes-tags');
   parentElement.innerHTML = '';
+
   for (let i = 0; i < allTags.length; i += 1) {
-    const defaultTagObject = TAG_OBJECT;
+    const defaultTagObject = { ...TAG_OBJECT }; // Create a new object to avoid mutating the original
     defaultTagObject.tag_name = allTags[i];
-    // adding the checkboxes and labels for the default tags
-    // const parentElement = document.getElementById('notes-tags');
+
+    // Create the checkbox input
     const newCheckBox = document.createElement('input');
     newCheckBox.type = 'checkbox';
-    if (noteTags.includes(allTags[i])) {
-      newCheckBox.checked = true;
-    } else {
-      newCheckBox.checked = false;
-    }
-    newCheckBox.className = 'tag';
+    newCheckBox.className = 'editor-tag-checkbox';
+    newCheckBox.id = `tag-${defaultTagObject.tag_name}`; // Unique ID for each checkbox
     newCheckBox.name = defaultTagObject.tag_name;
+    newCheckBox.checked = noteTags.includes(allTags[i]);
 
-    parentElement.appendChild(newCheckBox);
+    // Add event listener to the checkbox
     // eslint-disable-next-line
     newCheckBox.addEventListener('change', () => {
       updateTagNumNotes(tagDB, newCheckBox.name, newCheckBox.checked);
     });
 
+    // Create the label (acting as container)
     const label = document.createElement('label');
-    label.htmlFor = defaultTagObject.tag_name;
-    label.appendChild(document.createTextNode(defaultTagObject.tag_name));
+    label.htmlFor = newCheckBox.id; // Associate label with checkbox using 'for' attribute
+    label.className = 'editor-tag-label';
+
+    // Create a span for the tag name
+    const tagNameSpan = document.createElement('span');
+    tagNameSpan.className = 'editor-tag-name';
+    tagNameSpan.textContent = defaultTagObject.tag_name;
+
+    // Assemble the elements
+    label.appendChild(newCheckBox);
+    label.appendChild(tagNameSpan);
     parentElement.appendChild(label);
   }
 }
@@ -140,7 +164,6 @@ export function initializeTagDB() {
  */
 export function getTagsFromStorage(database) {
   return new Promise((resolve, reject) => {
-    // not sure what this line does, need to ask about it or research
     const objectStore = database.transaction(TAG_STORE_NAME).objectStore(TAG_STORE_NAME);
     const tags = [];
     const getTagsRequest = objectStore.openCursor();
@@ -180,13 +203,13 @@ export async function getTagFromStorage(database, tagName) {
 }
 
 /**
- * Takes the given tag and saves it to the database. To make a new tag,
- * pass in a Tag object where the name is undefined and a new note will be made.
- * @param {*} database The initialized indexedDB object.
- * @param {*} tagObj The tag object to save.
- * @returns Promise<int> The name of the newly saved tag.
+ * @description Saves a tag to the IndexedDB storage.
+ *
+ * @param {IDBDatabase} database - The IndexedDB database.
+ * @param {Object} tagObj - The tag object to be saved.
+ * @param {boolean} newTag - A boolean indicating whether the tag is new or existing.
+ * @returns {Promise<IDBValidKey>} A promise that resolves with the key of the saved tag.
  */
-
 export function saveTagToStorage(database, tagObj, newTag) {
   const tag = tagObj;
   if (newTag) {
@@ -230,17 +253,4 @@ export function deleteTagFromStorage(database, tag) {
       reject(new Error(`Error deleting tag with tag_name ${tag.tag_name} from storage`));
     };
   });
-}
-
-/**
- * @description Queries the notes database for notes with a specific tag.
- *
- * @param {string} className - The tag name to query for.
- * @returns {Array<Object>} - An array of note objects with the specified tag.
- */
-export function tagQuery() {
-  // eslint-disable-next-line
-  const notesDB = pageData.database.transaction('NotesOS').objectStore('NotesOS');
-  // eslint-disable-next-line
-  const tagsIndex = notesDB.index('note_tags');
 }

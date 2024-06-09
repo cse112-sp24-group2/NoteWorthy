@@ -6,6 +6,15 @@ import { toggleClassToArr } from './utility.js';
 
 const template = document.getElementById('dashboard-note-template');
 
+/**
+ * @description Copies a note and saves it to the IndexedDB storage, updating the document with the new note.
+ *
+ * @param {Object} note - The note object to be copied.
+ * @param {string} note.title - The title of the note.
+ * @param {number} note.uuid - The unique identifier of the note.
+ * @param {string} note.lastModified - The last modified date of the note.
+ * @returns {Promise<void>} A promise that resolves once the note is copied and updated in the document.
+ */
 async function copyNote(note) {
   const db = await initializeDB(indexedDB);
   const newNote = { ...note };
@@ -114,6 +123,10 @@ class dashboardRow extends HTMLElement {
     this.dom.noteFront.onclick = () => updateURL(`?id=${note.uuid}`);
   }
 
+  /**
+   * Flips card, toggling between front and back
+   * @param none
+   */
   flipNote() {
     if (!this.animation) {
       // fires once per element for lifetime

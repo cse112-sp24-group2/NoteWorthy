@@ -83,7 +83,7 @@
       <h1 class="title">NoteWorthy.</h1>
       <div class="controlPanel">
         <button id="darkMode">Dark</button>
-        <button id="newNote">+ New Note</button>
+        <button id="newNote">Create</button>
       </div>
     </div>
     <main>
@@ -131,8 +131,8 @@
       <section class="view">
         <!-- NOTES DASHBOARD -->
         <div class="dashboard">
+          <h2 class="dashboard-title">Dashboard</h2>
           <header class="dashboard-header">
-            <h2>Dashboard</h2>
             <div class="searchbar-wrapper">
               <input class="searchBar" type="text" id="search" name="search" placeholder="Search" />
               <img alt="search note" src="/search-icon.svg" />
@@ -149,9 +149,9 @@
           </header>
           <div class="dashboardItems"></div>
           <div class="empty-dashboard hidden">
-            <p>It looks empty here...</p>
+            <p id="empty-text">It looks empty here...</p>
             <br />
-            <p>Try adding a note</p>
+            <p id="empty-text">Try adding a note</p>
             <img alt="image of wojak" class="wojak" src="/empty-wojak.png" />
           </div>
         </div>

@@ -1,4 +1,4 @@
-# [NoteWorthy](https://cse112-sp24-group2.github.io/NoteWorthy/source/index.html)
+# [NoteWorthy](https://cse112-sp24-group2.github.io/NoteWorthy/)
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/d0673d8890128a7210db/maintainability)](https://codeclimate.com/github/cse112-sp24-group2/NoteWorthy/maintainability)
 [![Technical Debt](https://img.shields.io/codeclimate/tech-debt/cse112-sp24-group2/NoteWorthy?logo=codeclimate)](https://codeclimate.com/github/cse112-sp24-group2/NoteWorthy/maintainability)

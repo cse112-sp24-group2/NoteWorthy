@@ -5,7 +5,7 @@
  *   - switchToDashboard()
  *   - switchToEditor()
  *   - URLRoutingHandler()
- *   - initThemeToggle() 
+ *   - initThemeToggle()
  *   - initEventHandler()
  *   - init()
  */

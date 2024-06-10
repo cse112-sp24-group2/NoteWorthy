@@ -115,7 +115,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './out'
+          path: './'
           name: jsdocs-artifact
 
   deploy:

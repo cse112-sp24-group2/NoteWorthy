@@ -115,7 +115,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './'
+          path: './jsdocs'
           name: jsdocs-artifact
 
   deploy:
@@ -146,6 +146,11 @@ jobs:
         with:
           path: './source/dist'  # assuming your build output is in 'source/dist'
           name: github-pages
+      - name: Upload JSDocs artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './jsdocs'  # assuming your build output is in 'source/dist'
+          name: jsdocs-artifact
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages

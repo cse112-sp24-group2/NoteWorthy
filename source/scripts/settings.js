@@ -52,7 +52,7 @@ export function alertDialog(message) {
  */
 export function confirmDialog(message) {
   return new Promise((resolve) => {
-    initDialog(message, 'Yes', true);
+    initDialog(message, 'Cancel', true);
     const handleConfirm = () => {
       dom.dialog.close();
       resolve(true);

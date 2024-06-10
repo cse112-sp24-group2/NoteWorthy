@@ -6,6 +6,9 @@
  *   - getTagsFromStorage()
  *   - saveTagToStorage()
  *   - deleteNoteFromStorage()
+ *   - getTagNumNotes()
+ *   - updateTagNumNotes()
+ *   - addTagsToDOM()
  */
 let tagDB;
 const TAG_STORE_NAME = 'tags';

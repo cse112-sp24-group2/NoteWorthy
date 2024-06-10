@@ -6,6 +6,8 @@
  *   - initilizeDB()
  *   - getNotesFromStorage()
  *   - getNoteFromStorage()
+ *   - saveNoteToStorage()
+ *   - deleteNoteFromStorage()
  */
 import { pageData } from './Routing.js';
 

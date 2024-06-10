@@ -1,4 +1,15 @@
 /*
+ * sidebar.js provides sidebar functionality
+ *
+ * Functions inside this file:
+ *  - filterNotesByTags()
+ *  - createTagHTML()
+ *  - searchByTag()
+ *  - addTagsToSidebar()
+ *  - addTagsToDocument()
+ */
+
+/*
  * sidebar.js initializes the provides sidebar functionality
  *
  * Functions inside this file:

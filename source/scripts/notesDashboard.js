@@ -6,9 +6,10 @@
  *   - addNotesToDocument()
  *   - hideEmptyWojak()
  *   - filterNotesByQuery()
+ *   - sortNotesByTime()
  *   - sortNotesByTitle()
- *   - initTimeColumnSorting()
- *   - initTitleColumnSorting()
+ *   - filterNotesByQuery()
+ *   - initSortBy()
  *   - initSearchBar()
  */
 import { parseNoteDate } from './utility.js';

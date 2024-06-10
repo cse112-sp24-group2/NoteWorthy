@@ -1,3 +1,13 @@
+/*
+ * settings.js provides custom popup dialogs
+ *
+ * Functions inside this file:
+ *  - initDialog()
+ *  - alertDialog()
+ *  - confirmDialog()
+ *  - initSettings()
+ */
+
 /**
  * @description Object containing DOM elements used for dialog manipulation.
  * @type {Object}

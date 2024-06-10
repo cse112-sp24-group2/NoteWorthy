@@ -150,7 +150,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './jsdocs'  # assuming your build output is in 'source/dist'
-          name: jsdocs-artifact
+          name: jsdocs-up-artifact
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages

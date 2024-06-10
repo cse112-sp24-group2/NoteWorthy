@@ -454,7 +454,7 @@ main {
 
 @media only screen and (max-width: 768px) {
   .view {
-    padding: 2rem 2rem;
+    padding: 2rem 3rem;
   }
 
   .dashboard {
@@ -670,42 +670,45 @@ main {
 .dashboardItems {
   display: flex;
   justify-content: start;
-  gap: 2.5rem;
+  gap: 2rem;
   flex-wrap: wrap;
   align-items: center;
+  margin: 0 -1rem;
 }
 
 .dashboardItems .item {
-  flex: 1 1 10rem; /* Flex-grow, flex-shrink, flex-basis */
-  max-width: calc(25% - 1.5rem); /* 4 columns minus the gap */
+  flex: 1 1 calc(25% - 2rem);
   box-sizing: border-box;
+  padding: 1rem;
 }
 
 @media screen and (max-width: 1200px) {
   .dashboardItems .item {
-    max-width: calc(33.33% - 1.5rem); /* 3 columns minus the gap */
+    flex: 1 1 calc(33.33% - 2rem);
   }
 }
 
 @media screen and (max-width: 992px) {
   .dashboardItems .item {
-    max-width: calc(50% - 1.5rem); /* 2 columns minus the gap */
+    flex: 1 1 calc(50% - 2rem);
   }
 }
 
 @media screen and (max-width: 768px) {
   .dashboardItems .item {
-    max-width: calc(50% - 1.5rem); /* 2 columns minus the gap */
+    flex: 1 1 calc(50% - 2rem);
   }
 }
 
 @media screen and (max-width: 600px) {
   .dashboardItems .item {
-    max-width: 100%; /* Single column */
+    flex: 1 1 100%;
   }
 
   .dashboardItems {
     justify-content: center;
+    gap: 1rem;
+    margin: 0;
   }
 }
 
@@ -930,10 +933,10 @@ main {
 
 #tag-input {
   border: none;
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 2px solid var(--text-color);
   padding: 0.3rem 1rem;
   font-size: 1.2rem;
-  width: 9rem;
+  width: 8rem;
   transition: 0.3s;
   background: none;
 }
@@ -984,7 +987,7 @@ main {
   }
 
   #tag-input {
-    width: 7rem;
+    width: 9rem;
     font-size: 1rem;
   }
 }
@@ -995,8 +998,8 @@ main {
   }
 
   #tag-input {
-    width: 100%;
-    font-size: 0.8rem;
+    width: 9rem;
+    font-size: 1rem;
   }
 
   .editor-tag-name {

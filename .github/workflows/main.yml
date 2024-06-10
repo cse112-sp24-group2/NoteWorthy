@@ -112,15 +112,18 @@ jobs:
         run: npm i -g jsdoc && npm install -g jsdoc-tsimport-plugin
       - name: Build JSDocs
         run: jsdoc -c jsdoc.json
-      - name: Upload JSDocs artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: './out'  # JSDocs output directory
-          name: jsdocs
+          path: './'
+          name: jsdocs-artifact
 
-  build-app:
-    needs: [lint, validate-html, test, lighthouse]
+  deploy:
+    needs: [lint, validate-html, test, lighthouse, build-docs]
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -138,33 +141,10 @@ jobs:
           cd source
           npm install
           npm run build
-      - name: Upload app artifact
-        uses: actions/upload-artifact@v3
-        with:
-          path: './source/dist'
-          name: app-build
-
-  deploy:
-    needs: [build-app, build-docs]
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Download app artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: app-build
-          path: ./public
-      - name: Download JSDocs artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: jsdocs
-          path: ./public/docs
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './public'
+          path: './source/dist'  # assuming your build output is in 'source/dist'
           name: github-pages
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5

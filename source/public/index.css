@@ -155,7 +155,7 @@ html[data-theme='dark'] {
 
   .title {
     width: 60%;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .controlPanel {
@@ -368,11 +368,15 @@ main {
   .tags-count {
     font-size: 1rem;
   }
+
+  .tags-list {
+    gap: 0.2rem;
+  }
 }
 
 @media only screen and (max-width: 600px) {
   .sidebar > h3 {
-    display: none;
+    font-size: 1.3rem;
   }
 
   .tags-content {
@@ -459,6 +463,12 @@ main {
 
   #empty-text {
     font-size: 1rem;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .view {
+    padding: 2rem 1rem;
   }
 }
 
@@ -834,10 +844,6 @@ main {
   flex: 1;
 }
 
-.editor.dark {
-  color: var(--white);
-}
-
 .editor > header {
   display: flex;
   align-items: center;
@@ -852,16 +858,12 @@ main {
 /* Title Input */
 #title-input {
   color: var(--text-color);
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   background: none;
   font-weight: bold;
   border: none;
   border-bottom: 2px solid var(--accent-color);
   width: 100%;
-}
-
-#title-input.dark {
-  color: var(--text-color);
 }
 
 #title-input:focus {
@@ -872,25 +874,6 @@ main {
   margin-bottom: 5rem;
   height: 90%;
   background: white;
-}
-
-#edit-content,
-#view-content {
-  padding: 1em;
-  width: 100%;
-  height: 100%;
-  outline: none;
-  overflow-y: hidden;
-  font-size: 1.2em;
-  color: var(--text-color);
-  border-radius: 0.4rem;
-  background-color: var(--secondary-color);
-  border: 0.15rem solid var(--text-color);
-}
-
-#edit-content {
-  /* border-color: var(--accent-color); */
-  resize: none;
 }
 
 .flipped {
@@ -910,6 +893,7 @@ main {
 
 #notes-last-modified {
   color: var(--text-color);
+  font-size: 1rem;
   font-weight: 400;
   margin-top: 0.6rem;
 }
@@ -918,7 +902,7 @@ main {
   display: flex;
   justify-content: end;
   align-items: center;
-  gap: 1rem;
+  gap: 0.6rem;
   width: 100%;
 }
 
@@ -941,14 +925,15 @@ main {
 #notes-tags {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 #tag-input {
   border: none;
   border-bottom: 2px solid var(--primary-color);
   padding: 0.3rem 1rem;
-  font-size: 1rem;
-  width: 13rem;
+  font-size: 1.2rem;
+  width: 9rem;
   transition: 0.3s;
   background: none;
 }
@@ -956,7 +941,7 @@ main {
 .editor-tag-name {
   padding: 0.5rem;
   border-radius: 1rem;
-  font-size: 0.9em;
+  font-size: 1rem;
   border: 2px solid darkgray;
   cursor: pointer;
   min-width: 5rem;
@@ -973,4 +958,48 @@ main {
 .editor-tag-checkbox:checked + .editor-tag-name {
   background: var(--light-green);
   color: black;
+}
+
+@media screen and (max-width: 992px) {
+  .editor > header {
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: start;
+    align-items: start;
+  }
+
+  .note-control-bar {
+    justify-content: start;
+    flex-wrap: wrap;
+  }
+
+  #title-input {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #title-input {
+    font-size: 1.8rem;
+  }
+
+  #tag-input {
+    width: 7rem;
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #title-input {
+    font-size: 1.5rem;
+  }
+
+  #tag-input {
+    width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .editor-tag-name {
+    font-size: 0.8rem;
+  }
 }

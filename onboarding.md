@@ -2,7 +2,7 @@
 
 ## Documentation
 
-All documentation generated via JSDocs [here](https://cse110-fa22-group5.github.io/cse110-fa22-group5/jsdocs/index.html).
+All documentation generated via JSDocs [here](https://cse112-sp24-group2.github.io/JSDocs/).
 
 ## Installing necessary dependencies
 
@@ -72,12 +72,12 @@ Lastly, we use [Google's Lighthouse](https://developer.chrome.com/docs/lighthous
 
 ### To run unit and end-to-end tests:
 
-Start the local host on port `5500`
+Start the local host on port `5173`
 ```
-npm start
+cd source && npm run dev
 ```
 
-On a separate terminal, run the tests:
+On a separate terminal, run the tests from the root directory:
 ```
 npm run test
 ```

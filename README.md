@@ -9,7 +9,7 @@ Personal note-taking app that enables users to store, import, and export notes l
 
 ## Important File(path)s
 
-- Onboarding:: [`onboarding.md`](https://github.com/cse112-sp24-group2/NoteWorthy/blob/main/onboarding.md)
+- Onboarding: [`onboarding.md`](https://github.com/cse112-sp24-group2/NoteWorthy/blob/main/onboarding.md)
 - Workplans: [`admin/workplans`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/admin/workplans)
 - ADR's: [`specs/adrs`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/specs/adrs)
 - UML Diagrams: [`specs/Architecture-UML`](https://github.com/cse112-sp24-group2/NoteWorthy/tree/main/specs/Architecture-UML)

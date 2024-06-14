@@ -21,3 +21,5 @@ Personal note-taking app that enables users to store, import, and export notes l
 - Documentation: [JSDocs](https://cse112-sp24-group2.github.io/JSDocs/)
 - Team intro: [Youtube](https://youtu.be/6TGIHsYhdZY?si=kF-PFqX8vI5nCssk)
 - Public video: [Youtube](https://youtu.be/gBs5uSqh4kw)
+
+:)

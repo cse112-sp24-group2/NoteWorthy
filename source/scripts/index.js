@@ -115,7 +115,7 @@ function URLRoutingHandler() {
 function initThemeToggle() {
   const darkModeButton = document.querySelector('#darkMode');
   darkModeButton.addEventListener('click', () => {
-    darkModeButton.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+    darkModeButton.textContent = darkModeButton.textContent == 'Dark' ? 'Light' : 'Dark';
     pageData.theme = pageData.theme === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', pageData.theme);
   });
